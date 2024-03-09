@@ -259,7 +259,7 @@ public class TransactionControllerTest {
         Long transactionalId = Long.valueOf(1);
 
         try {
-            assertEquals(new ResponseEntity<String>("Operacija brisanja transakcije je uspesno izvrsena",HttpStatus.OK),transactionControllerTestMyMethods.deleteTransactionalPattern(transactionalId));
+            assertEquals(new ResponseEntity<String>("Operacija brisanja transakcionog sablona je uspesno izvrsena",HttpStatus.OK),transactionControllerTestMyMethods.deleteTransactionalPattern(transactionalId));
         }catch (Exception e) {
             fail(e.getMessage());
         }
@@ -269,7 +269,7 @@ public class TransactionControllerTest {
     public void testDeleteAllTransactionalPatternsTESTdeleteAllTransactionalPatterns() {
 
         try {
-            assertEquals(new ResponseEntity<String>("Operacija brisanja svih transakcionalnih sablona je uspesno izvrsena",HttpStatus.OK),transactionControllerTestMyMethods.deleteAllTransactionalPatterns());
+            assertEquals(new ResponseEntity<String>("Operacija brisanja svih transakcionih sablona je uspesno izvrsena",HttpStatus.OK),transactionControllerTestMyMethods.deleteAllTransactionalPatterns());
         }catch (Exception e) {
             fail(e.getMessage());
         }
