@@ -9,4 +9,5 @@ public class UserBackendSpringBootApplication {
     public static void main(String[] args) {
         SpringApplication.run(UserBackendSpringBootApplication.class,args);
     }
+
 }
