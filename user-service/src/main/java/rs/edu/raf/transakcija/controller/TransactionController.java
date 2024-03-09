@@ -196,7 +196,7 @@ public class TransactionController {
     }
     /////////////////////////////////////////////////////////////////////////
     @Tag(name = "TRANSAKCIJE", description = "Transakcija API")
-    @Operation(summary ="BRISANJE JEDNE TRANSAKCIJE",description = "prosledjuje se id transakcije ciji sablon treba da se obrise")
+    @Operation(summary ="BRISANJE JEDNOG TRANSAKCIONOG SABLONA",description = "prosledjuje se id transakcije ciji sablon treba da se obrise")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "uspesno obrisan transakcioni sablon"),
     })
@@ -205,12 +205,12 @@ public class TransactionController {
 
         transakcijaServis.deleteTransactionalPattern(transactionPatternId);
 
-        return new ResponseEntity<>("Operacija brisanja transakcije je uspesno izvrsena",HttpStatus.OK);
+        return new ResponseEntity<>("Operacija brisanja transakcionog sablona je uspesno izvrsena",HttpStatus.OK);
         //return ResponseEntity.status(HttpStatus.OK).body("Operacija brisanja transakcije je uspesno izvrsena");
 
     }
     @Tag(name = "TRANSAKCIJE", description = "Transakcija API")
-    @Operation(summary ="BRISANJE SVIH TRANSAKCIJA",description = "")
+    @Operation(summary ="BRISANJE SVIH TRANSAKCIONIH SABLONA",description = "")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "uspesno obrisani svi sabloni transakcije"),
     })
@@ -219,7 +219,7 @@ public class TransactionController {
 
         transakcijaServis.deleteAllTransactionalPatterns();
 
-        return new ResponseEntity<>("Operacija brisanja svih transakcionalnih sablona je uspesno izvrsena",HttpStatus.OK);
+        return new ResponseEntity<>("Operacija brisanja svih transakcionih sablona je uspesno izvrsena",HttpStatus.OK);
         //return ResponseEntity.ok("Operacija brisanja svih transakcija je uspesno izvrsena");
 
     }
