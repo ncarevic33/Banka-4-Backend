@@ -220,8 +220,10 @@ public class TransactionController {
     @DeleteMapping(value = "/deleteTransactionalPattern/{transactionPatternId}",produces = MediaType.TEXT_PLAIN_VALUE)
     public ResponseEntity<String> deleteTransactionalPattern(@PathVariable("transactionPatternId") Long transactionPatternId) {
 
+
         if(transakcijaServis.deleteTransactionalPattern(transactionPatternId))
             return new ResponseEntity<>("Operacija brisanja transakcionog sablona je uspesno izvrsena",HttpStatus.OK);
+
         //return ResponseEntity.status(HttpStatus.OK).body("Operacija brisanja transakcije je uspesno izvrsena");
         return new ResponseEntity<>("Operacija brisanja transakcionog sablona nije uspesno izvrsena",HttpStatus.NOT_ACCEPTABLE);
     }
