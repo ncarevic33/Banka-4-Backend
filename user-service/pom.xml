@@ -27,6 +27,7 @@
 
     <dependencies>
 
+
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -71,6 +72,7 @@
             <scope>test</scope>
         </dependency>
 
+
         <dependency>
             <groupId>io.swagger</groupId>
             <artifactId>swagger-annotations</artifactId>
@@ -107,6 +109,7 @@
         </dependency>
         -->
         <dependency>
+
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
@@ -135,7 +138,7 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>2.21.0</version>
+            <version>3.12.4</version>
         </dependency>
 
         <!--NIKAKO SA OVIM-->
