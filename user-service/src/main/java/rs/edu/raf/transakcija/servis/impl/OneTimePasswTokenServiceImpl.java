@@ -1,10 +1,10 @@
 package rs.edu.raf.transakcija.servis.impl;
 
 import org.springframework.stereotype.Service;
-import rs.edu.raf.transakcija.servis.OneTimePasswTokenService;
+import rs.edu.raf.transakcija.servis.OneTimePasswService;
 
 @Service
-public class OneTimePasswTokenServiceImpl implements OneTimePasswTokenService {
+public class OneTimePasswTokenServiceImpl implements OneTimePasswService {
 
 
     @Override

@@ -15,9 +15,10 @@ import rs.edu.raf.transakcija.mapper.DtoOriginalMapper;
 import rs.edu.raf.transakcija.model.PrenosSredstava;
 import rs.edu.raf.transakcija.model.SablonTransakcije;
 import rs.edu.raf.transakcija.model.Uplata;
-import rs.edu.raf.transakcija.servis.OneTimePasswTokenService;
+import rs.edu.raf.transakcija.servis.OneTimePasswService;
 import rs.edu.raf.transakcija.servis.TransakcijaServis;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -25,14 +26,14 @@ import java.util.List;
 public class TransactionController {
 
     public TransakcijaServis transakcijaServis;
-    public OneTimePasswTokenService oneTimePasswTokenService;
+    public OneTimePasswService oneTimePasswTokenService;
     public DtoOriginalMapper dtoOriginalMapper;
 
     //AUTOMATSKI CONSTRUCTOR INJECT IMPLEMENTACIJE
     //AKO IMA VISE IMPLEMENTACIJA,MORA SE NAVESTI KONKRETNA PREKO QUALIFIER
     @Autowired
     public TransactionController(TransakcijaServis transakcijaServis,
-                                 OneTimePasswTokenService oneTimePasswTokenService,
+                                 OneTimePasswService oneTimePasswTokenService,
                                  DtoOriginalMapper dtoOriginalMapper) {
         this.transakcijaServis = transakcijaServis;
         this.oneTimePasswTokenService = oneTimePasswTokenService;
@@ -59,19 +60,15 @@ public class TransactionController {
             @ApiResponse(responseCode = "200", description = "uspesna provera ispravnosti"),
     })
     @GetMapping(value = "/transactionUplataAndPassw",consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> transactionUplata(@RequestBody UplataTransactionAndOneTimePasswDTO payTransactionAndOneTimePasswDTO){
+    public ResponseEntity<Void> proveraIspravnostiUplataTransaction(@RequestBody UplataTransactionAndOneTimePasswDTO payTransactionAndOneTimePasswDTO){
 
-                                                //PRVA KOMPOZITNA METODA
+
         Uplata uplata = (Uplata) dtoOriginalMapper.newDtoToNewOriginal(payTransactionAndOneTimePasswDTO.getUplataDTO());
 
-                                                //ZAPRAVO PRAVA METODA KOJU TESTIRAMO OD TESTNE transactionUplata
+
         boolean ispravnost = transakcijaServis.proveraIspravnostiUplataTransakcije(uplata);
 
-        //UNAPRED PRETPOSTAVLJAMO ZA PROSLEDJENI PREDEFINISANI INPUT U transactionUplata KAKAV CE OUTPUT DA VRATI proveraIspravnostiUplataTransakcije
-        //POSTO TO NE ZNAMO SA SIGURNOSCU ZATO I TESTIRAMO
-        //ODNOSNO DA LI CE BITI TACNA transactionUplata ISKLJUCIVO ZAVISI OD POSLEDNJE KOMPOZITNE PRAVE TESTIRANE METODE proveraIspravnostiUplataTransakcije
-        //SVAKI MOGUCI RETURN U transactionUplata JE NOVA TESTNA METODA ZA transactionUplata
-        if(ispravnost)
+      if(ispravnost)
             return new ResponseEntity<>(HttpStatus.OK);
 
         return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
@@ -82,7 +79,7 @@ public class TransactionController {
             @ApiResponse(responseCode = "200", description = "uspesna provera ispravnosti"),
     })
     @GetMapping(value = "/transactionPrenosSredstavaAndPassw",consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> transactionPrenosSredstava(@RequestBody PrenosSredstavaTransactionAndOneTimePasswDTO transferTransactionAndOneTimePasswDTO){
+    public ResponseEntity<Void> proveraIspravnostiPrenosSredstavaTransaction(@RequestBody PrenosSredstavaTransactionAndOneTimePasswDTO transferTransactionAndOneTimePasswDTO){
 
         PrenosSredstava prenosSredstava = (PrenosSredstava) dtoOriginalMapper.newDtoToNewOriginal(transferTransactionAndOneTimePasswDTO.getPrenosSredstavaDTO());
 
@@ -101,48 +98,63 @@ public class TransactionController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "uspesno vracene transakcije korisnika"),
     })
-    @GetMapping(value = "/getAllTransactionsByClientId/{korisnikId}",produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/getAllTransactionsByKorisnikId/{korisnikId}",produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<Object>> getAllTransactionsByKorisnikId(@PathVariable("korisnikId") Long clientId) {
 
-        return new ResponseEntity<>((List<Object>) dtoOriginalMapper.originalToDtoWithId(transakcijaServis.getAllTransactionsByKorisnikId(clientId)), HttpStatus.OK);
+        List<Object> transactions = transakcijaServis.getAllTransactionsByKorisnikId(clientId);
+
+        if(transactions != null)
+            return new ResponseEntity<>((List<Object>) dtoOriginalMapper.originalToDtoWithId(transactions), HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
     }
 
-
     @Tag(name = "TRANSAKCIJE", description = "Transakcija API")
-    @Operation(summary ="DOHVATANJE SVIH TRANSAKCIJA PO DEVIZNOM ID RACUNA",description = "prosledjuje se u path param id racuna cije transakcije trebaju da se vrate")
+    @Operation(summary ="DOHVATANJE SVIH UPLATA TRANSAKCIJA PO BROJU RACUNA",description = "prosledjuje se u path param id racuna cije transakcije trebaju da se vrate")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "uspesno vracene transakcije racuna"),
     })
-    @GetMapping(value = "/getAllTransactionsByDevizniRacunId/{racunId}",produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<Object>> getAllTransactionsByDevizniRacunId(@PathVariable("racunId") Long billId) {
+    @GetMapping(value = "/getAllUplateByBrojRacuna/{brojRacuna}",produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<UplataDTO>> getAllUplateByBrojRacuna(@PathVariable("brojRacuna") Long billId) {
 
-        return new ResponseEntity<>((List<Object>) dtoOriginalMapper.originalToDtoWithId(transakcijaServis.getAllTransactionsByDevizniRacunId(billId)), HttpStatus.OK);
+        List<UplataDTO> uplateKaILIOdKorisnika = new ArrayList<>();
+
+        UplataDTO uplataDTO1 = transakcijaServis.dobaciUplatuSretstavaDTOPoBrojuPrimaoca(billId);
+        UplataDTO uplataDTO2 = transakcijaServis.dobaciUplatuSretstavaDTOPoBrojuPosiljaoca(billId);
+
+        if(uplataDTO1 != null && uplataDTO2 != null) {
+          //SAMO 2 UPLATE JER METODE SERVISA NE VRACAJU LISTU
+            uplateKaILIOdKorisnika.add(uplataDTO1);
+            uplateKaILIOdKorisnika.add(uplataDTO2);
+
+            return new ResponseEntity<>(uplateKaILIOdKorisnika,HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 
     }
     @Tag(name = "TRANSAKCIJE", description = "Transakcija API")
-    @Operation(summary ="DOHVATANJE SVIH TRANSAKCIJA PO PRAVNOM ID RACUNA",description = "prosledjuje se u path param id racuna cije transakcije trebaju da se vrate")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "uspesno vracene transakcije racuna"),
-    })
-    @GetMapping(value = "/getAllTransactionsByPravniRacunId/{racunId}",produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<Object>> getAllTransactionsByPravniRacunId(@PathVariable("racunId") Long billId) {
-
-        return new ResponseEntity<>((List<Object>) dtoOriginalMapper.originalToDtoWithId(transakcijaServis.getAllTransactionsByPravniRacunId(billId)), HttpStatus.OK);
-
-    }
-    @Tag(name = "TRANSAKCIJE", description = "Transakcija API")
-    @Operation(summary ="DOHVATANJE SVIH TRANSAKCIJA PO TEKUCEM ID RACUNA",description = "prosledjuje se u path param id racuna cije transakcije trebaju da se vrate")
+    @Operation(summary ="DOHVATANJE SVIH PRENOS SREDSTAVA TRANSAKCIJA PO BROJU RACUNA",description = "prosledjuje se u path param id racuna cije transakcije trebaju da se vrate")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "uspesno vracene transakcije racuna"),
     })
 
-    @GetMapping(value = "/getAllTransactionsByTekuciRacunId/{racunId}",produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<Object>> getAllTransactionsByTekuciRacunId(@PathVariable("racunId") Long billId) {
+    @GetMapping(value = "/getAllPrenosSredstavaByBrojRacuna/{brojRacuna}",produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<PrenosSredstavaDTO>> getAllPrenosSredstavaByBrojRacuna(@PathVariable("brojRacuna") Long billId) {
 
-        return new ResponseEntity<>((List<Object>) dtoOriginalMapper.originalToDtoWithId(transakcijaServis.getAllTransactionsByTekuciRacunId(billId)), HttpStatus.OK);
+        List<PrenosSredstavaDTO> prenosiSredstavaKaILIOdKorisnika = new ArrayList<>();
 
+        PrenosSredstavaDTO prenosSredstavaDTO1 = transakcijaServis.dobaviPrenosSretstavaDTOPoBrojuPrimaoca(billId);
+        PrenosSredstavaDTO prenosSredstavaDTO2 = transakcijaServis.dobaviPrenosSretstavaDTOPoBrojuPosiljaoca(billId);
+
+        if(prenosSredstavaDTO1 != null && prenosSredstavaDTO2 != null) {
+            //SAMO 2 PRENOSTA SREDSTAVA JER METODE SERVISA NE VRACAJU LISTU
+            prenosiSredstavaKaILIOdKorisnika.add(prenosSredstavaDTO1);
+            prenosiSredstavaKaILIOdKorisnika.add(prenosSredstavaDTO2);
+
+            return new ResponseEntity<>(prenosiSredstavaKaILIOdKorisnika, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
     }
-    //ZA TRANSAKCIJU UPLATA
+
     ////////////////////////////////////////////////////////////////////////////////////////
     @Tag(name = "TRANSAKCIJE", description = "Transakcija API")
     @Operation(summary ="DOHVATANJE UPLATE PREKO ID UPLATE",description = "prosledjuje se u path id uplate koja treba da se vrati")
@@ -152,10 +164,11 @@ public class TransactionController {
     @GetMapping(value = "/getUplataTransactionByTransactionId/{uplataId}",produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UplataDTO> getUplataTransactionById(@PathVariable("uplataId") Long transactionId) {
 
-        return new ResponseEntity<>(((UplataDTO) dtoOriginalMapper.originalToDtoWithId(transakcijaServis.nadjiUplatuPoId(transactionId))), HttpStatus.OK);
-
+        UplataDTO uplataDTO = transakcijaServis.dobaciUplatuSretstavaDTOPoID(transactionId);
+        if(uplataDTO != null)
+            return new ResponseEntity<>(uplataDTO, HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
     }
-    //ZA TRANSAKCIJU PRENOS SREDSTAVA
     @Tag(name = "TRANSAKCIJE", description = "Transakcija API")
     @Operation(summary ="DOHVATANJE PRENOSA SREDSTAVA PREKO ID PRENOSA SREDSTAVA",description = "prosledjuje se u path id prenosa sredstava koji treba da se vrati")
     @ApiResponses({
@@ -164,8 +177,11 @@ public class TransactionController {
     @GetMapping(value = "/getPrenosSredstavaTransactionByTransactionId/{prenosSredstavaId}",produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PrenosSredstavaDTO> getPrenosSredstavaTransactionById(@PathVariable("prenosSredstavaId") Long transactionId) {
 
-        return new ResponseEntity<>(((PrenosSredstavaDTO) dtoOriginalMapper.originalToDtoWithId(transakcijaServis.nadjiPrenosSretstavaPoId(transactionId))), HttpStatus.OK);
+        PrenosSredstavaDTO prenosSredstavaDTO = transakcijaServis.dobaviPrenosSretstavaDTOPoID(transactionId);
 
+        if(prenosSredstavaDTO != null)
+            return new ResponseEntity<>(prenosSredstavaDTO, HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
     }
     ////////////////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////
@@ -175,7 +191,7 @@ public class TransactionController {
             @ApiResponse(responseCode = "200", description = "uspesno vraceni sabloni transakcije"),
     })
     @GetMapping(value = "/getSavedTransactionalPatterns",produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<SablonTransakcijeDTO>> getSavedPatterns() {
+    public ResponseEntity<List<SablonTransakcijeDTO>> getSavedTransactionalPatterns() {
 
         return new ResponseEntity<>((List<SablonTransakcijeDTO>) dtoOriginalMapper.originalToDtoWithId(transakcijaServis.getSavedTransactionalPatterns()), HttpStatus.OK);
 
@@ -189,28 +205,28 @@ public class TransactionController {
     @PostMapping(value = "/addNewTransactionalPattern",consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.TEXT_PLAIN_VALUE)
     public ResponseEntity<String> addNewTransactionalPattern(@RequestBody NoviSablonTransakcijeDTO noviSablonTransakcijeDTO) {
 
-        transakcijaServis.addNewTransactionalPattern((SablonTransakcije) dtoOriginalMapper.newDtoToNewOriginal(noviSablonTransakcijeDTO));
+        SablonTransakcije sablonTransakcije = transakcijaServis.addNewTransactionalPattern((SablonTransakcije) dtoOriginalMapper.newDtoToNewOriginal(noviSablonTransakcijeDTO));
 
-        return ResponseEntity.status(HttpStatus.OK).body("Operacija dodavanja sablona transakcije je uspesno izvrsena");
-
+        if(sablonTransakcije != null)
+            return ResponseEntity.status(HttpStatus.OK).body("Operacija dodavanja sablona transakcije je uspesno izvrsena");
+        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Operacija dodavanja sablona nije uspela");
     }
     /////////////////////////////////////////////////////////////////////////
     @Tag(name = "TRANSAKCIJE", description = "Transakcija API")
-    @Operation(summary ="BRISANJE JEDNE TRANSAKCIJE",description = "prosledjuje se id transakcije ciji sablon treba da se obrise")
+    @Operation(summary ="BRISANJE JEDNOG TRANSAKCIONOG SABLONA",description = "prosledjuje se id transakcije ciji sablon treba da se obrise")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "uspesno obrisan transakcioni sablon"),
     })
     @DeleteMapping(value = "/deleteTransactionalPattern/{transactionPatternId}",produces = MediaType.TEXT_PLAIN_VALUE)
     public ResponseEntity<String> deleteTransactionalPattern(@PathVariable("transactionPatternId") Long transactionPatternId) {
 
-        transakcijaServis.deleteTransactionalPattern(transactionPatternId);
-
-        return new ResponseEntity<>("Operacija brisanja transakcije je uspesno izvrsena",HttpStatus.OK);
+        if(transakcijaServis.deleteTransactionalPattern(transactionPatternId))
+            return new ResponseEntity<>("Operacija brisanja transakcionog sablona je uspesno izvrsena",HttpStatus.OK);
         //return ResponseEntity.status(HttpStatus.OK).body("Operacija brisanja transakcije je uspesno izvrsena");
-
+        return new ResponseEntity<>("Operacija brisanja transakcionog sablona nije uspesno izvrsena",HttpStatus.NOT_ACCEPTABLE);
     }
     @Tag(name = "TRANSAKCIJE", description = "Transakcija API")
-    @Operation(summary ="BRISANJE SVIH TRANSAKCIJA",description = "")
+    @Operation(summary ="BRISANJE SVIH TRANSAKCIONIH SABLONA",description = "")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "uspesno obrisani svi sabloni transakcije"),
     })
@@ -219,7 +235,7 @@ public class TransactionController {
 
         transakcijaServis.deleteAllTransactionalPatterns();
 
-        return new ResponseEntity<>("Operacija brisanja svih transakcionalnih sablona je uspesno izvrsena",HttpStatus.OK);
+        return new ResponseEntity<>("Operacija brisanja svih transakcionih sablona je uspesno izvrsena",HttpStatus.OK);
         //return ResponseEntity.ok("Operacija brisanja svih transakcija je uspesno izvrsena");
 
     }

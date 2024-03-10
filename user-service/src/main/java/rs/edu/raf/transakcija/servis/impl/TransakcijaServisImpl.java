@@ -3,6 +3,7 @@ package rs.edu.raf.transakcija.servis.impl;
 import org.springframework.stereotype.Service;
 import rs.edu.raf.transakcija.dto.PrenosSredstavaDTO;
 import rs.edu.raf.transakcija.dto.UplataDTO;
+import rs.edu.raf.transakcija.mapper.DtoOriginalMapper;
 import rs.edu.raf.transakcija.model.PrenosSredstava;
 import rs.edu.raf.transakcija.model.SablonTransakcije;
 import rs.edu.raf.transakcija.model.Uplata;
@@ -23,12 +24,15 @@ public class TransakcijaServisImpl implements TransakcijaServis {
     TekuciRacunRepository tekuciRacunRepository;
     DevizniRacunRepository devizniRacunRepository;
 
+    DtoOriginalMapper dtoOriginalMapper;
+
     public TransakcijaServisImpl(UplataTransactionRepository uplataTransactionRepository,
                                  PrenosSredstavaTransactionRepository prenosSredstavaTransactionRepository,
                                  PravniRacunRepository billRepository,
                                  SablonTransakcijeRepository sablonTransakcijeRepository,
                                  TekuciRacunRepository tekuciRacunRepository,
-                                 DevizniRacunRepository devizniRacunRepository){
+                                 DevizniRacunRepository devizniRacunRepository,
+                                 DtoOriginalMapper dtoOriginalMapper){
         this.prenosSredstavaTransactionRepository = prenosSredstavaTransactionRepository;
         this.uplataTransactionRepository = uplataTransactionRepository;
         this.sablonTransakcijeRepository = sablonTransakcijeRepository;
@@ -36,17 +40,23 @@ public class TransakcijaServisImpl implements TransakcijaServis {
         this.pravniRacunRepository = billRepository;
         this.devizniRacunRepository = devizniRacunRepository;
         this.tekuciRacunRepository = tekuciRacunRepository;
+        this.dtoOriginalMapper = dtoOriginalMapper;
 
 
     }
 
     @Override
     public PrenosSredstavaDTO dobaviPrenosSretstavaDTOPoID(Long id) {
+
+        if(id != null)
+            return (PrenosSredstavaDTO) dtoOriginalMapper.originalToDtoWithId(prenosSredstavaTransactionRepository.findById(id).get());
         return null;
     }
 
     @Override
     public UplataDTO dobaciUplatuSretstavaDTOPoID(Long id) {
+        if(id != null)
+            return (UplataDTO) dtoOriginalMapper.originalToDtoWithId(uplataTransactionRepository.findById(id).get());
         return null;
     }
 
@@ -94,30 +104,31 @@ public class TransakcijaServisImpl implements TransakcijaServis {
     ////////////////////////////////////////////////////////////////////////////////
     @Override
     public PrenosSredstava nadjiPrenosSretstavaPoId(Long transactionId) {
-        return prenosSredstavaTransactionRepository.findById(transactionId).get();
+        return null;
     }
 
     @Override
     public Uplata nadjiUplatuPoId(Long transactionId) {
-        return uplataTransactionRepository.findById(transactionId).get();
+       return null;
     }
 
 
-    @Override
     public List<Object> getAllTransactionsByKorisnikId(Long clientId) {
 
-        List<Object> allPravniRacunKlijenta;
-        List<Object> allTekuciRacunKlijenta;
-        List<Object> allDevizniRacunKlijenta;
 
         List<Object> allTransactions = new ArrayList<>();
 
+        if(clientId != null) {
+            List<Object> allPravniRacunKlijenta;
+            List<Object> allTekuciRacunKlijenta;
+            List<Object> allDevizniRacunKlijenta;
 
+            /*
         allPravniRacunKlijenta = pravniRacunRepository.findAllBillsByClientId(clientId);
         allTekuciRacunKlijenta = tekuciRacunRepository.findAllBillsByClientId(clientId);
         allDevizniRacunKlijenta = devizniRacunRepository.findAllBillsByClientId(clientId);
 
-        /*for(Object clientBill:allPravniRacunKlijenta) {
+        for(Object clientBill:allPravniRacunKlijenta) {
             allTransactions.addAll(uplataTransactionRepository.findAllUplataByBillId(((PravniRacun)clientBill).getId()));
             allTransactions.addAll(prenosSredstavaTransactionRepository.findAllPrenosSredstavaByBillId(((PravniRacun)clientBill).getId()));
         }
@@ -129,39 +140,11 @@ public class TransakcijaServisImpl implements TransakcijaServis {
             allTransactions.addAll(uplataTransactionRepository.findAllUplataByBillId(((DevizniRacun)clientBill).getId()));
             allTransactions.addAll(prenosSredstavaTransactionRepository.findAllPrenosSredstavaByBillId(((DevizniRacun)clientBill).getId()));
         }*/
-        return allTransactions;
+            return allTransactions;
+        }
+        return null;
     }
 
-    @Override
-    public List<Object> getAllTransactionsByTekuciRacunId(Long billId) {
-
-        List<Object> allTransactions = new ArrayList<>();
-
-        /*allTransactions.addAll(uplataTransactionRepository.findAllUplataByBillId(billId));
-        allTransactions.addAll(prenosSredstavaTransactionRepository.findAllPrenosSredstavaByBillId(billId));
-*/
-        return allTransactions;
-    }
-    @Override
-    public List<Object> getAllTransactionsByPravniRacunId(Long billId) {
-
-        List<Object> allTransactions = new ArrayList<>();
-
-        /*allTransactions.addAll(uplataTransactionRepository.findAllUplataByBillId(billId));
-        allTransactions.addAll(prenosSredstavaTransactionRepository.findAllPrenosSredstavaByBillId(billId));
-*/
-        return allTransactions;
-    }
-    @Override
-    public List<Object> getAllTransactionsByDevizniRacunId(Long billId) {
-
-        List<Object> allTransactions = new ArrayList<>();
-
-        /*allTransactions.addAll(uplataTransactionRepository.findAllUplataByBillId(billId));
-        allTransactions.addAll(prenosSredstavaTransactionRepository.findAllPrenosSredstavaByBillId(billId));
-*/
-        return allTransactions;
-    }
     @Override
     public boolean proveraIspravnostiUplataTransakcije(Uplata uplata) {
 
@@ -179,17 +162,27 @@ public class TransakcijaServisImpl implements TransakcijaServis {
     }
 
     @Override
-    public void addNewTransactionalPattern(SablonTransakcije sablonTransakcije) {
-         this.sablonTransakcijeRepository.save(sablonTransakcije);
+    public SablonTransakcije addNewTransactionalPattern(SablonTransakcije sablonTransakcije) {
+        if(sablonTransakcije != null) {           //AKO VEC POSTOJI AZURIRACE,AKO NE POSTOJI DODACE
+            return this.sablonTransakcijeRepository.save(sablonTransakcije);
+        }
+        return null;
     }
 
     @Override
-    public void deleteTransactionalPattern(Long transactionPatternId) {
+    public boolean deleteTransactionalPattern(Long transactionPatternId) {
+
+        if(transactionPatternId != null){
+                                        //NE VRACA GRESKU AKO NE POSTOJI ID
          this.sablonTransakcijeRepository.deleteById(transactionPatternId);
+         return true;
+        }
+        return false;
     }
 
     @Override
     public void deleteAllTransactionalPatterns() {
+                                        //NE VRACA GRESKU AKO NEMA STA DA SE BRISE
         this.sablonTransakcijeRepository.deleteAll();
     }
 

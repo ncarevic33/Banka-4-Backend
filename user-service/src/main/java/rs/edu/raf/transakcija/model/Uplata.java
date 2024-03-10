@@ -21,28 +21,4 @@ public class Uplata {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    //one RACUN to many UPLATA?
-
-    @OneToOne
-    private Korisnik from;
-
-    @OneToOne
-    private Korisnik to;
-
-    @Column
-    private Integer suma;
-
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Uplata uplata = (Uplata) o;
-        return Objects.equals(from, uplata.from) && Objects.equals(to, uplata.to);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(from, to);
-    }
 }

@@ -12,6 +12,6 @@ import java.util.List;
 public interface PravniRacunRepository extends JpaRepository<PravniRacun,Long> {
 
 
-    @Query("SELECT u FROM PravniRacun u WHERE u.client.id = :clientId")
-    List<Object> findAllBillsByClientId(@Param("clientId") Long clientId);
+    //@Query("SELECT u FROM PravniRacun u WHERE u.client.id = :clientId")
+    //List<Object> findAllBillsByClientId(@Param("clientId") Long clientId);
 }

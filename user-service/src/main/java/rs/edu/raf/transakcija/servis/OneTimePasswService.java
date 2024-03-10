@@ -1,7 +1,7 @@
 package rs.edu.raf.transakcija.servis;
 
 
-public interface OneTimePasswTokenService {
+public interface OneTimePasswService {
 
 
     String generateOneTimePassw();

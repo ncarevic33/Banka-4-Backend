@@ -18,6 +18,4 @@ public class TekuciRacun {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    private Korisnik client;
 }

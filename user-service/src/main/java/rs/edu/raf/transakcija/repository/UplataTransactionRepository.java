@@ -12,7 +12,7 @@ import java.util.List;
 public interface UplataTransactionRepository extends JpaRepository<Uplata,Long> {
 
 
-    /*@Query("SELECT u FROM Uplata u WHERE u.bill.id = :billId")
-    List<Object> findAllUplataByBillId(@Param("billId") Long billId);
-*/
+    //@Query("SELECT u FROM Uplata u WHERE u.bill.id = :billId")
+    //List<Object> findAllUplataByBillId(@Param("billId") Long billId);
+
 }

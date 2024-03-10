@@ -19,6 +19,4 @@ public class DevizniRacun {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    private Korisnik client;
 }

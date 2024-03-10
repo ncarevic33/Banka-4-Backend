@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import rs.edu.raf.korisnik.model.Korisnik;
 import rs.edu.raf.transakcija.dto.*;
 import rs.edu.raf.transakcija.model.*;
+import rs.edu.raf.transakcija.model.SablonTransakcije;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,7 +62,7 @@ public class DtoOriginalMapper {
             //..
             return prenosSredstavaDTO;
         }else if(original instanceof SablonTransakcije){
-            SablonTransakcijeDTO sablonTransakcijeDTO = new SablonTransakcijeDTO();
+            rs.edu.raf.transakcija.dto.SablonTransakcijeDTO sablonTransakcijeDTO = new rs.edu.raf.transakcija.dto.SablonTransakcijeDTO();
             //..
             return sablonTransakcijeDTO;
         }
