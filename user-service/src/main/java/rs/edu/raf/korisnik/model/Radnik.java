@@ -1,83 +1,43 @@
 package rs.edu.raf.korisnik.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.util.Date;
-import java.util.List;
+import lombok.Data;
 
 @Entity
+@Data
 public class Radnik {
 
-    @Getter
-    @Setter
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Getter
-    @Pattern(regexp = "^[a-zA-Z]+$\n", message = "Samo jedno ili više slova su dozvoljena!")
-    private String Ime;
+    private String ime;
 
-    @Getter
-    @Setter
-    @Pattern(regexp = "^[a-zA-Z]+$\n", message = "Samo jedno ili više slova su dozvoljena!")
-    private String Prezime;
+    private String prezime;
 
-    @Getter
-    @Pattern(regexp = "^(0[1-9]|[12][0-9]|3[01])(0[1-9]|1[0-2])(\\\\d{2})(\\\\d{3})$\n", message = "Nepravilan JMBG!")
-    private Long JMBG;
+    private Long jmbg;
 
-    @Getter
-    private Long DatumRodjenja;
+    private Long datumRodjenja;
 
-    @Setter
-    @Getter
-    @Pattern(regexp = "^[M|F]$", message = "Pol može biti M ili F!")
-    private String Pol;
+    private String pol;
 
-    @Getter
-    @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", message = "Email adresa mora biti validna!")
-    private String Email;
+    private String email;
 
-    @Setter
-    @Getter
-    @Pattern(regexp = "^(\\+381|0)6[0-6]\\d{6,7}$", message = "Broj telefona mora biti formata +381/0 6 0-6 praćen sa 6 ili 7 cifara!")
-    private String BrojTelefona;
+    private String brojTelefona;
 
-    @Setter
-    @Getter
-    private String Adresa;
+    private String adresa;
 
-    @Getter
-    @NotBlank
-    private String Username;
+    private String username;
 
-    @Setter
-    @Getter
-    private String Password;
+    private String password;
 
-    @Getter
-    private String SaltPassword;
+    private String saltPassword;
 
-    @Setter
-    @Getter
-    @NotNull
-    private String Pozicija;
+    private String pozicija;
 
-    @Setter
-    @Getter
-    @NotNull
-    private String Departman;
+    private String departman;
 
-    @Setter
-    @Getter
-    @Positive
-    private Long Permisije;
+    private Long permisije;
 
-    @Setter
-    @Getter
-    private boolean Aktivan;
+    private boolean aktivan;
 }
