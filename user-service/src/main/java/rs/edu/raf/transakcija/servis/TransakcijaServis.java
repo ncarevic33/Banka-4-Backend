@@ -1,24 +1,37 @@
 package rs.edu.raf.transakcija.servis;
 
 import rs.edu.raf.transakcija.dto.PrenosSredstavaDTO;
-import rs.edu.raf.transakcija.dto.PlacanjaDTO;
+import rs.edu.raf.transakcija.dto.PlacanjeDTO;
 import rs.edu.raf.transakcija.model.PrenosSredstava;
-import rs.edu.raf.transakcija.model.Placanja;
+import rs.edu.raf.transakcija.model.Placanje;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface TransakcijaServis {
-    public PrenosSredstava nadjiPrenosSretstavaPoId(Long id);
-    public Placanja nadjiUplatuPoId(Long id);
-    public PrenosSredstavaDTO dobaviPrenosSretstavaDTOPoID(Long id);
-    public PlacanjaDTO dobaciUplatuSretstavaDTOPoID(Long id);
-    public PrenosSredstavaDTO dobaviPrenosSretstavaDTOPoBrojuPrimaoca(Long brojPrimaoca);
-    public PlacanjaDTO dobaciUplatuSretstavaDTOPoBrojuPrimaoca(Long brojPrimaoca);
-    public PrenosSredstavaDTO dobaviPrenosSretstavaDTOPoBrojuPosiljaoca(Long brojPosiljaoca);
-    public PlacanjaDTO dobaciUplatuSretstavaDTOPoBrojuPosiljaoca(Long brojPosiljaoca);
 
-    public List<PrenosSredstava> nadjiPrenosSretstavaKojiSuUObradi();
-    public List<Placanja> nadjiUplateKojiSuUObradi();
+    public Optional<PrenosSredstava> nadjiPrenosSredstavaPoId(Long id);
+
+    public Optional<Placanje> nadjiPlacanjePoId(Long id);
+
+    public PrenosSredstavaDTO vratiPrenosSredstavaDtoPoId(Long id);
+
+    public PlacanjeDTO vratiPlacanjeDtoPoId(Long id);
+
+    public List<PrenosSredstavaDTO> vratiPrenosSredstavaDtoPoRacunuPrimaoca(Long racunPrimaoca);
+
+    public List<PlacanjeDTO> vratiPlacanjeDtoPoRacunuPrimaoca(Long racunPrimaoca);
+
+    public List<PrenosSredstavaDTO> vratiPrenosSredstavaDtoPoRacunuPosiljaoca(Long racunPosiljaoca);
+
+    public List<PlacanjeDTO> vratiPlacanjeDtoPoRacunuPosiljaoca(Long racunPosiljaoca);
+
+    public List<PrenosSredstava> vratiPrenosSredstavaUObradi();
+
+    public List<Placanje> vratiPlacanjaUObradi();
+
     public String izracunajRezervisaneResurse(Long idRacuna);
+
     public boolean proveriDaLiNaRacunuImaDovoljnoSredstavaZaObradu(Long idRacuna, Long idPrenosa);
+
 }

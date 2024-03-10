@@ -1,11 +1,13 @@
 package rs.edu.raf.transakcija.dto;
 
 import lombok.Data;
+import rs.edu.raf.transakcija.model.Status;
 
 import java.math.BigDecimal;
 
 @Data
-public class NovoPlacanjeDTO {
+public class PlacanjeDTO {
+
     private Long racunPosiljaoca;
 
     private String nazivPrimaoca;
@@ -14,9 +16,15 @@ public class NovoPlacanjeDTO {
 
     private BigDecimal iznos;
 
-    private Integer pozivNaBroj;
+    private int pozivNaBroj;
 
-    private Integer sifraPlacanja;
+    private int sifraPlacanja;
 
     private String svrhaPlacanja;
+
+    private Status status;
+
+    private Long vremeTransakcije;
+
+    private Long vremeIzvrsavanja;
 }

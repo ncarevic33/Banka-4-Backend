@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 @Data
 @Entity
 @Table(name = "placanja")
-public class Placanja {
+public class Placanje {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,9 +26,9 @@ public class Placanja {
     @Column(nullable = false)
     private BigDecimal iznos;
 
-    private int pozivNaBroj;
+    private Integer pozivNaBroj;
 
-    private int sifraPlacanja;
+    private Integer sifraPlacanja;
 
     private String svrhaPlacanja;
 
@@ -38,6 +38,6 @@ public class Placanja {
     @Column(nullable = false)
     private Long vremeTransakcije;
 
-    private Long vremeIzvrsavanja;
+    private Long vremeIzvrsavanja = null;
 
 }

@@ -15,10 +15,10 @@ public class PrenosSredstava {
     private Long id;
 
     @Column(nullable = false)
-    private Long prviRacun;
+    private Long racunPosiljaoca;
 
     @Column(nullable = false)
-    private Long drugiRacun;
+    private Long racunPrimaoca;
 
     @Column(nullable = false)
     private BigDecimal iznos;
