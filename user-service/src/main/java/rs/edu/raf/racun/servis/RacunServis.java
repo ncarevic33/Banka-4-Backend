@@ -27,4 +27,5 @@ public interface RacunServis {
     public boolean dodajPravniRacunKorisniku(PravniRacun pravniRacun,Korisnik korisnik);
     public boolean dodajTekuciRacunKorisniku(TekuciRacun tekuciRacun,Korisnik korisnik);
     public Long generisiBrojRacuna(String tipRacuna);
+    public String nadjiVrstuRacuna(Long BrojRacuna);
 }
