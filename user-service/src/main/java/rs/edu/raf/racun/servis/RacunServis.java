@@ -10,7 +10,6 @@ import rs.edu.raf.racun.model.PravniRacun;
 import rs.edu.raf.racun.model.TekuciRacun;
 
 import java.util.List;
-
 public interface RacunServis {
     public DevizniRacun kreirajDevizniRacun(NoviDevizniRacunDTO noviDevizniRacunDTO);
     public PravniRacun kreirajPravniRacun(NoviPravniRacunDTO noviPravniRacunDTO);
