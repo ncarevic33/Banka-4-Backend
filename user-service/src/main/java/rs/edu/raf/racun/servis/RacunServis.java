@@ -8,10 +8,12 @@ import rs.edu.raf.racun.dto.RacunDTO;
 import rs.edu.raf.racun.model.DevizniRacun;
 import rs.edu.raf.racun.model.PravniRacun;
 import rs.edu.raf.racun.model.TekuciRacun;
+import rs.edu.raf.racun.repository.ZemljaRepository;
 
 import java.util.List;
 
 public interface RacunServis {
+
     public DevizniRacun kreirajDevizniRacun(NoviDevizniRacunDTO noviDevizniRacunDTO);
     public PravniRacun kreirajPravniRacun(NoviPravniRacunDTO noviPravniRacunDTO);
     public TekuciRacun kreirajTekuciRacun(NoviTekuciRacunDTO noviTekuciRacunDTO);
@@ -28,4 +30,5 @@ public interface RacunServis {
     public boolean dodajPravniRacunKorisniku(PravniRacun pravniRacun,Korisnik korisnik);
     public boolean dodajTekuciRacunKorisniku(TekuciRacun tekuciRacun,Korisnik korisnik);
     public Long generisiBrojRacuna(String tipRacuna);
+    public String nadjiVrstuRacuna(Long BrojRacuna);
 }
