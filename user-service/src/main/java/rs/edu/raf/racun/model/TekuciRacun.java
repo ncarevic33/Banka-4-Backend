@@ -1,8 +1,10 @@
 package rs.edu.raf.racun.model;
 
 import jakarta.persistence.*;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -60,3 +62,4 @@ public class TekuciRacun {
     @NotNull
     private BigDecimal odrzavanjeRacuna;
 }
+
