@@ -2,10 +2,17 @@ package rs.edu.raf.korisnik.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Data
-public class Radnik {
+public class Radnik implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,4 +47,32 @@ public class Radnik {
     private Long permisije;
 
     private boolean aktivan;
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        List<SimpleGrantedAuthority> authorityList = new ArrayList<>();
+        authorityList.add(new SimpleGrantedAuthority(permisije.toString()));
+
+        return authorityList;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return aktivan;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return aktivan;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return aktivan;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return aktivan;
+    }
 }
