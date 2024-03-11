@@ -1,24 +1,26 @@
-package rs.edu.raf.transakcija.servis;
+package rs.edu.raf.transakcija.servis.impl;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import rs.edu.raf.transakcija.dto.NoviPrenosSredstavaDTO;
-import rs.edu.raf.transakcija.dto.NovoPlacanjeDTO;
-import rs.edu.raf.transakcija.dto.PlacanjeDTO;
+import rs.edu.raf.transakcija.dto.NovaUplataDTO;
+import rs.edu.raf.transakcija.dto.UplataDTO;
 import rs.edu.raf.transakcija.dto.PrenosSredstavaDTO;
-import rs.edu.raf.transakcija.model.Placanje;
+import rs.edu.raf.transakcija.model.Uplata;
 import rs.edu.raf.transakcija.model.PrenosSredstava;
 import rs.edu.raf.transakcija.model.Status;
 import rs.edu.raf.transakcija.repo.PlacanjaRepozitorijum;
 import rs.edu.raf.transakcija.repo.PrenosSredstavaRepozitorijum;
+import rs.edu.raf.transakcija.servis.TransakcijaMapper;
+import rs.edu.raf.transakcija.servis.TransakcijaServis;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class TransakcijaServisImpl implements TransakcijaServis{
+public class TransakcijaServisImpl implements TransakcijaServis {
 
     private final PlacanjaRepozitorijum placanjaRepozitorijum;
     private final PrenosSredstavaRepozitorijum prenosSredstavaRepozitorijum;
@@ -35,8 +37,8 @@ public class TransakcijaServisImpl implements TransakcijaServis{
     }
 
     @Override
-    public Placanje sacuvajPlacanje(NovoPlacanjeDTO novoPlacanjeDTO) {
-        return placanjaRepozitorijum.save(TransakcijaMapper.NovoPlacanjeDtoToEntity(novoPlacanjeDTO));
+    public Uplata sacuvajPlacanje(NovaUplataDTO novaUplataDTO) {
+        return placanjaRepozitorijum.save(TransakcijaMapper.NovoPlacanjeDtoToEntity(novaUplataDTO));
     }
 
     @Override
@@ -45,7 +47,7 @@ public class TransakcijaServisImpl implements TransakcijaServis{
     }
 
     @Override
-    public Optional<Placanje> nadjiPlacanjePoId(Long id) {
+    public Optional<Uplata> nadjiPlacanjePoId(Long id) {
         return placanjaRepozitorijum.findById(id);
     }
 
@@ -57,7 +59,7 @@ public class TransakcijaServisImpl implements TransakcijaServis{
     }
 
     @Override
-    public PlacanjeDTO vratiPlacanjeDtoPoId(Long id) {
+    public UplataDTO vratiPlacanjeDtoPoId(Long id) {
         return placanjaRepozitorijum.findById(id)
                 .map(TransakcijaMapper::PlacanjeToDto)
                 .orElseThrow(() -> new EntityNotFoundException("Placanje sa ID-om " + id + " nije pronađeno."));
@@ -71,7 +73,7 @@ public class TransakcijaServisImpl implements TransakcijaServis{
     }
 
     @Override
-    public List<PlacanjeDTO> vratiPlacanjeDtoPoRacunuPrimaoca(Long racunPrimaoca) {
+    public List<UplataDTO> vratiPlacanjeDtoPoRacunuPrimaoca(Long racunPrimaoca) {
         return placanjaRepozitorijum.findAllByRacunPrimaoca(racunPrimaoca).stream()
                 .map(TransakcijaMapper::PlacanjeToDto)
                 .collect(Collectors.toList());
@@ -85,7 +87,7 @@ public class TransakcijaServisImpl implements TransakcijaServis{
     }
 
     @Override
-    public List<PlacanjeDTO> vratiPlacanjeDtoPoRacunuPosiljaoca(Long racunPosiljaoca) {
+    public List<UplataDTO> vratiPlacanjeDtoPoRacunuPosiljaoca(Long racunPosiljaoca) {
         return placanjaRepozitorijum.findAllByRacunPosiljaoca(racunPosiljaoca).stream()
                 .map(TransakcijaMapper::PlacanjeToDto)
                 .collect(Collectors.toList());
@@ -97,7 +99,7 @@ public class TransakcijaServisImpl implements TransakcijaServis{
     }
 
     @Override
-    public List<Placanje> vratiPlacanjaUObradi() {
+    public List<Uplata> vratiPlacanjaUObradi() {
         return placanjaRepozitorijum.findAllByStatus(Status.U_OBRADI);
     }
 
