@@ -3,6 +3,8 @@ package rs.edu.raf.transakcija.servis;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import rs.edu.raf.transakcija.dto.NoviPrenosSredstavaDTO;
+import rs.edu.raf.transakcija.dto.NovoPlacanjeDTO;
 import rs.edu.raf.transakcija.dto.PlacanjeDTO;
 import rs.edu.raf.transakcija.dto.PrenosSredstavaDTO;
 import rs.edu.raf.transakcija.model.Placanje;
@@ -25,6 +27,16 @@ public class TransakcijaServisImpl implements TransakcijaServis{
     public TransakcijaServisImpl(PlacanjaRepozitorijum placanjaRepozitorijum, PrenosSredstavaRepozitorijum prenosSredstavaRepozitorijum) {
         this.placanjaRepozitorijum = placanjaRepozitorijum;
         this.prenosSredstavaRepozitorijum = prenosSredstavaRepozitorijum;
+    }
+
+    @Override
+    public PrenosSredstava sacuvajPrenosSredstava(NoviPrenosSredstavaDTO noviPrenosSredstavaDTO) {
+        return prenosSredstavaRepozitorijum.save(TransakcijaMapper.NoviPrenosSredstavaDtoToEntity(noviPrenosSredstavaDTO));
+    }
+
+    @Override
+    public Placanje sacuvajPlacanje(NovoPlacanjeDTO novoPlacanjeDTO) {
+        return placanjaRepozitorijum.save(TransakcijaMapper.NovoPlacanjeDtoToEntity(novoPlacanjeDTO));
     }
 
     @Override

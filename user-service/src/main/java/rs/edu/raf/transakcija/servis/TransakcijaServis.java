@@ -1,5 +1,7 @@
 package rs.edu.raf.transakcija.servis;
 
+import rs.edu.raf.transakcija.dto.NoviPrenosSredstavaDTO;
+import rs.edu.raf.transakcija.dto.NovoPlacanjeDTO;
 import rs.edu.raf.transakcija.dto.PrenosSredstavaDTO;
 import rs.edu.raf.transakcija.dto.PlacanjeDTO;
 import rs.edu.raf.transakcija.model.PrenosSredstava;
@@ -10,28 +12,32 @@ import java.util.Optional;
 
 public interface TransakcijaServis {
 
-    public Optional<PrenosSredstava> nadjiPrenosSredstavaPoId(Long id);
+    PrenosSredstava sacuvajPrenosSredstava(NoviPrenosSredstavaDTO noviPrenosSredstavaDTO);
 
-    public Optional<Placanje> nadjiPlacanjePoId(Long id);
+    Placanje sacuvajPlacanje(NovoPlacanjeDTO novoPlacanjeDTO);
 
-    public PrenosSredstavaDTO vratiPrenosSredstavaDtoPoId(Long id);
+    Optional<PrenosSredstava> nadjiPrenosSredstavaPoId(Long id);
 
-    public PlacanjeDTO vratiPlacanjeDtoPoId(Long id);
+    Optional<Placanje> nadjiPlacanjePoId(Long id);
 
-    public List<PrenosSredstavaDTO> vratiPrenosSredstavaDtoPoRacunuPrimaoca(Long racunPrimaoca);
+     PrenosSredstavaDTO vratiPrenosSredstavaDtoPoId(Long id);
 
-    public List<PlacanjeDTO> vratiPlacanjeDtoPoRacunuPrimaoca(Long racunPrimaoca);
+     PlacanjeDTO vratiPlacanjeDtoPoId(Long id);
 
-    public List<PrenosSredstavaDTO> vratiPrenosSredstavaDtoPoRacunuPosiljaoca(Long racunPosiljaoca);
+     List<PrenosSredstavaDTO> vratiPrenosSredstavaDtoPoRacunuPrimaoca(Long racunPrimaoca);
 
-    public List<PlacanjeDTO> vratiPlacanjeDtoPoRacunuPosiljaoca(Long racunPosiljaoca);
+     List<PlacanjeDTO> vratiPlacanjeDtoPoRacunuPrimaoca(Long racunPrimaoca);
 
-    public List<PrenosSredstava> vratiPrenosSredstavaUObradi();
+     List<PrenosSredstavaDTO> vratiPrenosSredstavaDtoPoRacunuPosiljaoca(Long racunPosiljaoca);
 
-    public List<Placanje> vratiPlacanjaUObradi();
+     List<PlacanjeDTO> vratiPlacanjeDtoPoRacunuPosiljaoca(Long racunPosiljaoca);
 
-    public String izracunajRezervisaneResurse(Long idRacuna);
+     List<PrenosSredstava> vratiPrenosSredstavaUObradi();
 
-    public boolean proveriDaLiNaRacunuImaDovoljnoSredstavaZaObradu(Long idRacuna, Long idPrenosa);
+     List<Placanje> vratiPlacanjaUObradi();
+
+     String izracunajRezervisaneResurse(Long idRacuna);
+
+     boolean proveriDaLiNaRacunuImaDovoljnoSredstavaZaObradu(Long idRacuna, Long idPrenosa);
 
 }
