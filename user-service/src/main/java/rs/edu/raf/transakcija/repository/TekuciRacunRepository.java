@@ -14,5 +14,6 @@ public interface TekuciRacunRepository extends JpaRepository<TekuciRacun,Long> {
     //@Query("SELECT u FROM TekuciRacun u WHERE u.client.id = :clientId")
     //List<Object> findAllBillsByClientId(@Param("clientId") Long clientId);
 
-
+    @Query("SELECT tr.id FROM TekuciRacun tr ORDER BY tr.id DESC LIMIT 1")
+    Long findTop1ByOrderByIdDesc(); //vraca najveci id
 }

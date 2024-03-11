@@ -14,4 +14,7 @@ public interface DevizniRacunRepository extends JpaRepository<DevizniRacun,Long>
 
     //@Query("SELECT u FROM DevizniRacun u WHERE u.client.id = :clientId")
     //List<Object> findAllBillsByClientId(@Param("clientId") Long clientId);
+
+    @Query("SELECT dr.id FROM DevizniRacun dr ORDER BY dr.id DESC LIMIT 1")
+    Long findTop1ByOrderByIdDesc(); //vraca najveci id
 }

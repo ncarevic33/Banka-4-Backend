@@ -14,4 +14,7 @@ public interface PravniRacunRepository extends JpaRepository<PravniRacun,Long> {
 
     //@Query("SELECT u FROM PravniRacun u WHERE u.client.id = :clientId")
     //List<Object> findAllBillsByClientId(@Param("clientId") Long clientId);
+
+    @Query("SELECT pr.id FROM PravniRacun pr ORDER BY pr.id DESC LIMIT 1")
+    Long findTop1ByOrderByIdDesc(); //vraca najveci id
 }
