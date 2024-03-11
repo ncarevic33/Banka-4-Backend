@@ -90,8 +90,9 @@ public interface TransakcijaServis {
 
     BigDecimal vratiSredstva(Long idRacuna);
 
-    Uplata promeniStatusUplate(Long idUplate, Status status, Long vremeIzvrsavanja);
+    Uplata promeniStatusUplate(Long idUplate, String status, Long vremeIzvrsavanja);
 
-    PrenosSredstava promeniStatusPrenosaSredstava(Long idPrenosaSredstava, Status status, Long vremeIzvrsavanja);
+    PrenosSredstava promeniStatusPrenosaSredstava(Long idPrenosaSredstava, String status, Long vremeIzvrsavanja);
+
 
 }
