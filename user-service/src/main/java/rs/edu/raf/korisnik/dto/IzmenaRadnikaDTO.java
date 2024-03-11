@@ -16,7 +16,7 @@ public class IzmenaRadnikaDTO {
     @Pattern(regexp = "^[M|F]$", message = "Pol može biti M ili F!")
     private String pol;
 
-    @Pattern(regexp = "^(\\+381|0)6[0-6]\\d{6,7}$\n", message = "Broj telefona mora biti formata +381/0 6 0-6 praćen sa 6 ili 7 cifara!")
+    @Pattern(regexp = "^(\\+381|0)6\\d{7,8}$\n", message = "Broj telefona mora biti formata +381/0 6 praćen sa 6 ili 7 cifara!")
     private String brojTelefona;
 
     private String adresa;

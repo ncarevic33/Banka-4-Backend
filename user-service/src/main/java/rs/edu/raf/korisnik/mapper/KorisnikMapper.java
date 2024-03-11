@@ -14,9 +14,6 @@ import java.util.Optional;
 @AllArgsConstructor
 public class KorisnikMapper{
 
-    private KorisnikRepository korisnikRepository;
-
-
     public Korisnik noviKorisnikDtoToKorisnik(NoviKorisnikDTO noviKorisnikDTO) {
         Korisnik korisnik = new Korisnik();
 
@@ -31,18 +28,6 @@ public class KorisnikMapper{
         korisnik.setAktivan(noviKorisnikDTO.isAktivan());
 
         return korisnik;
-    }
-
-    public Korisnik registrujKorisnikDtoToKorisnik(RegistrujKorisnikDTO registrujKorisnikDTO) {
-
-        Optional<Korisnik> korisnik = korisnikRepository.findByEmailAndAktivanIsTrue(registrujKorisnikDTO.getEmail());
-
-        if (korisnik.isPresent()){
-            korisnik.get().setPassword(registrujKorisnikDTO.getPassword());
-            return korisnik.get();
-        }
-
-        return null;
     }
 
     public KorisnikDTO korisnikToKorisnikDto(Korisnik korisnik) {

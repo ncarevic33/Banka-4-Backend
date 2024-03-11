@@ -1,5 +1,6 @@
 package rs.edu.raf.korisnik.servis.impl;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import rs.edu.raf.korisnik.dto.*;
@@ -51,9 +52,14 @@ public class KorisnikServisImpl implements KorisnikServis {
     @Override
     public Korisnik registrujNovogKorisnika(RegistrujKorisnikDTO registrujKorisnikDTO) {
 
-        Korisnik korisnik = korisnikMapper.registrujKorisnikDtoToKorisnik(registrujKorisnikDTO);
+        Optional<Korisnik> korisnik = korisnikRepository.findByEmailAndAktivanIsTrue(registrujKorisnikDTO.getEmail());
 
-        return korisnikRepository.save(korisnik);
+        if (korisnik.isPresent()){
+            korisnik.get().setPassword(registrujKorisnikDTO.getPassword());
+            return korisnikRepository.save(korisnik.get());
+        }
+
+        return null;
     }
 
     @Override

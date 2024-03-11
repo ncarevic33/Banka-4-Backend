@@ -1,5 +1,6 @@
 package rs.edu.raf.korisnik.servis;
 
+import jakarta.validation.Valid;
 import rs.edu.raf.korisnik.dto.*;
 import rs.edu.raf.korisnik.model.Korisnik;
 import rs.edu.raf.korisnik.model.Radnik;
