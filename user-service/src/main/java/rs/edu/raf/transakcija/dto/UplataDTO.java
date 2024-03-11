@@ -1,7 +1,6 @@
 package rs.edu.raf.transakcija.dto;
 
 import lombok.Data;
-import rs.edu.raf.transakcija.model.Status;
 
 import java.math.BigDecimal;
 
@@ -22,7 +21,7 @@ public class UplataDTO {
 
     private String svrhaPlacanja;
 
-    private Status status;
+    private String status;
 
     private Long vremeTransakcije;
 
