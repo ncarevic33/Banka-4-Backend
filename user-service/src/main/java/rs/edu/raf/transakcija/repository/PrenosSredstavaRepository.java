@@ -1,4 +1,4 @@
-package rs.edu.raf.transakcija.repo;
+package rs.edu.raf.transakcija.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -8,7 +8,7 @@ import rs.edu.raf.transakcija.model.Status;
 import java.util.List;
 
 @Repository
-public interface PrenosSredstavaRepozitorijum extends JpaRepository<PrenosSredstava, Long> {
+public interface PrenosSredstavaRepository extends JpaRepository<PrenosSredstava, Long> {
 
     List<PrenosSredstava> findAllByStatus(Status status);
 
