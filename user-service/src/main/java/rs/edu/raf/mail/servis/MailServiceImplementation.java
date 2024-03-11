@@ -41,7 +41,7 @@ public class MailServiceImplementation implements MailServis{
     }
 
     @Override
-    public boolean posaljiMailZaPromenuLozinke(KorisnikaDTO korisnik, String kod) {
+    public boolean posaljiMailZaPromenuLozinke(KorisnikDTO korisnik, String kod) {
         String text = "";
         if(korisnik.getPol().equals("M")){
             text = ("Poštovani gospodine " + korisnik.getPrezime() + ",");
