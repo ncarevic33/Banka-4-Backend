@@ -3,6 +3,7 @@ package rs.edu.raf.korisnik.servis.impl;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import rs.edu.raf.korisnik.dto.*;
+import rs.edu.raf.korisnik.exceptions.JMBGDateMismatchException;
 import rs.edu.raf.korisnik.mapper.KorisnikMapper;
 import rs.edu.raf.korisnik.mapper.RadnikMapper;
 import rs.edu.raf.korisnik.model.Korisnik;
@@ -11,6 +12,7 @@ import rs.edu.raf.korisnik.repository.KorisnikRepository;
 import rs.edu.raf.korisnik.repository.RadnikRepository;
 import rs.edu.raf.korisnik.servis.KorisnikServis;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -32,6 +34,13 @@ public class KorisnikServisImpl implements KorisnikServis {
 
         Korisnik korisnik = korisnikMapper.noviKorisnikDtoToKorisnik(noviKorisnikDTO);
 
+        Date datumRodjenja = new Date(korisnik.getDatumRodjenja());
+        if (datumRodjenja.getDay() != Integer.parseInt(korisnik.getJmbg().toString().substring(0,2)) ||
+            datumRodjenja.getMonth() != Integer.parseInt(korisnik.getJmbg().toString().substring(2,4)) ||
+            datumRodjenja.getYear() != Integer.parseInt(korisnik.getJmbg().toString().substring(4,7))) {
+            throw new JMBGDateMismatchException("Datum rodjenja i JMBG se ne poklapaju!");
+        }
+
         return korisnikRepository.save(korisnik);
     }
 
@@ -48,6 +57,13 @@ public class KorisnikServisImpl implements KorisnikServis {
         
         Radnik radnik = radnikMapper.noviRadnikDtoToRadnik(noviRadnikDTO);
 
+        Date datumRodjenja = new Date(radnik.getDatumRodjenja());
+        if (datumRodjenja.getDay() != Integer.parseInt(radnik.getJmbg().toString().substring(0,2)) ||
+            datumRodjenja.getMonth() != Integer.parseInt(radnik.getJmbg().toString().substring(2,4)) ||
+            datumRodjenja.getYear() != Integer.parseInt(radnik.getJmbg().toString().substring(4,7))) {
+            throw new JMBGDateMismatchException("Datum rodjenja i JMBG se ne poklapaju!");
+        }
+
         return radnikRepository.save(radnik);
     }
 
@@ -57,6 +73,13 @@ public class KorisnikServisImpl implements KorisnikServis {
         Optional<Korisnik> korisnik = korisnikRepository.findById(izmenaKorisnikaDTO.getId());
 
         if (korisnik.isPresent()) {
+            Date datumRodjenja = new Date(korisnik.get().getDatumRodjenja());
+            if (datumRodjenja.getDay() != Integer.parseInt(korisnik.get().getJmbg().toString().substring(0,2)) ||
+                datumRodjenja.getMonth() != Integer.parseInt(korisnik.get().getJmbg().toString().substring(2,4)) ||
+                datumRodjenja.getYear() != Integer.parseInt(korisnik.get().getJmbg().toString().substring(4,7))) {
+                throw new JMBGDateMismatchException("Datum rodjenja i JMBG se ne poklapaju!");
+            }
+
             korisnik.get().setPrezime(izmenaKorisnikaDTO.getPrezime());
             korisnik.get().setPol(izmenaKorisnikaDTO.getPol());
             korisnik.get().setEmail(izmenaKorisnikaDTO.getEmail());
@@ -77,6 +100,13 @@ public class KorisnikServisImpl implements KorisnikServis {
         Optional<Radnik> radnik = radnikRepository.findById(izmenaRadnikaDTO.getId());
 
         if (radnik.isPresent()) {
+            Date datumRodjenja = new Date(radnik.get().getDatumRodjenja());
+            if (datumRodjenja.getDay() != Integer.parseInt(radnik.get().getJmbg().toString().substring(0,2)) ||
+                datumRodjenja.getMonth() != Integer.parseInt(radnik.get().getJmbg().toString().substring(2,4)) ||
+                datumRodjenja.getYear() != Integer.parseInt(radnik.get().getJmbg().toString().substring(4,7))) {
+                throw new JMBGDateMismatchException("Datum rodjenja i JMBG se ne poklapaju!");
+            }
+
             radnik.get().setPrezime(izmenaRadnikaDTO.getPrezime());
             radnik.get().setPol(izmenaRadnikaDTO.getPol());
             radnik.get().setBrojTelefona(izmenaRadnikaDTO.getBrojTelefona());
