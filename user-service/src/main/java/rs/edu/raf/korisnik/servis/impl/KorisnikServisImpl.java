@@ -1,9 +1,11 @@
 package rs.edu.raf.korisnik.servis.impl;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import rs.edu.raf.korisnik.dto.*;
+import rs.edu.raf.korisnik.exceptions.JMBGDateMismatchException;
 import rs.edu.raf.korisnik.mapper.KorisnikMapper;
 import rs.edu.raf.korisnik.mapper.RadnikMapper;
 import rs.edu.raf.korisnik.model.Korisnik;
@@ -13,6 +15,11 @@ import rs.edu.raf.korisnik.repository.RadnikRepository;
 import rs.edu.raf.korisnik.servis.KodServis;
 import rs.edu.raf.korisnik.servis.KorisnikServis;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -36,15 +43,26 @@ public class KorisnikServisImpl implements KorisnikServis {
 
         Korisnik korisnik = korisnikMapper.noviKorisnikDtoToKorisnik(noviKorisnikDTO);
 
+        LocalDateTime datumRodjenja = LocalDateTime.ofInstant(Instant.ofEpochMilli(korisnik.getDatumRodjenja()), ZoneOffset.systemDefault());
+        if (datumRodjenja.getDayOfMonth() != Integer.parseInt(korisnik.getJmbg().toString().substring(0,2)) ||
+            datumRodjenja.getMonthValue() != Integer.parseInt(korisnik.getJmbg().toString().substring(2,4)) ||
+            datumRodjenja.getYear()%1000 != Integer.parseInt(korisnik.getJmbg().toString().substring(4,7))) {
+            throw new JMBGDateMismatchException("Datum rodjenja i JMBG se ne poklapaju!");
+        }
+
         return korisnikMapper.korisnikToKorisnikDto(korisnikRepository.save(korisnik));
     }
 
     @Override
     public KorisnikDTO registrujNovogKorisnika(RegistrujKorisnikDTO registrujKorisnikDTO) {
-        if(kodServis.dobarKod(registrujKorisnikDTO.getEmail(),registrujKorisnikDTO.getCode(),false)) {
-            Korisnik korisnik = korisnikMapper.registrujKorisnikDtoToKorisnik(registrujKorisnikDTO);
-            return korisnikMapper.korisnikToKorisnikDto(korisnikRepository.save(korisnik));
+
+        Optional<Korisnik> korisnik = korisnikRepository.findByEmailAndAktivanIsTrue(registrujKorisnikDTO.getEmail());
+
+        if (korisnik.isPresent()){
+            korisnik.get().setPassword(registrujKorisnikDTO.getPassword());
+            return korisnikMapper.korisnikToKorisnikDto(korisnikRepository.save(korisnik.get()));
         }
+
         return null;
     }
 
@@ -74,6 +92,13 @@ public class KorisnikServisImpl implements KorisnikServis {
 
         Radnik radnik = radnikMapper.noviRadnikDtoToRadnik(noviRadnikDTO);
 
+        LocalDateTime datumRodjenja = LocalDateTime.ofInstant(Instant.ofEpochMilli(radnik.getDatumRodjenja()), ZoneOffset.systemDefault());
+        if (datumRodjenja.getDayOfMonth() != Integer.parseInt(radnik.getJmbg().toString().substring(0,2)) ||
+            datumRodjenja.getMonthValue() != Integer.parseInt(radnik.getJmbg().toString().substring(2,4)) ||
+            datumRodjenja.getYear()%1000 != Integer.parseInt(radnik.getJmbg().toString().substring(4,7))) {
+            throw new JMBGDateMismatchException("Datum rodjenja i JMBG se ne poklapaju!");
+        }
+
         return radnikMapper.radnikToRadnikDto(radnikRepository.save(radnik));
     }
 
@@ -83,6 +108,13 @@ public class KorisnikServisImpl implements KorisnikServis {
         Optional<Korisnik> korisnik = korisnikRepository.findById(izmenaKorisnikaDTO.getId());
 
         if (korisnik.isPresent()) {
+            LocalDateTime datumRodjenja = LocalDateTime.ofInstant(Instant.ofEpochMilli(korisnik.get().getDatumRodjenja()), ZoneOffset.systemDefault());
+            if (datumRodjenja.getDayOfMonth() != Integer.parseInt(korisnik.get().getJmbg().toString().substring(0,2)) ||
+                datumRodjenja.getMonthValue() != Integer.parseInt(korisnik.get().getJmbg().toString().substring(2,4)) ||
+                datumRodjenja.getYear()%1000 != Integer.parseInt(korisnik.get().getJmbg().toString().substring(4,7))) {
+                throw new JMBGDateMismatchException("Datum rodjenja i JMBG se ne poklapaju!");
+            }
+
             korisnik.get().setPrezime(izmenaKorisnikaDTO.getPrezime());
             korisnik.get().setPol(izmenaKorisnikaDTO.getPol());
             korisnik.get().setEmail(izmenaKorisnikaDTO.getEmail());
@@ -103,6 +135,13 @@ public class KorisnikServisImpl implements KorisnikServis {
         Optional<Radnik> radnik = radnikRepository.findById(izmenaRadnikaDTO.getId());
 
         if (radnik.isPresent()) {
+            LocalDateTime datumRodjenja = LocalDateTime.ofInstant(Instant.ofEpochMilli(radnik.get().getDatumRodjenja()), ZoneOffset.systemDefault());
+            if (datumRodjenja.getDayOfMonth() != Integer.parseInt(radnik.get().getJmbg().toString().substring(0,2)) ||
+                datumRodjenja.getMonthValue() != Integer.parseInt(radnik.get().getJmbg().toString().substring(2,4)) ||
+                datumRodjenja.getYear()%1000 != Integer.parseInt(radnik.get().getJmbg().toString().substring(4,7))) {
+                throw new JMBGDateMismatchException("Datum rodjenja i JMBG se ne poklapaju!");
+            }
+
             radnik.get().setPrezime(izmenaRadnikaDTO.getPrezime());
             radnik.get().setPol(izmenaRadnikaDTO.getPol());
             radnik.get().setBrojTelefona(izmenaRadnikaDTO.getBrojTelefona());
