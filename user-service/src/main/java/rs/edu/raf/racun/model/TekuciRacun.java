@@ -26,8 +26,8 @@ public class TekuciRacun {
     private Long id;
 
     @Column(unique = true)
-    @NotBlank
-    private String brojRacuna;
+    @NotNull
+    private Long brojRacuna;
 
     @NotNull
     private Long vlasnik; //Korisnik id
@@ -54,7 +54,7 @@ public class TekuciRacun {
     private Boolean aktivan;
 
     @NotBlank
-    private String vrstaRacuna; //Poslovni, Lični, Štedni, Penzionerski, Devizni
+    private String vrstaRacuna; //Poslovni, Lični, Štedni, Penzionerski, Devizni, Studentski
 
     @NotNull
     private BigDecimal kamatnaStopa; //procenat

@@ -28,6 +28,5 @@ public class Valute {
     private String simbol;
 
     @NotBlank
-    @OneToMany
-    private List<Zemlja> zemlje;
+    private String zemlje; //nazivi zemalja e.g. Srbija,Francuska,Nemacka
 }

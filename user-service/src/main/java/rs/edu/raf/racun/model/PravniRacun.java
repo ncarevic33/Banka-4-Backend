@@ -26,8 +26,8 @@ public class PravniRacun {
     private Long id;
 
     @Column(unique = true)
-    @NotBlank
-    private String brojRacuna;
+    @NotNull
+    private Long brojRacuna;
 
     @NotNull
     private Long firma; // Firma id

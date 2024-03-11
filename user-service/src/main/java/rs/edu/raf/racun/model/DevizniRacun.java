@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
@@ -27,8 +28,8 @@ public class DevizniRacun {
     private Long id;
 
     @Column(unique = true)
-    @NotBlank
-    private String brojRacuna;
+    @NotNull
+    private Long brojRacuna;
 
     @NotNull
     private Long vlasnik; //Korisnik id
