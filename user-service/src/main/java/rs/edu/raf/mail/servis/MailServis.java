@@ -1,5 +1,6 @@
 package rs.edu.raf.mail.servis;
 
+
 import rs.edu.raf.korisnik.dto.KorisnikDTO;
 
 public interface MailServis {
