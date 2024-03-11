@@ -12,6 +12,10 @@ import rs.edu.raf.korisnik.repository.KorisnikRepository;
 import rs.edu.raf.korisnik.repository.RadnikRepository;
 import rs.edu.raf.korisnik.servis.KorisnikServis;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -34,10 +38,10 @@ public class KorisnikServisImpl implements KorisnikServis {
 
         Korisnik korisnik = korisnikMapper.noviKorisnikDtoToKorisnik(noviKorisnikDTO);
 
-        Date datumRodjenja = new Date(korisnik.getDatumRodjenja());
-        if (datumRodjenja.getDay() != Integer.parseInt(korisnik.getJmbg().toString().substring(0,2)) ||
-            datumRodjenja.getMonth() != Integer.parseInt(korisnik.getJmbg().toString().substring(2,4)) ||
-            datumRodjenja.getYear() != Integer.parseInt(korisnik.getJmbg().toString().substring(4,7))) {
+        LocalDateTime datumRodjenja = LocalDateTime.ofInstant(Instant.ofEpochMilli(korisnik.getDatumRodjenja()), ZoneOffset.systemDefault());
+        if (datumRodjenja.getDayOfMonth() != Integer.parseInt(korisnik.getJmbg().toString().substring(0,2)) ||
+            datumRodjenja.getMonthValue() != Integer.parseInt(korisnik.getJmbg().toString().substring(2,4)) ||
+            datumRodjenja.getYear()%1000 != Integer.parseInt(korisnik.getJmbg().toString().substring(4,7))) {
             throw new JMBGDateMismatchException("Datum rodjenja i JMBG se ne poklapaju!");
         }
 
@@ -57,10 +61,10 @@ public class KorisnikServisImpl implements KorisnikServis {
         
         Radnik radnik = radnikMapper.noviRadnikDtoToRadnik(noviRadnikDTO);
 
-        Date datumRodjenja = new Date(radnik.getDatumRodjenja());
-        if (datumRodjenja.getDay() != Integer.parseInt(radnik.getJmbg().toString().substring(0,2)) ||
-            datumRodjenja.getMonth() != Integer.parseInt(radnik.getJmbg().toString().substring(2,4)) ||
-            datumRodjenja.getYear() != Integer.parseInt(radnik.getJmbg().toString().substring(4,7))) {
+        LocalDateTime datumRodjenja = LocalDateTime.ofInstant(Instant.ofEpochMilli(radnik.getDatumRodjenja()), ZoneOffset.systemDefault());
+        if (datumRodjenja.getDayOfMonth() != Integer.parseInt(radnik.getJmbg().toString().substring(0,2)) ||
+            datumRodjenja.getMonthValue() != Integer.parseInt(radnik.getJmbg().toString().substring(2,4)) ||
+            datumRodjenja.getYear()%1000 != Integer.parseInt(radnik.getJmbg().toString().substring(4,7))) {
             throw new JMBGDateMismatchException("Datum rodjenja i JMBG se ne poklapaju!");
         }
 
@@ -73,10 +77,10 @@ public class KorisnikServisImpl implements KorisnikServis {
         Optional<Korisnik> korisnik = korisnikRepository.findById(izmenaKorisnikaDTO.getId());
 
         if (korisnik.isPresent()) {
-            Date datumRodjenja = new Date(korisnik.get().getDatumRodjenja());
-            if (datumRodjenja.getDay() != Integer.parseInt(korisnik.get().getJmbg().toString().substring(0,2)) ||
-                datumRodjenja.getMonth() != Integer.parseInt(korisnik.get().getJmbg().toString().substring(2,4)) ||
-                datumRodjenja.getYear() != Integer.parseInt(korisnik.get().getJmbg().toString().substring(4,7))) {
+            LocalDateTime datumRodjenja = LocalDateTime.ofInstant(Instant.ofEpochMilli(korisnik.get().getDatumRodjenja()), ZoneOffset.systemDefault());
+            if (datumRodjenja.getDayOfMonth() != Integer.parseInt(korisnik.get().getJmbg().toString().substring(0,2)) ||
+                datumRodjenja.getMonthValue() != Integer.parseInt(korisnik.get().getJmbg().toString().substring(2,4)) ||
+                datumRodjenja.getYear()%1000 != Integer.parseInt(korisnik.get().getJmbg().toString().substring(4,7))) {
                 throw new JMBGDateMismatchException("Datum rodjenja i JMBG se ne poklapaju!");
             }
 
@@ -100,10 +104,10 @@ public class KorisnikServisImpl implements KorisnikServis {
         Optional<Radnik> radnik = radnikRepository.findById(izmenaRadnikaDTO.getId());
 
         if (radnik.isPresent()) {
-            Date datumRodjenja = new Date(radnik.get().getDatumRodjenja());
-            if (datumRodjenja.getDay() != Integer.parseInt(radnik.get().getJmbg().toString().substring(0,2)) ||
-                datumRodjenja.getMonth() != Integer.parseInt(radnik.get().getJmbg().toString().substring(2,4)) ||
-                datumRodjenja.getYear() != Integer.parseInt(radnik.get().getJmbg().toString().substring(4,7))) {
+            LocalDateTime datumRodjenja = LocalDateTime.ofInstant(Instant.ofEpochMilli(radnik.get().getDatumRodjenja()), ZoneOffset.systemDefault());
+            if (datumRodjenja.getDayOfMonth() != Integer.parseInt(radnik.get().getJmbg().toString().substring(0,2)) ||
+                datumRodjenja.getMonthValue() != Integer.parseInt(radnik.get().getJmbg().toString().substring(2,4)) ||
+                datumRodjenja.getYear()%1000 != Integer.parseInt(radnik.get().getJmbg().toString().substring(4,7))) {
                 throw new JMBGDateMismatchException("Datum rodjenja i JMBG se ne poklapaju!");
             }
 
