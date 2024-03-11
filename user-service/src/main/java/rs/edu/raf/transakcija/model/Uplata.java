@@ -33,7 +33,7 @@ public class Uplata {
     private String svrhaPlacanja;
 
     @Column(nullable = false)
-    private Status status;
+    private String status;
 
     @Column(nullable = false)
     private Long vremeTransakcije;

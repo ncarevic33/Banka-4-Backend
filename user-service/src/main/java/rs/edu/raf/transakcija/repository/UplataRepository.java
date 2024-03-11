@@ -15,7 +15,7 @@ import java.util.List;
 @Repository
 public interface UplataRepository extends JpaRepository<Uplata, Long> {
 
-    List<Uplata> findAllByStatus(Status status);
+    List<Uplata> findAllByStatus(String status);
 
     List<Uplata> findAllByRacunPosiljaoca(Long racunPosiljaoca);
 

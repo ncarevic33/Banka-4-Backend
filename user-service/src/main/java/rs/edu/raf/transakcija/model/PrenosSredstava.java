@@ -27,7 +27,7 @@ public class PrenosSredstava {
     private Long vreme;
 
     @Column(nullable = false)
-    private Status status;
+    private String status;
 
     private Long vremeIzvrsavanja = null;
 
