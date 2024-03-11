@@ -16,7 +16,6 @@ public interface TransakcijaServis {
     public UplataDTO dobaciUplatuSretstavaDTOPoBrojuPrimaoca(Long brojPrimaoca);
     public PrenosSredstavaDTO dobaviPrenosSretstavaDTOPoBrojuPosiljaoca(Long brojPosiljaoca);
     public UplataDTO dobaciUplatuSretstavaDTOPoBrojuPosiljaoca(Long brojPosiljaoca);
-
     public List<PrenosSretstava> nadjiPrenosSretstavaKojiSuUObradi();
     public List<Uplata> nadjiUplateKojiSuUObradi();
     public String izracunajRezervisaneResurse(Long idRacuna);
