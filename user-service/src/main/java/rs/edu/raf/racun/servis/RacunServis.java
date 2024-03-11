@@ -10,7 +10,6 @@ import rs.edu.raf.racun.model.PravniRacun;
 import rs.edu.raf.racun.model.TekuciRacun;
 
 import java.util.List;
-
 public interface RacunServis {
     public DevizniRacun kreirajDevizniRacun(NoviDevizniRacunDTO noviDevizniRacunDTO);
     public PravniRacun kreirajPravniRacun(NoviPravniRacunDTO noviPravniRacunDTO);
@@ -28,4 +27,5 @@ public interface RacunServis {
     public boolean dodajPravniRacunKorisniku(PravniRacun pravniRacun,Korisnik korisnik);
     public boolean dodajTekuciRacunKorisniku(TekuciRacun tekuciRacun,Korisnik korisnik);
     public Long generisiBrojRacuna(String tipRacuna);
+    public String nadjiVrstuRacuna(Long BrojRacuna);
 }
