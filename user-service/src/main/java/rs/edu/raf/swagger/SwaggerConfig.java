@@ -1,5 +1,6 @@
 package rs.edu.raf.swagger;
 
+
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
@@ -17,6 +18,7 @@ import org.springframework.context.annotation.Configuration;
         in= SecuritySchemeIn.HEADER
 )
 public class SwaggerConfig {
+
     @Bean
     public OpenAPI usersMicroserviceOpenAPI() {
         return new OpenAPI()
@@ -24,4 +26,5 @@ public class SwaggerConfig {
                         .description("Description")
                         .version("1.0"));
     }
+
 }
