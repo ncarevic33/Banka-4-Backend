@@ -15,7 +15,7 @@ public class MailServiceImplementation implements MailServis{
     private JavaMailSender emailSender;
 
     @Override
-    public boolean posaljiMailZaRegistraciju(NoviKorisnikDTO korisnik, String kod) {
+    public boolean posaljiMailZaRegistraciju(KorisnikDTO korisnik, String kod) {
         String text = "";
         if(korisnik.getPol().equals("M")){
             text = ("Poštovani gospodine " + korisnik.getPrezime() + ",");
@@ -41,7 +41,7 @@ public class MailServiceImplementation implements MailServis{
     }
 
     @Override
-    public boolean posaljiMailZaPromenuLozinke(IzmenaKorisnikaDTO korisnik, String kod) {
+    public boolean posaljiMailZaPromenuLozinke(KorisnikaDTO korisnik, String kod) {
         String text = "";
         if(korisnik.getPol().equals("M")){
             text = ("Poštovani gospodine " + korisnik.getPrezime() + ",");
