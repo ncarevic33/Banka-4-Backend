@@ -22,7 +22,7 @@ public class DtoOriginalMapper {
             Uplata novaUplata = new Uplata();
             //..
             return novaUplata;
-        }else if(dto instanceof NoviPrenostSredstavaDTO){
+        }else if(dto instanceof NoviPrenosSredstavaDTO){
             PrenosSredstava noviPrenosSredstava = new PrenosSredstava();
             //..
             return noviPrenosSredstava;

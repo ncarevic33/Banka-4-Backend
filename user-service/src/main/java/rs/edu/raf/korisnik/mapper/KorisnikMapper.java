@@ -1,7 +1,9 @@
 package rs.edu.raf.korisnik.mapper;
 
 import lombok.AllArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
+import rs.edu.raf.korisnik.dto.IzmenaSifreUzKodDto;
 import rs.edu.raf.korisnik.dto.KorisnikDTO;
 import rs.edu.raf.korisnik.dto.NoviKorisnikDTO;
 import rs.edu.raf.korisnik.dto.RegistrujKorisnikDTO;
@@ -15,6 +17,7 @@ import java.util.Optional;
 public class KorisnikMapper{
 
     private KorisnikRepository korisnikRepository;
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
 
     public Korisnik noviKorisnikDtoToKorisnik(NoviKorisnikDTO noviKorisnikDTO) {
@@ -38,7 +41,7 @@ public class KorisnikMapper{
         Optional<Korisnik> korisnik = korisnikRepository.findByEmailAndAktivanIsTrue(registrujKorisnikDTO.getEmail());
 
         if (korisnik.isPresent()){
-            korisnik.get().setPassword(registrujKorisnikDTO.getPassword());
+            korisnik.get().setPassword(bCryptPasswordEncoder.encode(registrujKorisnikDTO.getPassword()));
             return korisnik.get();
         }
 
@@ -48,6 +51,7 @@ public class KorisnikMapper{
     public KorisnikDTO korisnikToKorisnikDto(Korisnik korisnik) {
         KorisnikDTO korisnikDTO = new KorisnikDTO();
 
+        korisnikDTO.setId(korisnik.getId());
         korisnikDTO.setIme(korisnik.getIme());
         korisnikDTO.setPrezime(korisnik.getPrezime());
         korisnikDTO.setJmbg(korisnik.getJmbg());
@@ -59,6 +63,15 @@ public class KorisnikMapper{
         korisnikDTO.setPovezaniRacuni(korisnik.getPovezaniRacuni());
 
         return korisnikDTO;
+    }
+
+    public Korisnik izmenaSifreDtoToKorisnik(IzmenaSifreUzKodDto izmenaSifreUzKodDto) {
+        Optional<Korisnik> korisnik = korisnikRepository.findByEmailAndAktivanIsTrue(izmenaSifreUzKodDto.getEmail());
+        if(korisnik.isPresent()) {
+            korisnik.get().setPassword(bCryptPasswordEncoder.encode(izmenaSifreUzKodDto.getSifra()));
+            return korisnik.get();
+        }
+        return null;
     }
 
 }

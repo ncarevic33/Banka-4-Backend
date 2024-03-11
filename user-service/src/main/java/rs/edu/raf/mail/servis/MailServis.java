@@ -1,9 +1,9 @@
 package rs.edu.raf.mail.servis;
 
-import rs.edu.raf.korisnik.dto.IzmenaKorisnikaDTO;
-import rs.edu.raf.korisnik.dto.NoviKorisnikDTO;
+
+import rs.edu.raf.korisnik.dto.KorisnikDTO;
 
 public interface MailServis {
-    public boolean posaljiMailZaRegistraciju(NoviKorisnikDTO korisnik, String kod);
-    public boolean posaljiMailZaPromenuLozinke(IzmenaKorisnikaDTO korisnik, String kod);
+    public boolean posaljiMailZaRegistraciju(KorisnikDTO korisnik, String kod);
+    public boolean posaljiMailZaPromenuLozinke(KorisnikDTO korisnik,String kod);
 }

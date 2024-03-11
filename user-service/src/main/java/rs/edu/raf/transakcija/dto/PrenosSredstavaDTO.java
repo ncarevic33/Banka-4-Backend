@@ -1,8 +1,6 @@
 package rs.edu.raf.transakcija.dto;
 
-import jakarta.persistence.Column;
 import lombok.Data;
-import rs.edu.raf.transakcija.model.Status;
 
 import java.math.BigDecimal;
 
@@ -17,7 +15,7 @@ public class PrenosSredstavaDTO {
 
     private Long vreme;
 
-    private Status status;
+    private String status;
 
     private Long vremeIzvrsavanja;
 }
