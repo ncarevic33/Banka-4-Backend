@@ -2,6 +2,7 @@ package rs.edu.raf.korisnik.servis.impl;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import rs.edu.raf.korisnik.dto.*;
 import rs.edu.raf.korisnik.exceptions.JMBGDateMismatchException;
@@ -11,6 +12,7 @@ import rs.edu.raf.korisnik.model.Korisnik;
 import rs.edu.raf.korisnik.model.Radnik;
 import rs.edu.raf.korisnik.repository.KorisnikRepository;
 import rs.edu.raf.korisnik.repository.RadnikRepository;
+import rs.edu.raf.korisnik.servis.KodServis;
 import rs.edu.raf.korisnik.servis.KorisnikServis;
 
 import java.time.Instant;
@@ -33,9 +35,11 @@ public class KorisnikServisImpl implements KorisnikServis {
     private KorisnikMapper korisnikMapper;
 
     private RadnikMapper radnikMapper;
+    private KodServis kodServis;
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Override
-    public Korisnik kreirajNovogKorisnika(NoviKorisnikDTO noviKorisnikDTO) {
+    public KorisnikDTO kreirajNovogKorisnika(NoviKorisnikDTO noviKorisnikDTO) {
 
         Korisnik korisnik = korisnikMapper.noviKorisnikDtoToKorisnik(noviKorisnikDTO);
 
@@ -46,25 +50,46 @@ public class KorisnikServisImpl implements KorisnikServis {
             throw new JMBGDateMismatchException("Datum rodjenja i JMBG se ne poklapaju!");
         }
 
-        return korisnikRepository.save(korisnik);
+        return korisnikMapper.korisnikToKorisnikDto(korisnikRepository.save(korisnik));
     }
 
     @Override
-    public Korisnik registrujNovogKorisnika(RegistrujKorisnikDTO registrujKorisnikDTO) {
+    public KorisnikDTO registrujNovogKorisnika(RegistrujKorisnikDTO registrujKorisnikDTO) {
 
         Optional<Korisnik> korisnik = korisnikRepository.findByEmailAndAktivanIsTrue(registrujKorisnikDTO.getEmail());
 
         if (korisnik.isPresent()){
             korisnik.get().setPassword(registrujKorisnikDTO.getPassword());
-            return korisnikRepository.save(korisnik.get());
+            return korisnikMapper.korisnikToKorisnikDto(korisnikRepository.save(korisnik.get()));
         }
 
         return null;
     }
 
     @Override
-    public Radnik kreirajNovogRadnika(NoviRadnikDTO noviRadnikDTO) {
-        
+    public KorisnikDTO promeniSifruKorisnikaUzKod(IzmenaSifreUzKodDto izmenaSifreUzKodDto) {
+        if(kodServis.dobarKod(izmenaSifreUzKodDto.getEmail(), izmenaSifreUzKodDto.getKod(),true)) {
+            Korisnik korisnik = korisnikMapper.izmenaSifreDtoToKorisnik(izmenaSifreUzKodDto);
+            return korisnikMapper.korisnikToKorisnikDto(korisnikRepository.save(korisnik));
+        }
+        return null;
+    }
+
+    @Override
+    public KorisnikDTO promeniSifruKorisnika(String email, IzmenaSifreDto izmenaSifreDto) {
+        Optional<Korisnik> korisnik = korisnikRepository.findByEmailAndAktivanIsTrue(email);
+        if(korisnik.isPresent()) {
+            if(bCryptPasswordEncoder.matches(izmenaSifreDto.getStaraSifra(),korisnik.get().getPassword())) {
+                korisnik.get().setPassword(bCryptPasswordEncoder.encode(izmenaSifreDto.getNovaSifra()));
+                return korisnikMapper.korisnikToKorisnikDto(korisnikRepository.save(korisnik.get()));
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public RadnikDTO kreirajNovogRadnika(NoviRadnikDTO noviRadnikDTO) {
+
         Radnik radnik = radnikMapper.noviRadnikDtoToRadnik(noviRadnikDTO);
 
         LocalDateTime datumRodjenja = LocalDateTime.ofInstant(Instant.ofEpochMilli(radnik.getDatumRodjenja()), ZoneOffset.systemDefault());
@@ -74,11 +99,11 @@ public class KorisnikServisImpl implements KorisnikServis {
             throw new JMBGDateMismatchException("Datum rodjenja i JMBG se ne poklapaju!");
         }
 
-        return radnikRepository.save(radnik);
+        return radnikMapper.radnikToRadnikDto(radnikRepository.save(radnik));
     }
 
     @Override
-    public Korisnik izmeniKorisnika(IzmenaKorisnikaDTO izmenaKorisnikaDTO) {
+    public KorisnikDTO izmeniKorisnika(IzmenaKorisnikaDTO izmenaKorisnikaDTO) {
 
         Optional<Korisnik> korisnik = korisnikRepository.findById(izmenaKorisnikaDTO.getId());
 
@@ -99,13 +124,13 @@ public class KorisnikServisImpl implements KorisnikServis {
             korisnik.get().setPovezaniRacuni(izmenaKorisnikaDTO.getPovezaniRacuni());
             korisnik.get().setAktivan(izmenaKorisnikaDTO.isAktivan());
 
-            return korisnikRepository.save(korisnik.get());
+            return korisnikMapper.korisnikToKorisnikDto(korisnikRepository.save(korisnik.get()));
         }
         return null;
     }
 
     @Override
-    public Radnik izmeniRadnika(IzmenaRadnikaDTO izmenaRadnikaDTO) {
+    public RadnikDTO izmeniRadnika(IzmenaRadnikaDTO izmenaRadnikaDTO) {
 
         Optional<Radnik> radnik = radnikRepository.findById(izmenaRadnikaDTO.getId());
 
@@ -127,7 +152,7 @@ public class KorisnikServisImpl implements KorisnikServis {
             radnik.get().setPermisije(izmenaRadnikaDTO.getPermisije());
             radnik.get().setAktivan(izmenaRadnikaDTO.isAktivan());
 
-            return radnikRepository.save(radnik.get());
+            return radnikMapper.radnikToRadnikDto(radnikRepository.save(radnik.get()));
         }
 
         return null;
@@ -135,17 +160,17 @@ public class KorisnikServisImpl implements KorisnikServis {
 
     @Override
     public List<RadnikDTO> izlistajSveAktivneRadnike() {
-        
+
         List<Radnik> radnici = radnikRepository.findAllByAktivanIsTrue();
-        
+
         return radnici.stream().map(radnikMapper::radnikToRadnikDto).collect(Collectors.toList());
     }
 
     @Override
     public List<KorisnikDTO> izlistajSveAktivneKorisnike() {
-        
+
         List<Korisnik> korisnici = korisnikRepository.findAllByAktivanIsTrue();
-        
+
         return korisnici.stream().map(korisnikMapper::korisnikToKorisnikDto).collect(Collectors.toList());
     }
 
@@ -180,9 +205,5 @@ public class KorisnikServisImpl implements KorisnikServis {
 
         return korisnik.map(korisnikMapper::korisnikToKorisnikDto).orElse(null);
     }
-
-    @Override
-    public UserDTO ulogujUsera(String username, String password) {
-        return null;
-    }
 }
+

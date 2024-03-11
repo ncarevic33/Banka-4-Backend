@@ -348,8 +348,8 @@ public class KorisnikServisUnitTests {
         given(korisnikMapper.noviKorisnikDtoToKorisnik(noviKorisnikDTO)).willReturn(korisnik);
 
         try{
-            Korisnik kreiraniKorisnik = korisnikServis.kreirajNovogKorisnika(noviKorisnikDTO);
-            assertEquals(korisnik, kreiraniKorisnik);
+            KorisnikDTO kreiraniKorisnik = korisnikServis.kreirajNovogKorisnika(noviKorisnikDTO);
+            assertEquals(korisnikMapper.korisnikToKorisnikDto(korisnik), kreiraniKorisnik);
         } catch (Exception e){
             fail(e.getMessage());
         }
@@ -406,8 +406,8 @@ public class KorisnikServisUnitTests {
         given(korisnikRepository.findByEmailAndAktivanIsTrue(registrujKorisnikDTO.getEmail())).willReturn(Optional.of(korisnik));
 
         try{
-            Korisnik kreiraniKorisnik = korisnikServis.registrujNovogKorisnika(registrujKorisnikDTO);
-            assertEquals(korisnik, kreiraniKorisnik);
+            KorisnikDTO kreiraniKorisnik = korisnikServis.registrujNovogKorisnika(registrujKorisnikDTO);
+            assertEquals(korisnikMapper.korisnikToKorisnikDto(korisnik), kreiraniKorisnik);
         } catch (Exception e){
             fail(e.getMessage());
         }
@@ -424,8 +424,8 @@ public class KorisnikServisUnitTests {
         given(radnikMapper.noviRadnikDtoToRadnik(noviRadnikDTO)).willReturn(radnik);
 
         try{
-            Radnik kreiraniRadnik = korisnikServis.kreirajNovogRadnika(noviRadnikDTO);
-            assertEquals(radnik, kreiraniRadnik);
+            RadnikDTO kreiraniRadnik = korisnikServis.kreirajNovogRadnika(noviRadnikDTO);
+            assertEquals(radnikMapper.radnikToRadnikDto(radnik), kreiraniRadnik);
         } catch (Exception e){
             fail(e.getMessage());
         }
@@ -471,8 +471,8 @@ public class KorisnikServisUnitTests {
         given(korisnikRepository.findById(izmenaKorisnikaDTO.getId())).willReturn(Optional.of(korisnik));
 
         try{
-            Korisnik izmenjenKorisnik = korisnikServis.izmeniKorisnika(izmenaKorisnikaDTO);
-            assertEquals(korisnik, izmenjenKorisnik);
+            KorisnikDTO izmenjenKorisnik = korisnikServis.izmeniKorisnika(izmenaKorisnikaDTO);
+            assertEquals(korisnikMapper.korisnikToKorisnikDto(korisnik), izmenjenKorisnik);
         } catch (Exception e){
             fail(e.getMessage());
         }
@@ -489,8 +489,8 @@ public class KorisnikServisUnitTests {
         given(radnikRepository.findById(izmenaRadnikaDTO.getId())).willReturn(Optional.of(radnik));
 
         try{
-            Radnik izmenjenRadnik = korisnikServis.izmeniRadnika(izmenaRadnikaDTO);
-            assertEquals(radnik, izmenjenRadnik);
+            RadnikDTO izmenjenRadnik = korisnikServis.izmeniRadnika(izmenaRadnikaDTO);
+            assertEquals(radnikMapper.radnikToRadnikDto(radnik), izmenjenRadnik);
         } catch (Exception e){
             fail(e.getMessage());
         }

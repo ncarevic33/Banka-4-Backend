@@ -1,7 +1,9 @@
 package rs.edu.raf.korisnik.mapper;
 
 import lombok.AllArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
+import rs.edu.raf.korisnik.dto.IzmenaSifreUzKodDto;
 import rs.edu.raf.korisnik.dto.KorisnikDTO;
 import rs.edu.raf.korisnik.dto.NoviKorisnikDTO;
 import rs.edu.raf.korisnik.dto.RegistrujKorisnikDTO;
@@ -13,6 +15,11 @@ import java.util.Optional;
 @Component
 @AllArgsConstructor
 public class KorisnikMapper{
+
+
+    private KorisnikRepository korisnikRepository;
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
+
 
     public Korisnik noviKorisnikDtoToKorisnik(NoviKorisnikDTO noviKorisnikDTO) {
         Korisnik korisnik = new Korisnik();
@@ -33,6 +40,7 @@ public class KorisnikMapper{
     public KorisnikDTO korisnikToKorisnikDto(Korisnik korisnik) {
         KorisnikDTO korisnikDTO = new KorisnikDTO();
 
+        korisnikDTO.setId(korisnik.getId());
         korisnikDTO.setIme(korisnik.getIme());
         korisnikDTO.setPrezime(korisnik.getPrezime());
         korisnikDTO.setJmbg(korisnik.getJmbg());
@@ -44,6 +52,15 @@ public class KorisnikMapper{
         korisnikDTO.setPovezaniRacuni(korisnik.getPovezaniRacuni());
 
         return korisnikDTO;
+    }
+
+    public Korisnik izmenaSifreDtoToKorisnik(IzmenaSifreUzKodDto izmenaSifreUzKodDto) {
+        Optional<Korisnik> korisnik = korisnikRepository.findByEmailAndAktivanIsTrue(izmenaSifreUzKodDto.getEmail());
+        if(korisnik.isPresent()) {
+            korisnik.get().setPassword(bCryptPasswordEncoder.encode(izmenaSifreUzKodDto.getSifra()));
+            return korisnik.get();
+        }
+        return null;
     }
 
 }
