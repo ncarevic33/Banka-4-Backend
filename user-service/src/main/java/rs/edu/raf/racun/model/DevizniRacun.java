@@ -28,7 +28,7 @@ public class DevizniRacun {
 
     @Column(unique = true)
     @NotBlank
-    private String brojRacuna;
+    private Long brojRacuna;
 
     @NotNull
     private Long vlasnik; //Korisnik id
