@@ -1,200 +1,238 @@
 package rs.edu.raf.racun.servis.impl;
 
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import rs.edu.raf.korisnik.model.Korisnik;
-import rs.edu.raf.racun.dto.NoviDevizniRacunDTO;
-import rs.edu.raf.racun.dto.NoviPravniRacunDTO;
-import rs.edu.raf.racun.dto.NoviTekuciRacunDTO;
-import rs.edu.raf.racun.dto.RacunDTO;
+import rs.edu.raf.korisnik.repository.KorisnikRepository;
+import rs.edu.raf.racun.dto.*;
+import rs.edu.raf.racun.mapper.FirmaMapper;
+import rs.edu.raf.racun.mapper.RacunMapper;
 import rs.edu.raf.racun.model.DevizniRacun;
+import rs.edu.raf.racun.model.Firma;
 import rs.edu.raf.racun.model.PravniRacun;
 import rs.edu.raf.racun.model.TekuciRacun;
-import rs.edu.raf.racun.repository.ValuteRepository;
+import rs.edu.raf.racun.repository.FirmaRepository;
 import rs.edu.raf.racun.servis.RacunServis;
 import rs.edu.raf.transakcija.repository.DevizniRacunRepository;
 import rs.edu.raf.transakcija.repository.PravniRacunRepository;
 import rs.edu.raf.transakcija.repository.TekuciRacunRepository;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @Service
 public class RacunServisImpl implements RacunServis {
 
-    private Map<String, Integer> vrsteRacuna;
     private DevizniRacunRepository devizniRacunRepository;
-    private ValuteRepository valuteRepository;
     private PravniRacunRepository pravniRacunRepository;
     private TekuciRacunRepository tekuciRacunRepository;
+    private KorisnikRepository korisnikRepository;
+    private FirmaRepository firmaRepository;
+
+    private RacunMapper racunMapper;
+    private FirmaMapper firmaMapper;
 
     @Autowired
-    public RacunServisImpl(DevizniRacunRepository devizniRacunRepository, ValuteRepository valuteRepository, PravniRacunRepository pravniRacunRepository, TekuciRacunRepository tekuciRacunRepository) {
+    public RacunServisImpl(DevizniRacunRepository devizniRacunRepository, PravniRacunRepository pravniRacunRepository, TekuciRacunRepository tekuciRacunRepository, KorisnikRepository korisnikRepository, FirmaRepository firmaRepository, RacunMapper racunMapper, FirmaMapper firmaMapper) {
         this.devizniRacunRepository = devizniRacunRepository;
-        this.valuteRepository = valuteRepository;
         this.pravniRacunRepository = pravniRacunRepository;
         this.tekuciRacunRepository = tekuciRacunRepository;
-        initialiseVrste();
+        this.korisnikRepository = korisnikRepository;
+        this.firmaRepository = firmaRepository;
+        this.racunMapper = racunMapper;
+        this.firmaMapper = firmaMapper;
     }
 
     @Override
     public DevizniRacun kreirajDevizniRacun(NoviDevizniRacunDTO noviDevizniRacunDTO) {
-        DevizniRacun dr = new DevizniRacun();
-
-        Long id = devizniRacunRepository.findTop1ByOrderByIdDesc() * 10000000000L;
-        dr.setBrojRacuna(444000000000000011L + id); //444 sifra banke 0000 filial
-
-        dr.setVlasnik(noviDevizniRacunDTO.getVlasnik());
-        dr.setStanje(new BigDecimal("0"));
-        dr.setRaspolozivoStanje(new BigDecimal("0"));
-        dr.setZaposleni(noviDevizniRacunDTO.getZaposleni());
-        dr.setDatumKreiranja(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()));
-        dr.setDatumIsteka(dr.getDatumKreiranja() + 5*31536000L);
-
-        List<String> nazivi = noviDevizniRacunDTO.getCurrency();
-        String valute = "";
-        for (String naziv : nazivi) {
-            valute = valute.concat(naziv + ",");
-        }
-        valute = valute.substring(0, valute.length() - 1);
-        dr.setCurrency(valute);
-
-        dr.setDefaultCurrency(noviDevizniRacunDTO.getDefaultCurrency());
-        dr.setAktivan(true);
-        dr.setKamatnaStopa(new BigDecimal("1"));
-        dr.setOdrzavanjeRacuna(new BigDecimal(100 * noviDevizniRacunDTO.getBrojDozvoljenihValuta()));
-        dr.setBrojDozvoljenihValuta(noviDevizniRacunDTO.getBrojDozvoljenihValuta());
-
+        DevizniRacun dr = racunMapper.noviDevizniRacunDTOToDevizniRacun(noviDevizniRacunDTO);
         return this.devizniRacunRepository.save(dr);
     }
 
     @Override
     public PravniRacun kreirajPravniRacun(NoviPravniRacunDTO noviPravniRacunDTO) {
-        PravniRacun pr = new PravniRacun();
-
-        Long id = pravniRacunRepository.findTop1ByOrderByIdDesc() * 10000000000L;
-        pr.setBrojRacuna(333444400000000022L + id); //TODO odluciti se za sifru banke
-
-        pr.setFirma(noviPravniRacunDTO.getFirma());
-        pr.setStanje(new BigDecimal("0"));
-        pr.setRaspolozivoStanje(new BigDecimal("0"));
-        pr.setZaposleni(noviPravniRacunDTO.getZaposleni());
-        pr.setDatumKreiranja(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()));
-        pr.setDatumIsteka(pr.getDatumKreiranja() + 5*31536000L);
-        pr.setCurrency("Srpski dinar");
-        pr.setAktivan(true);
-
+        PravniRacun pr = racunMapper.noviPravniRacunDTOToPravniRacun(noviPravniRacunDTO);
         return this.pravniRacunRepository.save(pr);
     }
 
     @Override
     public TekuciRacun kreirajTekuciRacun(NoviTekuciRacunDTO noviTekuciRacunDTO) {
-        TekuciRacun tr = new TekuciRacun();
-
-        Long id = tekuciRacunRepository.findTop1ByOrderByIdDesc() * 10000000000L;
-        tr.setBrojRacuna(333444400000000033L + id); //TODO odluciti se za sifru banke
-
-        tr.setVlasnik(noviTekuciRacunDTO.getVlasnik());
-        tr.setStanje(new BigDecimal("0"));
-        tr.setRaspolozivoStanje(new BigDecimal("0"));
-        tr.setZaposleni(noviTekuciRacunDTO.getZaposleni());
-        tr.setDatumKreiranja(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()));
-        tr.setDatumIsteka(tr.getDatumKreiranja() + 5*31536000L);
-        tr.setCurrency("Srpski dinar");
-        tr.setAktivan(true);
-        tr.setVrstaRacuna(noviTekuciRacunDTO.getVrstaRacuna());
-
-        if (tr.getVrstaRacuna().equals("Penzionerski") || tr.getVrstaRacuna().equals("Studentski")) {
-            tr.setKamatnaStopa(new BigDecimal("0.5"));
-        } else {
-            tr.setKamatnaStopa(new BigDecimal("0"));
-        }
-
-        tr.setOdrzavanjeRacuna(new BigDecimal(100 * vrsteRacuna.get(tr.getVrstaRacuna())));
-
+        TekuciRacun tr = racunMapper.noviTekuciRacunDTOToTekuciRacun(noviTekuciRacunDTO);
         return this.tekuciRacunRepository.save(tr);
     }
 
-    @Override
+    @Override //drugi metod za firmu?
     public List<RacunDTO> izlistavanjeRacunaJednogKorisnika(Long idKorisnika) {
+        Korisnik k = korisnikRepository.findById(idKorisnika).orElse(null);
+        if (k != null) {
+            List<RacunDTO> racunDTOs = new ArrayList<>();
+            RacunDTO dto;
+            List<String> racuni = List.of(k.getPovezaniRacuni().split(","));
+            for (String r : racuni) {
+                String vrsta = nadjiVrstuRacuna(Long.parseLong(r));
+                if (Objects.equals(vrsta, "DevizniRacun")) {
+                    DevizniRacun dr = this.devizniRacunRepository.findByBrojRacunaAndAktivanIsTrue(Long.parseLong(r)).orElse(null);
+                    if (dr != null) {
+                        dto = racunMapper.devizniRacunToRacunDTO(dr);
+                        racunDTOs.add(dto);
+                    }
+                } else if (Objects.equals(vrsta, "TekuciRacun")) {
+                    TekuciRacun tr = this.tekuciRacunRepository.findByBrojRacunaAndAktivanIsTrue(Long.parseLong(r)).orElse(null);
+                    if (tr != null) {
+                        dto = racunMapper.tekuciRacunToRacunDTO(tr);
+                        racunDTOs.add(dto);
+                    }
+                }
+            }
+        }
         return null;
     }
 
     @Override
     public RacunDTO nadjiAktivanRacunPoID(Long id) {
+        DevizniRacun dr = this.devizniRacunRepository.findByIdAndAktivanIsTrue(id).orElse(null);
+        PravniRacun pr = this.pravniRacunRepository.findByIdAndAktivanIsTrue(id).orElse(null);
+        TekuciRacun tr = this.tekuciRacunRepository.findByIdAndAktivanIsTrue(id).orElse(null);
+        RacunDTO dto;
+        if (dr != null) {
+            dto = racunMapper.devizniRacunToRacunDTO(dr);
+            return dto;
+        } else if (pr != null) {
+            dto = racunMapper.pravniRacunToRacunDTO(pr);
+            return dto;
+        } else if (tr != null) {
+            dto = racunMapper.tekuciRacunToRacunDTO(tr);
+            return dto;
+        }
         return null;
     }
 
     @Override
     public DevizniRacun nadjiAktivanDevizniRacunPoID(Long id) {
-        return null;
+        return this.devizniRacunRepository.findByIdAndAktivanIsTrue(id).orElse(null);
     }
 
     @Override
     public PravniRacun nadjiAktivanPravniRacunPoID(Long id) {
-        return null;
+        return this.pravniRacunRepository.findByIdAndAktivanIsTrue(id).orElse(null);
     }
 
     @Override
     public TekuciRacun nadjiAktivanTekuciRacunPoID(Long id) {
-        return null;
+        return this.tekuciRacunRepository.findByIdAndAktivanIsTrue(id).orElse(null);
     }
 
     @Override
     public RacunDTO nadjiAktivanRacunPoBrojuRacuna(Long BrojRacuna) {
+        RacunDTO dto;
+        if (BrojRacuna % 100 == 11) {
+            DevizniRacun dr = this.devizniRacunRepository.findByBrojRacunaAndAktivanIsTrue(BrojRacuna).orElse(null);
+            if (dr != null) {
+                dto = racunMapper.devizniRacunToRacunDTO(dr);
+                return dto;
+            }
+        } else if (BrojRacuna % 100 == 22) {
+            PravniRacun pr = this.pravniRacunRepository.findByBrojRacunaAndAktivanIsTrue(BrojRacuna).orElse(null);
+            if (pr != null) {
+                dto = racunMapper.pravniRacunToRacunDTO(pr);
+                return dto;
+            }
+        } else if (BrojRacuna % 100 == 33) {
+            TekuciRacun tr = this.tekuciRacunRepository.findByBrojRacunaAndAktivanIsTrue(BrojRacuna).orElse(null);
+            if (tr != null) {
+                dto = racunMapper.tekuciRacunToRacunDTO(tr);
+                return dto;
+            }
+        }
         return null;
     }
 
     @Override
     public DevizniRacun nadjiAktivanDevizniRacunPoBrojuRacuna(Long BrojRacuna) {
-        return null;
+        return this.devizniRacunRepository.findByBrojRacunaAndAktivanIsTrue(BrojRacuna).orElse(null);
     }
 
     @Override
     public PravniRacun nadjiAktivanPravniRacunPoBrojuRacuna(Long BrojRacuna) {
-        return null;
+        return this.pravniRacunRepository.findByBrojRacunaAndAktivanIsTrue(BrojRacuna).orElse(null);
     }
 
     @Override
     public TekuciRacun nadjiAktivanTekuciRacunPoBrojuRacuna(Long BrojRacuna) {
-        return null;
+        return this.tekuciRacunRepository.findByBrojRacunaAndAktivanIsTrue(BrojRacuna).orElse(null);
     }
 
     @Override
     public boolean dodajDevizniRacunKorisniku(DevizniRacun devizniRacun, Korisnik korisnik) {
-        return false;
+        devizniRacun.setVlasnik(korisnik.getId());
+        korisnik.setPovezaniRacuni(korisnik.getPovezaniRacuni().concat("," + devizniRacun.getId()));
+        this.devizniRacunRepository.save(devizniRacun);
+        this.korisnikRepository.save(korisnik);
+        return true;
     }
 
     @Override
-    public boolean dodajPravniRacunKorisniku(PravniRacun pravniRacun, Korisnik korisnik) {
-        return false;
+    public boolean dodajPravniRacunFirmi(PravniRacun pravniRacun, Firma firma) {
+        pravniRacun.setFirma(firma.getId());
+        firma.setPovezaniRacuni(firma.getPovezaniRacuni().concat("," + pravniRacun.getId()));
+        this.pravniRacunRepository.save(pravniRacun);
+        this.firmaRepository.save(firma);
+        return true;
     }
 
     @Override
     public boolean dodajTekuciRacunKorisniku(TekuciRacun tekuciRacun, Korisnik korisnik) {
-        return false;
+        tekuciRacun.setVlasnik(korisnik.getId());
+        korisnik.setPovezaniRacuni(korisnik.getPovezaniRacuni().concat("," + tekuciRacun.getId()));
+        this.tekuciRacunRepository.save(tekuciRacun);
+        this.korisnikRepository.save(korisnik);
+        return true;
     }
 
     @Override
     public Long generisiBrojRacuna(String tipRacuna) {
+        if (tipRacuna.equals("DevizniRacun")) {
+            Long id = devizniRacunRepository.findTop1ByOrderByIdDesc() * 10000000000L;
+            return 444000000000000011L + id; //444 sifra banke 0000 filial
+        } else if (tipRacuna.equals("PravniRacun")) {
+            Long id = pravniRacunRepository.findTop1ByOrderByIdDesc() * 10000000000L;
+            return 444000000000000022L + id; //444 sifra banke 0000 filial
+        } else if (tipRacuna.equals("TekuciRacun")) {
+            Long id = tekuciRacunRepository.findTop1ByOrderByIdDesc() * 10000000000L;
+            return 444000000000000033L + id; //444 sifra banke 0000 filial
+        }
         return null;
     }
 
     @Override
     public String nadjiVrstuRacuna(Long BrojRacuna) {
+        if (BrojRacuna % 100 == 11) {
+            return "DevizniRacun";
+        } else if (BrojRacuna % 100 == 22) {
+            return "PravniRacun";
+        } else if (BrojRacuna % 100 == 33) {
+            return "TekuciRacun";
+        }
         return null;
     }
 
-    private void initialiseVrste() {
-        vrsteRacuna = new HashMap<>();
-        vrsteRacuna.put("Poslovni", 5);
-        vrsteRacuna.put("Lični", 3);
-        vrsteRacuna.put("Štedni", 2);
-        vrsteRacuna.put("Penzionerski", 2);
-        vrsteRacuna.put("Devizni", 5);
-        vrsteRacuna.put("Studentski", 0);
+    @Override
+    public List<FirmaDTO> izlistajSveFirme() {
+        List<FirmaDTO> dtos = new ArrayList<>();
+        List<Firma> firme = firmaRepository.findAll();
+        for (Firma f : firme) {
+            FirmaDTO dto = firmaMapper.firmaToFirmaDTO(f);
+            dtos.add(dto);
+        }
+        return dtos;
     }
+
+    @Override
+    public Firma kreirajFirmu(NovaFirmaDTO firmaDTO) {
+        Firma f = firmaMapper.novaFirmaDTOToFirma(firmaDTO);
+        return this.firmaRepository.save(f);
+    }
+
 }
