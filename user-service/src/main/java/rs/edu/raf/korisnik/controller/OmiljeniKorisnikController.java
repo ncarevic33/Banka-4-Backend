@@ -24,12 +24,17 @@ public class OmiljeniKorisnikController {
         return new ResponseEntity<>(omiljeniKorisnikServis.add(omiljeniKorisnikDTO), HttpStatus.OK);
     }
 
-//    @ApiOperation(value = "Izlistaj racune korisnika")
-//    @GetMapping("/{idKorisnik}")
-//    public ResponseEntity<List<RacunDTO>> izlistajRacuneKorisnika(@RequestHeader("Authorization") String authorization,@PathVariable("idKorisnik") Long idKorisnik){
-//        return new ResponseEntity<>(racunServis.izlistavanjeRacunaJednogKorisnika(idKorisnik), HttpStatus.OK);
-//    }
+    @ApiOperation(value = "Dohvati Omiljenog Korisnika po id")
+    @GetMapping("/{id}")
+    public ResponseEntity<OmiljeniKorisnikDTO> dohvatiOmiljenogKorisnika(@RequestHeader("Authorization") String authorization, @PathVariable("id") Long id){
+        return new ResponseEntity<>(omiljeniKorisnikServis.findById(id), HttpStatus.OK);
+    }
 
-
+    @ApiOperation(value = "Obrisi Omiljenog Korisnika po id")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> obrisiOmiljenogKorisnika(@RequestHeader("Authorization") String authorization, @PathVariable("id") Long id){
+        omiljeniKorisnikServis.delete(id);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 
 }
