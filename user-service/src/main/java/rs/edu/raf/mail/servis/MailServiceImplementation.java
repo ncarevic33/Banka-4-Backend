@@ -5,8 +5,8 @@ import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
-import rs.edu.raf.korisnik.dto.IzmenaKorisnikaDTO;
-import rs.edu.raf.korisnik.dto.NoviKorisnikDTO;
+import rs.edu.raf.korisnik.dto.KorisnikDTO;
+import rs.edu.raf.korisnik.dto.KorisnikDTO;
 
 @Service("MailServiceImplementation")
 public class MailServiceImplementation implements MailServis{
