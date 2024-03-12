@@ -25,9 +25,24 @@ public class TekuciRacun {
     @NotNull
     private Long id;
 
+    public TekuciRacun(Long brojRacuna, Long vlasnik, BigDecimal stanje, BigDecimal raspolozivoStanje, Long zaposleni, Long datumKreiranja, Long datumIsteka, String currency, Boolean aktivan, String vrstaRacuna, BigDecimal kamatnaStopa, BigDecimal odrzavanjeRacuna) {
+        this.brojRacuna = brojRacuna;
+        this.vlasnik = vlasnik;
+        this.stanje = stanje;
+        this.raspolozivoStanje = raspolozivoStanje;
+        this.zaposleni = zaposleni;
+        this.datumKreiranja = datumKreiranja;
+        this.datumIsteka = datumIsteka;
+        this.currency = currency;
+        this.aktivan = aktivan;
+        this.vrstaRacuna = vrstaRacuna;
+        this.kamatnaStopa = kamatnaStopa;
+        this.odrzavanjeRacuna = odrzavanjeRacuna;
+    }
+
     @Column(unique = true)
-    @NotBlank
-    private String brojRacuna;
+    @NotNull
+    private Long brojRacuna;
 
     @NotNull
     private Long vlasnik; //Korisnik id
@@ -54,7 +69,7 @@ public class TekuciRacun {
     private Boolean aktivan;
 
     @NotBlank
-    private String vrstaRacuna; //Poslovni, Lični, Štedni, Penzionerski, Devizni
+    private String vrstaRacuna; //Poslovni, Lični, Štedni, Penzionerski, Devizni, Studentski
 
     @NotNull
     private BigDecimal kamatnaStopa; //procenat
