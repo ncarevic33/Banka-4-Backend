@@ -21,6 +21,8 @@ public class Firma {
     @NotNull
     private Long id;
 
+    private String povezaniRacuni; //BrojRacuna
+
     @NotBlank
     private String nazivPreduzeca;
 
