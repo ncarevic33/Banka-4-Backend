@@ -3,11 +3,9 @@ package rs.edu.raf.racun.dto;
 import lombok.Data;
 
 @Data
-public class FirmaDTO {
+public class NovaFirmaDTO {
 
     private String nazivPreduzeca;
-
-    private String povezaniRacuni; //BrojRacuna
 
     private String brojTelefona;
 
