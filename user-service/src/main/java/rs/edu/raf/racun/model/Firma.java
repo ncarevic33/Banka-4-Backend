@@ -21,10 +21,21 @@ public class Firma {
     @NotNull
     private Long id;
 
-    private String povezaniRacuni; //BrojRacuna
+    public Firma(String nazivPreduzeca, String povezaniRacuni, String brojTelefona, String brojFaksa, Integer PIB, Integer maticniBroj, Integer sifraDelatnosti, Integer registarskiBroj) {
+        this.nazivPreduzeca = nazivPreduzeca;
+        this.povezaniRacuni = povezaniRacuni;
+        this.brojTelefona = brojTelefona;
+        this.brojFaksa = brojFaksa;
+        this.PIB = PIB;
+        this.maticniBroj = maticniBroj;
+        this.sifraDelatnosti = sifraDelatnosti;
+        this.registarskiBroj = registarskiBroj;
+    }
 
     @NotBlank
     private String nazivPreduzeca;
+
+    private String povezaniRacuni; //BrojRacuna
 
     @NotBlank
     private String brojTelefona;
