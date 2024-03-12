@@ -15,9 +15,9 @@ public class UplataDTO {
 
     private BigDecimal iznos;
 
-    private int pozivNaBroj;
+    private Integer pozivNaBroj;
 
-    private int sifraPlacanja;
+    private Integer sifraPlacanja;
 
     private String svrhaPlacanja;
 
