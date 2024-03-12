@@ -6,6 +6,9 @@ import java.math.BigDecimal;
 
 @Data
 public class RacunDTO {
+
+    private Long id;
+    
     private Long brojRacuna;
 
     private Long vlasnik; //Korisnik ili Firma id

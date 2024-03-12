@@ -113,6 +113,7 @@ public class RacunMapper {
 
     public RacunDTO devizniRacunToRacunDTO(DevizniRacun dr) {
         RacunDTO dto = new RacunDTO();
+        dto.setId(dr.getId());
         dto.setBrojRacuna(dr.getBrojRacuna());
         dto.setVlasnik(dr.getVlasnik());
         dto.setStanje(dr.getStanje());
@@ -127,6 +128,7 @@ public class RacunMapper {
 
     public RacunDTO pravniRacunToRacunDTO(PravniRacun pr) {
         RacunDTO dto = new RacunDTO();
+        dto.setId(pr.getId());
         dto.setBrojRacuna(pr.getBrojRacuna());
         dto.setVlasnik(pr.getFirma());
         dto.setStanje(pr.getStanje());
@@ -141,6 +143,7 @@ public class RacunMapper {
 
     public RacunDTO tekuciRacunToRacunDTO(TekuciRacun tr) {
         RacunDTO dto = new RacunDTO();
+        dto.setId(tr.getId());
         dto.setBrojRacuna(tr.getBrojRacuna());
         dto.setVlasnik(tr.getVlasnik());
         dto.setStanje(tr.getStanje());
@@ -156,8 +159,8 @@ public class RacunMapper {
     private void initialiseVrste() {
         vrsteRacuna = new HashMap<>();
         vrsteRacuna.put("Poslovni", 5);
-        vrsteRacuna.put("Lični", 3);
-        vrsteRacuna.put("Štedni", 2);
+        vrsteRacuna.put("Licni", 3);
+        vrsteRacuna.put("Stedni", 2);
         vrsteRacuna.put("Penzionerski", 2);
         vrsteRacuna.put("Devizni", 5);
         vrsteRacuna.put("Studentski", 0);
