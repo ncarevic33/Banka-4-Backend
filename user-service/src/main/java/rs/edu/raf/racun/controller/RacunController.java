@@ -6,11 +6,9 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import rs.edu.raf.racun.dto.NoviDevizniRacunDTO;
-import rs.edu.raf.racun.dto.NoviPravniRacunDTO;
-import rs.edu.raf.racun.dto.NoviTekuciRacunDTO;
-import rs.edu.raf.racun.dto.RacunDTO;
+import rs.edu.raf.racun.dto.*;
 import rs.edu.raf.racun.model.DevizniRacun;
+import rs.edu.raf.racun.model.Firma;
 import rs.edu.raf.racun.model.PravniRacun;
 import rs.edu.raf.racun.model.TekuciRacun;
 import rs.edu.raf.racun.servis.RacunServis;
@@ -86,6 +84,19 @@ public class RacunController {
     public ResponseEntity<TekuciRacun> nadjiTekuciRacunPoBroju(@RequestHeader("Authorization") String authorization,@PathVariable("brojRacuna") Long brojRacuna){
         return new ResponseEntity<>(racunServis.nadjiAktivanTekuciRacunPoBrojuRacuna(brojRacuna), HttpStatus.OK);
     }
+    @ApiOperation(value = "Izlistaj sve firme")
+    @GetMapping("/izlistajSveFirme")
+    public ResponseEntity<List<FirmaDTO>> izlistajSveFirme(@RequestHeader("Authorization") String authorization){
+        return new ResponseEntity<>(racunServis.izlistajSveFirme(), HttpStatus.OK);
+    }
+    @ApiOperation(value = "Kreiraj novu firmu")
+    @PostMapping("/kreirajFirmu")
+    public ResponseEntity<Firma> dodajDevizniRacun(@RequestHeader("Authorization") String authorization, @RequestBody NovaFirmaDTO novaFirmaDTO){
+        return new ResponseEntity<>(racunServis.kreirajFirmu(novaFirmaDTO), HttpStatus.OK);
+    }
+
+
+
 
 
 }
