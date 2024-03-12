@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import rs.edu.raf.racun.model.DevizniRacun;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface DevizniRacunRepository extends JpaRepository<DevizniRacun,Long> {
@@ -17,4 +18,8 @@ public interface DevizniRacunRepository extends JpaRepository<DevizniRacun,Long>
 
     @Query("SELECT dr.id FROM DevizniRacun dr ORDER BY dr.id DESC LIMIT 1")
     Long findTop1ByOrderByIdDesc(); //vraca najveci id
+
+    Optional<DevizniRacun> findByIdAndAktivanIsTrue(Long id);
+
+    Optional<DevizniRacun> findByBrojRacunaAndAktivanIsTrue(Long BrojRacuna);
 }
