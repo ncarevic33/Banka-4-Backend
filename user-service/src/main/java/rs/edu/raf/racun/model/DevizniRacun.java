@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
@@ -26,9 +27,25 @@ public class DevizniRacun {
     @NotNull
     private Long id;
 
+    public DevizniRacun(Long brojRacuna, Long vlasnik, BigDecimal stanje, BigDecimal raspolozivoStanje, Long zaposleni, Long datumKreiranja, Long datumIsteka, String currency, String defaultCurrency, Boolean aktivan, BigDecimal kamatnaStopa, BigDecimal odrzavanjeRacuna, Integer brojDozvoljenihValuta) {
+        this.brojRacuna = brojRacuna;
+        this.vlasnik = vlasnik;
+        this.stanje = stanje;
+        this.raspolozivoStanje = raspolozivoStanje;
+        this.zaposleni = zaposleni;
+        this.datumKreiranja = datumKreiranja;
+        this.datumIsteka = datumIsteka;
+        this.currency = currency;
+        this.defaultCurrency = defaultCurrency;
+        this.aktivan = aktivan;
+        this.kamatnaStopa = kamatnaStopa;
+        this.odrzavanjeRacuna = odrzavanjeRacuna;
+        this.brojDozvoljenihValuta = brojDozvoljenihValuta;
+    }
+
     @Column(unique = true)
-    @NotBlank
-    private String brojRacuna;
+    @NotNull
+    private Long brojRacuna;
 
     @NotNull
     private Long vlasnik; //Korisnik id

@@ -25,9 +25,21 @@ public class PravniRacun {
     @NotNull
     private Long id;
 
+    public PravniRacun(Long brojRacuna, Long firma, BigDecimal stanje, BigDecimal raspolozivoStanje, Long zaposleni, Long datumKreiranja, Long datumIsteka, String currency, Boolean aktivan) {
+        this.brojRacuna = brojRacuna;
+        this.firma = firma;
+        this.stanje = stanje;
+        this.raspolozivoStanje = raspolozivoStanje;
+        this.zaposleni = zaposleni;
+        this.datumKreiranja = datumKreiranja;
+        this.datumIsteka = datumIsteka;
+        this.currency = currency;
+        this.aktivan = aktivan;
+    }
+
     @Column(unique = true)
-    @NotBlank
-    private String brojRacuna;
+    @NotNull
+    private Long brojRacuna;
 
     @NotNull
     private Long firma; // Firma id
