@@ -48,38 +48,33 @@ public class TransakcijaServisImpl implements TransakcijaServis {
 
     @Override
     public PrenosSredstavaDTO dobaviPrenosSretstavaDTOPoID(Long id) {
-
-        if(id != null)
-            return (PrenosSredstavaDTO) dtoOriginalMapper.originalToDtoWithId(prenosSredstavaRepository.findById(id).get());
-        return null;
-    } // TODO zameniti sa vratiPrenosSredstavaDtoPoId
+        return vratiPrenosSredstavaDtoPoId(id);
+    }
 
     @Override
     public UplataDTO dobaciUplatuSretstavaDTOPoID(Long id) {
-        if(id != null)
-            return (UplataDTO) dtoOriginalMapper.originalToDtoWithId(uplataRepository.findById(id).get());
-        return null;
-    } // TODO zameniti sa vratiUplatuPoId
+        return vratiUplatuDtoPoId(id);
+    }
 
     @Override
-    public PrenosSredstavaDTO dobaviPrenosSretstavaDTOPoBrojuPrimaoca(Long brojPrimaoca) {
-        return null;
-    } // TODO zameniti sa vratiPrenosSredstavaDtoPoRacunuPrimaoca koji vraca listu
+    public List<PrenosSredstavaDTO> dobaviPrenosSretstavaDTOPoBrojuPrimaoca(Long brojPrimaoca) {
+        return vratiPrenosSredstavaDtoPoRacunuPrimaoca(brojPrimaoca);
+    }
 
     @Override
-    public UplataDTO dobaciUplatuSretstavaDTOPoBrojuPrimaoca(Long brojPrimaoca) {
-        return null;
-    } // TODO zameniti sa vratiUplataDtoPoRacunuPrimaoca koji vraca listu
+    public List<UplataDTO> dobaciUplatuSretstavaDTOPoBrojuPrimaoca(Long brojPrimaoca) {
+        return vratiUplataDtoPoRacunuPrimaoca(brojPrimaoca);
+    }
 
     @Override
-    public PrenosSredstavaDTO dobaviPrenosSretstavaDTOPoBrojuPosiljaoca(Long brojPosiljaoca) {
-        return null;
-    } // TODO zameniti sa vratiPrenosSredstavaDtoPoRacunuPosiljaoca koji vraca listu
+    public List<PrenosSredstavaDTO> dobaviPrenosSretstavaDTOPoBrojuPosiljaoca(Long brojPosiljaoca) {
+        return vratiPrenosSredstavaDtoPoRacunuPosiljaoca(brojPosiljaoca);
+    }
 
     @Override
-    public UplataDTO dobaciUplatuSretstavaDTOPoBrojuPosiljaoca(Long brojPosiljaoca) {
-        return null;
-    } // TODO zameniti sa vratiUplataDtoPoRacunuPosiljaoca koji vraca listu
+    public List<UplataDTO> dobaciUplatuSretstavaDTOPoBrojuPosiljaoca(Long brojPosiljaoca) {
+        return vratiUplataDtoPoRacunuPosiljaoca(brojPosiljaoca);
+    }
 
     /////////////////////////////////////////////////////////////////////////
 
