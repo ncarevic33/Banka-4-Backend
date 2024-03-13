@@ -24,7 +24,7 @@ public class MailTest {
         KorisnikDTO kor = new KorisnikDTO();
         kor.setPol("Z");
         kor.setPrezime("Rakic");
-        kor.setEmail("mrakic8121rn@raf.rs");
+        kor.setEmail("abuncic720rn@raf.rs");
         assertTrue(mailServiceImplementation.posaljiMailZaRegistraciju(kor, "123456"));
     }
 
@@ -33,7 +33,7 @@ public class MailTest {
         KorisnikDTO kor = new KorisnikDTO();
         kor.setPol("Z");
         kor.setPrezime("Rakic");
-        kor.setEmail("mrakic8121rn@raf.rs");
+        kor.setEmail("abuncic720rn@raf.rs");
 
         assertTrue(mailServiceImplementation.posaljiMailZaPromenuLozinke(kor, "123456"));
     }
