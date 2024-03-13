@@ -382,6 +382,8 @@ public class KorisnikServisUnitTests {
         noviKorisnikDTO.setDatumRodjenja(708514400000L);
         korisnik.setDatumRodjenja(708514400000L);
 
+        given(korisnikMapper.noviKorisnikDtoToKorisnik(noviKorisnikDTO)).willReturn(korisnik);
+
         assertThrows(Exception.class, () -> {
             korisnikServis.kreirajNovogKorisnika(noviKorisnikDTO);
         });
