@@ -24,6 +24,7 @@ public class FirmaMapper {
     public Firma novaFirmaDTOToFirma(NovaFirmaDTO dto) {
         Firma f = new Firma();
         f.setNazivPreduzeca(dto.getNazivPreduzeca());
+        f.setPovezaniRacuni("");
         f.setBrojTelefona(dto.getBrojTelefona());
         f.setBrojFaksa(dto.getBrojFaksa());
         f.setPIB(dto.getPIB());
