@@ -6,7 +6,6 @@ import rs.edu.raf.transakcija.dto.PrenosSredstavaDTO;
 import rs.edu.raf.transakcija.dto.UplataDTO;
 import rs.edu.raf.transakcija.model.PrenosSredstava;
 import rs.edu.raf.transakcija.model.SablonTransakcije;
-import rs.edu.raf.transakcija.model.Status;
 import rs.edu.raf.transakcija.model.Uplata;
 
 import java.math.BigDecimal;
@@ -30,13 +29,13 @@ public interface TransakcijaServis {
 
     //PrenosSredstavaDTO KOJI JE KORISNIK SLAO ILI KOJI MU JE STIGAO
                                                         //BROJ RACUNA NA KOJI SE SALJE NOVAC ODNOSNO NA KOJI STIZE
-    PrenosSredstavaDTO dobaviPrenosSretstavaDTOPoBrojuPrimaoca(Long brojPrimaoca);
+    List<PrenosSredstavaDTO> dobaviPrenosSretstavaDTOPoBrojuPrimaoca(Long brojPrimaoca);
                                                         //BROJ RACUNA SA KOG STIZE NOVAC ODNOSNO SA KOG SE SALJE
-    PrenosSredstavaDTO dobaviPrenosSretstavaDTOPoBrojuPosiljaoca(Long brojPosiljaoca);
+    List<PrenosSredstavaDTO> dobaviPrenosSretstavaDTOPoBrojuPosiljaoca(Long brojPosiljaoca);
 
     //UplataDTO KOJI JE KORISNIK SLAO ILI KOJI MU JE STIGAO
-    UplataDTO dobaciUplatuSretstavaDTOPoBrojuPrimaoca(Long brojPrimaoca);
-    UplataDTO dobaciUplatuSretstavaDTOPoBrojuPosiljaoca(Long brojPosiljaoca);
+    List<UplataDTO> dobaciUplatuSretstavaDTOPoBrojuPrimaoca(Long brojPrimaoca);
+    List<UplataDTO> dobaciUplatuSretstavaDTOPoBrojuPosiljaoca(Long brojPosiljaoca);
     /////////////////////////////////////////////////////////
 
 

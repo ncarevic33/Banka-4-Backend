@@ -118,18 +118,17 @@ public class TransactionController {
 
         List<UplataDTO> uplateKaILIOdKorisnika = new ArrayList<>();
 
-        UplataDTO uplataDTO1 = transakcijaServis.dobaciUplatuSretstavaDTOPoBrojuPrimaoca(billId);
-        UplataDTO uplataDTO2 = transakcijaServis.dobaciUplatuSretstavaDTOPoBrojuPosiljaoca(billId);
+        List<UplataDTO> uplataDTO1 = transakcijaServis.dobaciUplatuSretstavaDTOPoBrojuPrimaoca(billId);
+        List<UplataDTO> uplataDTO2 = transakcijaServis.dobaciUplatuSretstavaDTOPoBrojuPosiljaoca(billId);
 
         if(uplataDTO1 != null && uplataDTO2 != null) {
           //SAMO 2 UPLATE JER METODE SERVISA NE VRACAJU LISTU
-            uplateKaILIOdKorisnika.add(uplataDTO1);
-            uplateKaILIOdKorisnika.add(uplataDTO2);
+            uplateKaILIOdKorisnika.addAll(uplataDTO1);
+            uplateKaILIOdKorisnika.addAll(uplataDTO2);
 
             return new ResponseEntity<>(uplateKaILIOdKorisnika,HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
-
     }
     @Tag(name = "TRANSAKCIJE", description = "Transakcija API")
     @Operation(summary ="DOHVATANJE SVIH PRENOS SREDSTAVA TRANSAKCIJA PO BROJU RACUNA",description = "prosledjuje se u path param id racuna cije transakcije trebaju da se vrate")
@@ -142,13 +141,13 @@ public class TransactionController {
 
         List<PrenosSredstavaDTO> prenosiSredstavaKaILIOdKorisnika = new ArrayList<>();
 
-        PrenosSredstavaDTO prenosSredstavaDTO1 = transakcijaServis.dobaviPrenosSretstavaDTOPoBrojuPrimaoca(billId);
-        PrenosSredstavaDTO prenosSredstavaDTO2 = transakcijaServis.dobaviPrenosSretstavaDTOPoBrojuPosiljaoca(billId);
+        List<PrenosSredstavaDTO> prenosSredstavaDTO1 = transakcijaServis.dobaviPrenosSretstavaDTOPoBrojuPrimaoca(billId);
+        List<PrenosSredstavaDTO>  prenosSredstavaDTO2 = transakcijaServis.dobaviPrenosSretstavaDTOPoBrojuPosiljaoca(billId);
 
         if(prenosSredstavaDTO1 != null && prenosSredstavaDTO2 != null) {
             //SAMO 2 PRENOSTA SREDSTAVA JER METODE SERVISA NE VRACAJU LISTU
-            prenosiSredstavaKaILIOdKorisnika.add(prenosSredstavaDTO1);
-            prenosiSredstavaKaILIOdKorisnika.add(prenosSredstavaDTO2);
+            prenosiSredstavaKaILIOdKorisnika.addAll(prenosSredstavaDTO1);
+            prenosiSredstavaKaILIOdKorisnika.addAll(prenosSredstavaDTO2);
 
             return new ResponseEntity<>(prenosiSredstavaKaILIOdKorisnika, HttpStatus.OK);
         }
