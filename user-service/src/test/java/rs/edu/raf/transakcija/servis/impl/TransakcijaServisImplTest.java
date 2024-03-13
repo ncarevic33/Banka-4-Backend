@@ -8,7 +8,9 @@ import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import rs.edu.raf.racun.model.DevizniRacun;
 import rs.edu.raf.racun.model.PravniRacun;
+import rs.edu.raf.racun.model.TekuciRacun;
 import rs.edu.raf.racun.servis.RacunServis;
 import rs.edu.raf.transakcija.dto.NovaUplataDTO;
 import rs.edu.raf.transakcija.dto.NoviPrenosSredstavaDTO;
@@ -17,9 +19,7 @@ import rs.edu.raf.transakcija.dto.UplataDTO;
 import rs.edu.raf.transakcija.model.PrenosSredstava;
 import rs.edu.raf.transakcija.model.Status;
 import rs.edu.raf.transakcija.model.Uplata;
-import rs.edu.raf.transakcija.repository.PravniRacunRepository;
-import rs.edu.raf.transakcija.repository.PrenosSredstavaRepository;
-import rs.edu.raf.transakcija.repository.UplataRepository;
+import rs.edu.raf.transakcija.repository.*;
 import rs.edu.raf.transakcija.servis.TransakcijaMapper;
 
 
@@ -45,7 +45,13 @@ public class TransakcijaServisImplTest {
     private RacunServis racunServis;
 
     @Mock
-    PravniRacunRepository pravniRacunRepository;
+    private PravniRacunRepository pravniRacunRepository;
+
+    @Mock
+    private TekuciRacunRepository tekuciRacunRepository;
+
+    @Mock
+    private DevizniRacunRepository devizniRacunRepository;
 
     @InjectMocks
     private TransakcijaServisImpl transakcijaServis;
@@ -77,6 +83,74 @@ public class TransakcijaServisImplTest {
         PravniRacun pravniRacun = new PravniRacun();
         pravniRacun.setRaspolozivoStanje(new BigDecimal("100.00"));
         when(racunServis.nadjiAktivanPravniRacunPoBrojuRacuna(dto.getRacunPosiljaoca())).thenReturn(pravniRacun);
+        Uplata expected = new Uplata();
+        when(uplataRepository.save(any(Uplata.class))).thenReturn(expected);
+
+        Uplata result = transakcijaServis.sacuvajUplatu(dto);
+
+        assertEquals(expected, result);
+    }
+
+    @Test
+    public void givenValidDto_whenSacuvajPrenosSredstava_thenReturnExpectedValue2() {
+        NoviPrenosSredstavaDTO dto = new NoviPrenosSredstavaDTO();
+        dto.setRacunPosiljaoca(1L);
+        dto.setIznos(new BigDecimal("50.00"));
+        when(racunServis.nadjiVrstuRacuna(dto.getRacunPosiljaoca())).thenReturn("TekuciRacun");
+        TekuciRacun tekuciRacun = new TekuciRacun();
+        tekuciRacun.setRaspolozivoStanje(new BigDecimal("100.00"));
+        when(racunServis.nadjiAktivanTekuciRacunPoBrojuRacuna(dto.getRacunPosiljaoca())).thenReturn(tekuciRacun);
+        PrenosSredstava expected = new PrenosSredstava();
+        when(prenosSredstavaRepository.save(any(PrenosSredstava.class))).thenReturn(expected);
+
+        PrenosSredstava result = transakcijaServis.sacuvajPrenosSredstava(dto);
+
+        assertEquals(expected, result);
+    }
+
+    @Test
+    public void givenValidDto_whenSacuvajUplatu_thenReturnExpectedValue2() {
+        NovaUplataDTO dto = new NovaUplataDTO();
+        dto.setRacunPosiljaoca(1L);
+        dto.setIznos(new BigDecimal("50.00"));
+        when(racunServis.nadjiVrstuRacuna(dto.getRacunPosiljaoca())).thenReturn("TekuciRacun");
+        TekuciRacun tekuciRacun = new TekuciRacun();
+        tekuciRacun.setRaspolozivoStanje(new BigDecimal("100.00"));
+        when(racunServis.nadjiAktivanTekuciRacunPoBrojuRacuna(dto.getRacunPosiljaoca())).thenReturn(tekuciRacun);
+        Uplata expected = new Uplata();
+        when(uplataRepository.save(any(Uplata.class))).thenReturn(expected);
+
+        Uplata result = transakcijaServis.sacuvajUplatu(dto);
+
+        assertEquals(expected, result);
+    }
+
+    @Test
+    public void givenValidDto_whenSacuvajPrenosSredstava_thenReturnExpectedValue3() {
+        NoviPrenosSredstavaDTO dto = new NoviPrenosSredstavaDTO();
+        dto.setRacunPosiljaoca(1L);
+        dto.setIznos(new BigDecimal("50.00"));
+        when(racunServis.nadjiVrstuRacuna(dto.getRacunPosiljaoca())).thenReturn("DevizniRacun");
+        DevizniRacun devizniRacun = new DevizniRacun();
+        devizniRacun.setRaspolozivoStanje(new BigDecimal("100.00"));
+        when(racunServis.nadjiAktivanDevizniRacunPoBrojuRacuna(dto.getRacunPosiljaoca())).thenReturn(devizniRacun);
+        PrenosSredstava expected = new PrenosSredstava();
+        when(prenosSredstavaRepository.save(any(PrenosSredstava.class))).thenReturn(expected);
+
+        PrenosSredstava result = transakcijaServis.sacuvajPrenosSredstava(dto);
+
+        assertEquals(expected, result);
+    }
+
+    @Test
+    public void givenValidDto_whenSacuvajUplatu_thenReturnExpectedValue3() {
+        NovaUplataDTO dto = new NovaUplataDTO();
+        dto.setRacunPosiljaoca(1L);
+        dto.setIznos(new BigDecimal("50.00"));
+        when(racunServis.nadjiVrstuRacuna(dto.getRacunPosiljaoca())).thenReturn("DevizniRacun");
+        DevizniRacun devizniRacun = new DevizniRacun();
+        devizniRacun.setRaspolozivoStanje(new BigDecimal("100.00"));
+        when(racunServis.nadjiAktivanDevizniRacunPoBrojuRacuna(dto.getRacunPosiljaoca())).thenReturn(devizniRacun);
         Uplata expected = new Uplata();
         when(uplataRepository.save(any(Uplata.class))).thenReturn(expected);
 
@@ -177,6 +251,87 @@ public class TransakcijaServisImplTest {
         PrenosSredstava result = transakcijaServis.promeniStatusPrenosaSredstava(idPrenosaSredstava, newStatus, System.currentTimeMillis());
 
         assertEquals(expected, result);
+    }
+
+    @Test
+    public void givenValidId_whenIzracunajRezervisanaSredstva_thenReturnExpectedValue() {
+        Long idRacuna = 1L;
+        when(racunServis.nadjiVrstuRacuna(idRacuna)).thenReturn("PravniRacun");
+        PravniRacun pravniRacun = new PravniRacun();
+        pravniRacun.setStanje(new BigDecimal("100.00"));
+        pravniRacun.setRaspolozivoStanje(new BigDecimal("50.00"));
+        when(racunServis.nadjiAktivanPravniRacunPoID(idRacuna)).thenReturn(pravniRacun);
+
+        BigDecimal result = transakcijaServis.izracunajRezervisanaSredstva(idRacuna);
+
+        assertEquals(new BigDecimal("50.00"), result);
+    }
+
+    @Test
+    public void givenValidId_whenVratiSredstva_thenReturnExpectedValue() {
+        Long idRacuna = 1L;
+        when(racunServis.nadjiVrstuRacuna(idRacuna)).thenReturn("PravniRacun");
+        PravniRacun pravniRacun = new PravniRacun();
+        pravniRacun.setStanje(new BigDecimal("100.00"));
+        when(racunServis.nadjiAktivanPravniRacunPoID(idRacuna)).thenReturn(pravniRacun);
+
+        BigDecimal result = transakcijaServis.vratiSredstva(idRacuna);
+
+        assertEquals(new BigDecimal("100.00"), result);
+    }
+
+    @Test
+    public void givenValidId_whenIzracunajRezervisanaSredstvaForTekuciRacun_thenReturnExpectedValue() {
+        Long idRacuna = 1L;
+        when(racunServis.nadjiVrstuRacuna(idRacuna)).thenReturn("TekuciRacun");
+        TekuciRacun tekuciRacun = new TekuciRacun();
+        tekuciRacun.setStanje(new BigDecimal("100.00"));
+        tekuciRacun.setRaspolozivoStanje(new BigDecimal("50.00"));
+        when(racunServis.nadjiAktivanTekuciRacunPoID(idRacuna)).thenReturn(tekuciRacun);
+
+        BigDecimal result = transakcijaServis.izracunajRezervisanaSredstva(idRacuna);
+
+        assertEquals(new BigDecimal("50.00"), result);
+    }
+
+    @Test
+    public void givenValidId_whenVratiSredstvaForTekuciRacun_thenReturnExpectedValue() {
+        Long idRacuna = 1L;
+        when(racunServis.nadjiVrstuRacuna(idRacuna)).thenReturn("TekuciRacun");
+        TekuciRacun tekuciRacun = new TekuciRacun();
+        tekuciRacun.setStanje(new BigDecimal("100.00"));
+        when(racunServis.nadjiAktivanTekuciRacunPoID(idRacuna)).thenReturn(tekuciRacun);
+
+        BigDecimal result = transakcijaServis.vratiSredstva(idRacuna);
+
+        assertEquals(new BigDecimal("100.00"), result);
+    }
+
+    @Test
+    public void givenValidId_whenIzracunajRezervisanaSredstvaForDevizniRacun_thenReturnExpectedValue() {
+        Long idRacuna = 1L;
+        when(racunServis.nadjiVrstuRacuna(idRacuna)).thenReturn("DevizniRacun");
+        DevizniRacun devizniRacun = new DevizniRacun();
+        devizniRacun.setStanje(new BigDecimal("100.00"));
+        devizniRacun.setRaspolozivoStanje(new BigDecimal("50.00"));
+        when(racunServis.nadjiAktivanDevizniRacunPoID(idRacuna)).thenReturn(devizniRacun);
+
+        BigDecimal result = transakcijaServis.izracunajRezervisanaSredstva(idRacuna);
+
+        assertEquals(new BigDecimal("50.00"), result);
+    }
+
+    @Test
+    public void givenValidId_whenVratiSredstvaForDevizniRacun_thenReturnExpectedValue() {
+        Long idRacuna = 1L;
+        when(racunServis.nadjiVrstuRacuna(idRacuna)).thenReturn("DevizniRacun");
+        DevizniRacun devizniRacun = new DevizniRacun();
+        devizniRacun.setStanje(new BigDecimal("100.00"));
+        when(racunServis.nadjiAktivanDevizniRacunPoID(idRacuna)).thenReturn(devizniRacun);
+
+        BigDecimal result = transakcijaServis.vratiSredstva(idRacuna);
+
+        assertEquals(new BigDecimal("100.00"), result);
     }
 
     @Test
