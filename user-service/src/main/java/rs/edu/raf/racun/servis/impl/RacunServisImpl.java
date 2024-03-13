@@ -66,8 +66,8 @@ public class RacunServisImpl implements RacunServis {
     @Override //drugi metod za firmu?
     public List<RacunDTO> izlistavanjeRacunaJednogKorisnika(Long idKorisnika) {
         Korisnik k = korisnikRepository.findById(idKorisnika).orElse(null);
+        List<RacunDTO> racunDTOs = new ArrayList<>();
         if (k != null) {
-            List<RacunDTO> racunDTOs = new ArrayList<>();
             RacunDTO dto;
             List<String> racuni = List.of(k.getPovezaniRacuni().split(","));
             for (String r : racuni) {
@@ -87,7 +87,7 @@ public class RacunServisImpl implements RacunServis {
                 }
             }
         }
-        return null;
+        return racunDTOs;
     }
 
     @Override

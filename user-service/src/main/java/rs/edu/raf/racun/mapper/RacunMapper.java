@@ -39,15 +39,15 @@ public class RacunMapper {
     public DevizniRacun noviDevizniRacunDTOToDevizniRacun(NoviDevizniRacunDTO noviDevizniRacunDTO) {
         DevizniRacun dr = new DevizniRacun();
 
-        Long id = devizniRacunRepository.findTop1ByOrderByIdDesc() * 10000000000L;
+        Long id = devizniRacunRepository.findTop1ByOrderByIdDesc() * 100L;
         dr.setBrojRacuna(444000000000000011L + id); //444 sifra banke 0000 filial
 
         dr.setVlasnik(noviDevizniRacunDTO.getVlasnik());
         dr.setStanje(new BigDecimal("0"));
         dr.setRaspolozivoStanje(new BigDecimal("0"));
         dr.setZaposleni(noviDevizniRacunDTO.getZaposleni());
-        dr.setDatumKreiranja(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()));
-        dr.setDatumIsteka(dr.getDatumKreiranja() + 5*31536000L);
+        dr.setDatumKreiranja(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()) * 1000L);
+        dr.setDatumIsteka(dr.getDatumKreiranja() + 5*1000L*31536000L);
 
         List<String> nazivi = noviDevizniRacunDTO.getCurrency();
         String valute = "";
@@ -69,15 +69,15 @@ public class RacunMapper {
     public PravniRacun noviPravniRacunDTOToPravniRacun(NoviPravniRacunDTO noviPravniRacunDTO) {
         PravniRacun pr = new PravniRacun();
 
-        Long id = pravniRacunRepository.findTop1ByOrderByIdDesc() * 10000000000L;
+        Long id = pravniRacunRepository.findTop1ByOrderByIdDesc() * 100L;
         pr.setBrojRacuna(444000000000000022L + id); //444 sifra banke 0000 filial
 
         pr.setFirma(noviPravniRacunDTO.getFirma());
         pr.setStanje(new BigDecimal("0"));
         pr.setRaspolozivoStanje(new BigDecimal("0"));
         pr.setZaposleni(noviPravniRacunDTO.getZaposleni());
-        pr.setDatumKreiranja(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()));
-        pr.setDatumIsteka(pr.getDatumKreiranja() + 5*31536000L);
+        pr.setDatumKreiranja(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()) * 1000L);
+        pr.setDatumIsteka(pr.getDatumKreiranja() + 5*1000L*31536000L);
         pr.setCurrency("Srpski dinar");
         pr.setAktivan(true);
 
@@ -87,15 +87,15 @@ public class RacunMapper {
     public TekuciRacun noviTekuciRacunDTOToTekuciRacun(NoviTekuciRacunDTO noviTekuciRacunDTO) {
         TekuciRacun tr = new TekuciRacun();
 
-        Long id = tekuciRacunRepository.findTop1ByOrderByIdDesc() * 10000000000L;
+        Long id = tekuciRacunRepository.findTop1ByOrderByIdDesc() * 100L;
         tr.setBrojRacuna(444000000000000033L + id); //444 sifra banke 0000 filial
 
         tr.setVlasnik(noviTekuciRacunDTO.getVlasnik());
         tr.setStanje(new BigDecimal("0"));
         tr.setRaspolozivoStanje(new BigDecimal("0"));
         tr.setZaposleni(noviTekuciRacunDTO.getZaposleni());
-        tr.setDatumKreiranja(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()));
-        tr.setDatumIsteka(tr.getDatumKreiranja() + 5*31536000L);
+        tr.setDatumKreiranja(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()) * 1000L);
+        tr.setDatumIsteka(tr.getDatumKreiranja() + 5*1000L*31536000L);
         tr.setCurrency("Srpski dinar");
         tr.setAktivan(true);
         tr.setVrstaRacuna(noviTekuciRacunDTO.getVrstaRacuna());

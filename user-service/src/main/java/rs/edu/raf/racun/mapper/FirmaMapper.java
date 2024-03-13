@@ -10,6 +10,7 @@ public class FirmaMapper {
 
     public FirmaDTO firmaToFirmaDTO(Firma f) {
         FirmaDTO dto = new FirmaDTO();
+        dto.setId(f.getId());
         dto.setNazivPreduzeca(f.getNazivPreduzeca());
         dto.setPovezaniRacuni(f.getPovezaniRacuni());
         dto.setBrojTelefona(f.getBrojTelefona());
@@ -24,6 +25,7 @@ public class FirmaMapper {
     public Firma novaFirmaDTOToFirma(NovaFirmaDTO dto) {
         Firma f = new Firma();
         f.setNazivPreduzeca(dto.getNazivPreduzeca());
+        f.setPovezaniRacuni("");
         f.setBrojTelefona(dto.getBrojTelefona());
         f.setBrojFaksa(dto.getBrojFaksa());
         f.setPIB(dto.getPIB());

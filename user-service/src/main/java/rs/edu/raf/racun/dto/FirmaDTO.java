@@ -5,6 +5,8 @@ import lombok.Data;
 @Data
 public class FirmaDTO {
 
+    private Long id;
+
     private String nazivPreduzeca;
 
     private String povezaniRacuni; //BrojRacuna
