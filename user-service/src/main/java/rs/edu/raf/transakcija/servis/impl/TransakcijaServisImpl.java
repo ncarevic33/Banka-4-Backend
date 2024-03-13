@@ -1,6 +1,7 @@
 package rs.edu.raf.transakcija.servis.impl;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import rs.edu.raf.transakcija.dto.RealizacijaTransakcije;
@@ -614,7 +615,7 @@ public class TransakcijaServisImpl implements TransakcijaServis {
         }
     }
 
-    private void neuspelaUplata(String tip, Uplata uplata){
+    public void neuspelaUplata(String tip, Uplata uplata){
         switch (tip){
             case "PravniRacun" -> {
                 PravniRacun pravniRacun = racunServis.nadjiAktivanPravniRacunPoBrojuRacuna(uplata.getRacunPosiljaoca());
@@ -634,7 +635,7 @@ public class TransakcijaServisImpl implements TransakcijaServis {
         }
     }
 
-    private void neuspeoPrenos(String tip, PrenosSredstava prenosSredstava){
+    public void neuspeoPrenos(String tip, PrenosSredstava prenosSredstava){
         switch (tip){
             case "PravniRacun" -> {
                 PravniRacun pravniRacun = racunServis.nadjiAktivanPravniRacunPoBrojuRacuna(prenosSredstava.getRacunPosiljaoca());
@@ -654,7 +655,7 @@ public class TransakcijaServisImpl implements TransakcijaServis {
         }
     }
 
-    private boolean proveriZajednickiElement(String[] niz1, String[] niz2) {
+    public boolean proveriZajednickiElement(String[] niz1, String[] niz2) {
         for (int i = 0; i < niz1.length; i++) {
             for (int j = 0; j < niz2.length; j++) {
                 if (niz1[i].equals(niz2[j])) {
