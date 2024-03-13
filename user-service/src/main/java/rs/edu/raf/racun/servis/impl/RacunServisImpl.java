@@ -48,22 +48,31 @@ public class RacunServisImpl implements RacunServis {
     @Override
     public DevizniRacun kreirajDevizniRacun(NoviDevizniRacunDTO noviDevizniRacunDTO) {
         DevizniRacun dr = racunMapper.noviDevizniRacunDTOToDevizniRacun(noviDevizniRacunDTO);
-        return this.devizniRacunRepository.save(dr);
+        DevizniRacun drRepo = this.devizniRacunRepository.save(dr);
+        Optional<Korisnik> korisnik = korisnikRepository.findById(drRepo.getVlasnik());
+        korisnik.ifPresent(k -> dodajDevizniRacunKorisniku(drRepo, k));
+        return drRepo;
     }
 
     @Override
     public PravniRacun kreirajPravniRacun(NoviPravniRacunDTO noviPravniRacunDTO) {
         PravniRacun pr = racunMapper.noviPravniRacunDTOToPravniRacun(noviPravniRacunDTO);
-        return this.pravniRacunRepository.save(pr);
+        PravniRacun prRepo = this.pravniRacunRepository.save(pr);
+        Optional<Firma> firma = firmaRepository.findById(prRepo.getFirma());
+        firma.ifPresent(f -> dodajPravniRacunFirmi(prRepo, f));
+        return prRepo;
     }
 
     @Override
     public TekuciRacun kreirajTekuciRacun(NoviTekuciRacunDTO noviTekuciRacunDTO) {
         TekuciRacun tr = racunMapper.noviTekuciRacunDTOToTekuciRacun(noviTekuciRacunDTO);
-        return this.tekuciRacunRepository.save(tr);
+        TekuciRacun trRepo = this.tekuciRacunRepository.save(tr);
+        Optional<Korisnik> korisnik = korisnikRepository.findById(trRepo.getVlasnik());
+        korisnik.ifPresent(k -> dodajTekuciRacunKorisniku(trRepo, k));
+        return trRepo;
     }
 
-    @Override //drugi metod za firmu?
+    @Override
     public List<RacunDTO> izlistavanjeRacunaJednogKorisnika(Long idKorisnika) {
         Korisnik k = korisnikRepository.findById(idKorisnika).orElse(null);
         List<RacunDTO> racunDTOs = new ArrayList<>();
@@ -82,6 +91,19 @@ public class RacunServisImpl implements RacunServis {
                     TekuciRacun tr = this.tekuciRacunRepository.findByBrojRacunaAndAktivanIsTrue(Long.parseLong(r)).orElse(null);
                     if (tr != null) {
                         dto = racunMapper.tekuciRacunToRacunDTO(tr);
+                        racunDTOs.add(dto);
+                    }
+                }
+            }
+        } else {
+            Firma f = firmaRepository.findById(idKorisnika).orElse(null);
+            if (f != null) {
+                RacunDTO dto;
+                List<String> racuni = List.of(f.getPovezaniRacuni().split(","));
+                for (String r : racuni) {
+                    PravniRacun pr = this.pravniRacunRepository.findByBrojRacunaAndAktivanIsTrue(Long.parseLong(r)).orElse(null);
+                    if (pr != null) {
+                        dto = racunMapper.pravniRacunToRacunDTO(pr);
                         racunDTOs.add(dto);
                     }
                 }
@@ -167,7 +189,17 @@ public class RacunServisImpl implements RacunServis {
     @Override
     public boolean dodajDevizniRacunKorisniku(DevizniRacun devizniRacun, Korisnik korisnik) {
         devizniRacun.setVlasnik(korisnik.getId());
-        korisnik.setPovezaniRacuni(korisnik.getPovezaniRacuni().concat("," + devizniRacun.getId()));
+        if (korisnik.getPovezaniRacuni() == null) {
+            korisnik.setPovezaniRacuni(devizniRacun.getBrojRacuna().toString());
+        } else {
+            List<String> racuni = List.of(korisnik.getPovezaniRacuni().split(","));
+            for (String r : racuni) {
+                if (r.equals(devizniRacun.getBrojRacuna().toString())) {
+                    return false;
+                }
+            }
+        }
+        korisnik.setPovezaniRacuni(korisnik.getPovezaniRacuni().concat("," + devizniRacun.getBrojRacuna()));
         this.devizniRacunRepository.save(devizniRacun);
         this.korisnikRepository.save(korisnik);
         return true;
@@ -176,7 +208,17 @@ public class RacunServisImpl implements RacunServis {
     @Override
     public boolean dodajPravniRacunFirmi(PravniRacun pravniRacun, Firma firma) {
         pravniRacun.setFirma(firma.getId());
-        firma.setPovezaniRacuni(firma.getPovezaniRacuni().concat("," + pravniRacun.getId()));
+        if (firma.getPovezaniRacuni() == null) {
+            firma.setPovezaniRacuni(pravniRacun.getBrojRacuna().toString());
+        } else {
+            List<String> racuni = List.of(firma.getPovezaniRacuni().split(","));
+            for (String r : racuni) {
+                if (r.equals(pravniRacun.getBrojRacuna().toString())) {
+                    return false;
+                }
+            }
+            firma.setPovezaniRacuni(firma.getPovezaniRacuni().concat("," + pravniRacun.getBrojRacuna()));
+        }
         this.pravniRacunRepository.save(pravniRacun);
         this.firmaRepository.save(firma);
         return true;
@@ -185,7 +227,17 @@ public class RacunServisImpl implements RacunServis {
     @Override
     public boolean dodajTekuciRacunKorisniku(TekuciRacun tekuciRacun, Korisnik korisnik) {
         tekuciRacun.setVlasnik(korisnik.getId());
-        korisnik.setPovezaniRacuni(korisnik.getPovezaniRacuni().concat("," + tekuciRacun.getId()));
+        if (korisnik.getPovezaniRacuni() == null) {
+            korisnik.setPovezaniRacuni(tekuciRacun.getBrojRacuna().toString());
+        } else {
+            List<String> racuni = List.of(korisnik.getPovezaniRacuni().split(","));
+            for (String r : racuni) {
+                if (r.equals(tekuciRacun.getBrojRacuna().toString())) {
+                    return false;
+                }
+            }
+            korisnik.setPovezaniRacuni(korisnik.getPovezaniRacuni().concat("," + tekuciRacun.getBrojRacuna()));
+        }
         this.tekuciRacunRepository.save(tekuciRacun);
         this.korisnikRepository.save(korisnik);
         return true;
@@ -194,13 +246,13 @@ public class RacunServisImpl implements RacunServis {
     @Override
     public Long generisiBrojRacuna(String tipRacuna) {
         if (tipRacuna.equals("DevizniRacun")) {
-            Long id = devizniRacunRepository.findTop1ByOrderByIdDesc() * 10000000000L;
+            Long id = devizniRacunRepository.findTop1ByOrderByIdDesc() * 100L;
             return 444000000000000011L + id; //444 sifra banke 0000 filial
         } else if (tipRacuna.equals("PravniRacun")) {
-            Long id = pravniRacunRepository.findTop1ByOrderByIdDesc() * 10000000000L;
+            Long id = pravniRacunRepository.findTop1ByOrderByIdDesc() * 100L;
             return 444000000000000022L + id; //444 sifra banke 0000 filial
         } else if (tipRacuna.equals("TekuciRacun")) {
-            Long id = tekuciRacunRepository.findTop1ByOrderByIdDesc() * 10000000000L;
+            Long id = tekuciRacunRepository.findTop1ByOrderByIdDesc() * 100L;
             return 444000000000000033L + id; //444 sifra banke 0000 filial
         }
         return null;
