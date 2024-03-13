@@ -18,6 +18,7 @@ public class FirmaMapperTests {
 
         FirmaDTO dto = fm.firmaToFirmaDTO(f);
 
+        assertEquals(dto.getId(), f.getId());
         assertEquals(dto.getNazivPreduzeca(), f.getNazivPreduzeca());
         assertEquals(dto.getPovezaniRacuni(), f.getPovezaniRacuni());
         assertEquals(dto.getBrojTelefona(), f.getBrojTelefona());
