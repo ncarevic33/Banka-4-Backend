@@ -60,14 +60,24 @@ public class KorisnikServisImpl implements KorisnikServis {
     }
 
     @Override
-    public KorisnikDTO registrujNovogKorisnika(RegistrujKorisnikDTO registrujKorisnikDTO) {
+    public boolean registrujNovogKorisnika(RegistrujKorisnikDTO registrujKorisnikDTO) {
 
         if(kodServis.dobarKod(registrujKorisnikDTO.getEmail(),registrujKorisnikDTO.getCode(),false)) {
             Korisnik korisnik = korisnikMapper.registrujKorisnikDtoToKorisnik(registrujKorisnikDTO);
-            return korisnikMapper.korisnikToKorisnikDto(korisnikRepository.save(korisnik));
-        }
+            if(korisnik == null){
+                Radnik radnik = korisnikMapper.registrujRadnikDtoToRadnik(registrujKorisnikDTO);
+                if(radnik == null)
+                    return false;
+                radnikRepository.save(radnik);
+                return true;
 
-        return null;
+            }
+            if(korisnik.getPovezaniRacuni().contains(registrujKorisnikDTO.getBrojRacuna())) {
+                korisnikRepository.save(korisnik);
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
@@ -137,14 +147,22 @@ public class KorisnikServisImpl implements KorisnikServis {
                 }
             }
 
-            korisnik.get().setPrezime(izmenaKorisnikaDTO.getPrezime());
-            korisnik.get().setPol(izmenaKorisnikaDTO.getPol());
-            korisnik.get().setEmail(izmenaKorisnikaDTO.getEmail());
-            korisnik.get().setBrojTelefona(izmenaKorisnikaDTO.getBrojTelefona());
-            korisnik.get().setAdresa(izmenaKorisnikaDTO.getAdresa());
-            korisnik.get().setPassword(bCryptPasswordEncoder.encode(izmenaKorisnikaDTO.getPassword()));
-            korisnik.get().setPovezaniRacuni(izmenaKorisnikaDTO.getPovezaniRacuni());
-            korisnik.get().setAktivan(izmenaKorisnikaDTO.isAktivan());
+            if(izmenaKorisnikaDTO.getPrezime()!=null && !izmenaKorisnikaDTO.getPrezime().equals(""))
+                korisnik.get().setPrezime(izmenaKorisnikaDTO.getPrezime());
+            if(izmenaKorisnikaDTO.getPol()!=null && !izmenaKorisnikaDTO.getPol().equals("") && (izmenaKorisnikaDTO.getPol().equalsIgnoreCase("M")|| izmenaKorisnikaDTO.getPol().equalsIgnoreCase("Z")))
+                korisnik.get().setPol(izmenaKorisnikaDTO.getPol());
+            if(izmenaKorisnikaDTO.getEmail()!=null && !izmenaKorisnikaDTO.getEmail().equals(""))
+                korisnik.get().setEmail(izmenaKorisnikaDTO.getEmail());
+            if(izmenaKorisnikaDTO.getBrojTelefona()!=null && !izmenaKorisnikaDTO.getBrojTelefona().equals(""))
+                korisnik.get().setBrojTelefona(izmenaKorisnikaDTO.getBrojTelefona());
+            if(izmenaKorisnikaDTO.getAdresa()!=null && !izmenaKorisnikaDTO.getAdresa().equals(""))
+                korisnik.get().setAdresa(izmenaKorisnikaDTO.getAdresa());
+            if(izmenaKorisnikaDTO.getPassword()!=null && !izmenaKorisnikaDTO.getPassword().equals(""))
+                korisnik.get().setPassword(bCryptPasswordEncoder.encode(izmenaKorisnikaDTO.getPassword()));
+            if(izmenaKorisnikaDTO.getPovezaniRacuni()!=null && !izmenaKorisnikaDTO.getPovezaniRacuni().equals(""))
+                korisnik.get().setPovezaniRacuni(izmenaKorisnikaDTO.getPovezaniRacuni());
+            if(izmenaKorisnikaDTO.getAktivan()!=null)
+                korisnik.get().setAktivan(izmenaKorisnikaDTO.getAktivan());
 
             return korisnikMapper.korisnikToKorisnikDto(korisnikRepository.save(korisnik.get()));
         }
@@ -173,15 +191,22 @@ public class KorisnikServisImpl implements KorisnikServis {
                 }
             }
 
-            radnik.get().setPrezime(izmenaRadnikaDTO.getPrezime());
-            radnik.get().setPol(izmenaRadnikaDTO.getPol());
-            radnik.get().setBrojTelefona(izmenaRadnikaDTO.getBrojTelefona());
+            if(izmenaRadnikaDTO.getPrezime()!=null && !izmenaRadnikaDTO.getPrezime().equals(""))
+                radnik.get().setPrezime(izmenaRadnikaDTO.getPrezime());
+            if(izmenaRadnikaDTO.getPol()!=null && !izmenaRadnikaDTO.getPol().equals("") && (izmenaRadnikaDTO.getPol().equalsIgnoreCase("M")|| izmenaRadnikaDTO.getPol().equalsIgnoreCase("Z")))
+                radnik.get().setPol(izmenaRadnikaDTO.getPol());
+            if(izmenaRadnikaDTO.getBrojTelefona()!=null && !izmenaRadnikaDTO.getBrojTelefona().equals(""))
+                radnik.get().setBrojTelefona(izmenaRadnikaDTO.getBrojTelefona());
             radnik.get().setAdresa(izmenaRadnikaDTO.getAdresa());
-            radnik.get().setPassword(bCryptPasswordEncoder.encode(izmenaRadnikaDTO.getPassword()));
+            if(izmenaRadnikaDTO.getPassword()!=null && !izmenaRadnikaDTO.getPassword().equals(""))
+                radnik.get().setPassword(bCryptPasswordEncoder.encode(izmenaRadnikaDTO.getPassword()));
             radnik.get().setPozicija(izmenaRadnikaDTO.getPozicija());
-            radnik.get().setDepartman(izmenaRadnikaDTO.getDepartman());
-            radnik.get().setPermisije(izmenaRadnikaDTO.getPermisije());
-            radnik.get().setAktivan(izmenaRadnikaDTO.isAktivan());
+            if(izmenaRadnikaDTO.getDepartman()!=null && !izmenaRadnikaDTO.getDepartman().equals(""))
+                radnik.get().setDepartman(izmenaRadnikaDTO.getDepartman());
+            if(izmenaRadnikaDTO.getPermisije()!=null)
+                radnik.get().setPermisije(izmenaRadnikaDTO.getPermisije());
+            if(izmenaRadnikaDTO.getAdresa()!=null)
+            radnik.get().setAktivan(izmenaRadnikaDTO.getAktivan());
 
             return radnikMapper.radnikToRadnikDto(radnikRepository.save(radnik.get()));
         }
