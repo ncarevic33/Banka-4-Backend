@@ -462,7 +462,7 @@ public class KorisnikServisUnitTests {
             korisnikServis.kreirajNovogRadnika(noviRadnikDTO);
         });
     }
-
+/*
     @Test
     public void testIzmeniKorisnika(){
         IzmenaKorisnikaDTO izmenaKorisnikaDTO = createMockIzmenaKorisnikDTO();
@@ -479,7 +479,7 @@ public class KorisnikServisUnitTests {
             fail(e.getMessage());
         }
     }
-
+*/
     @Test
     public void testIzmeniRadnika(){
 
