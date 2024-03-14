@@ -9,7 +9,7 @@ public class RacunDTO {
 
     private Long id;
     
-    private Long brojRacuna;
+    private String brojRacuna;
 
     private Long vlasnik; //Korisnik ili Firma id
 

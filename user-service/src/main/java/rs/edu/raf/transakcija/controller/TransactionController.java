@@ -4,6 +4,7 @@ package rs.edu.raf.transakcija.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,6 +24,8 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/transaction")
+@CrossOrigin(origins = "*")
+@SecurityRequirement(name = "jwt")
 public class TransactionController {
 
     public TransakcijaServis transakcijaServis;
@@ -40,56 +43,24 @@ public class TransactionController {
         this.dtoOriginalMapper = dtoOriginalMapper;
     }
 
-
-    @Tag(name = "TRANSAKCIJE", description = "Transakcija API")
-    @Operation(summary ="GENERISANJE JEDNOKRATNE LOZINKE",description = "")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "uspesno vracena jednokratna lozinka"),
-    })
-    @GetMapping(value = "/oneTimePassw",produces = MediaType.TEXT_PLAIN_VALUE)
-    public ResponseEntity<String> getGeneratedOneTimePass(){
-
-        return new ResponseEntity<>(oneTimePasswTokenService.generateOneTimePassw(),HttpStatus.OK);
-
-    }
-
     /////////////////////////////////////////////////////////////////////////////////////////
     @Tag(name = "TRANSAKCIJE", description = "Transakcija API")
-    @Operation(summary ="PROVERA ISPRAVNOSTI UPLATA TRANSAKCIJE SA JEDNOKRATNOM LOZINKOM",description = "proverena ispravnost uplata transakcije")
+    @Operation(summary ="Kreiranje nove uplate",description = "proverena ispravnost uplata transakcije")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "uspesna provera ispravnosti"),
     })
-    @GetMapping(value = "/transactionUplataAndPassw",consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> proveraIspravnostiUplataTransaction(@RequestBody UplataTransactionAndOneTimePasswDTO payTransactionAndOneTimePasswDTO){
-
-
-        Uplata uplata = (Uplata) dtoOriginalMapper.newDtoToNewOriginal(payTransactionAndOneTimePasswDTO.getUplataDTO());
-
-
-        boolean ispravnost = transakcijaServis.proveraIspravnostiUplataTransakcije(uplata);
-
-      if(ispravnost)
-            return new ResponseEntity<>(HttpStatus.OK);
-
-        return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+    @PostMapping(value = "/nova-uplata",consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Uplata> novaUplata(@RequestBody NovaUplataDTO novaUplataDTO){
+        return new ResponseEntity<>(transakcijaServis.sacuvajUplatu(novaUplataDTO),HttpStatus.OK);
     }
     @Tag(name = "TRANSAKCIJE", description = "Transakcija API")
     @Operation(summary ="PROVERA ISPRAVNOSTI PRENOS SREDSTAVA TRANSAKCIJE SA JEDNOKRATNOM LOZINKOM",description = "proverena ispravnost prenos sredstava transakcije")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "uspesna provera ispravnosti"),
     })
-    @GetMapping(value = "/transactionPrenosSredstavaAndPassw",consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> proveraIspravnostiPrenosSredstavaTransaction(@RequestBody PrenosSredstavaTransactionAndOneTimePasswDTO transferTransactionAndOneTimePasswDTO){
-
-        PrenosSredstava prenosSredstava = (PrenosSredstava) dtoOriginalMapper.newDtoToNewOriginal(transferTransactionAndOneTimePasswDTO.getPrenosSredstavaDTO());
-
-        boolean ispravnost = transakcijaServis.proveraIspravnostiPrenosSredstavaTransakcije(prenosSredstava);
-
-        if(ispravnost)
-            return new ResponseEntity<>(HttpStatus.OK);
-
-        return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
-
+    @PostMapping(value = "/novi-prenos",consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<PrenosSredstava> proveraIspravnostiPrenosSredstavaTransaction(@RequestBody NoviPrenosSredstavaDTO noviPrenosSredstavaDTO){
+        return new ResponseEntity<>(transakcijaServis.sacuvajPrenosSredstava(noviPrenosSredstavaDTO),HttpStatus.OK);
     }
     /////////////////////////////////////////////////////////////////////////////////////////
 
@@ -183,62 +154,5 @@ public class TransactionController {
         return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
     }
     ////////////////////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////////////////
-    @Tag(name = "TRANSAKCIJE", description = "Transakcija API")
-    @Operation(summary ="DOHVATANJE SACUVANIH SABLONA TRANSAKCIJE",description = "")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "uspesno vraceni sabloni transakcije"),
-    })
-    @GetMapping(value = "/getSavedTransactionalPatterns",produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<SablonTransakcijeDTO>> getSavedTransactionalPatterns() {
-
-        return new ResponseEntity<>((List<SablonTransakcijeDTO>) dtoOriginalMapper.originalToDtoWithId(transakcijaServis.getSavedTransactionalPatterns()), HttpStatus.OK);
-
-    }
-    @Tag(name = "TRANSAKCIJE", description = "Transakcija API")
-    @Operation(summary ="DODAVANJE NOVOG SABLONA TRANSAKCIJE",description = "prosledjuje se u body sablon transakcije koji treba da se doda")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "uspesno dodat sablon transakcije"),
-    })
-
-    @PostMapping(value = "/addNewTransactionalPattern",consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.TEXT_PLAIN_VALUE)
-    public ResponseEntity<String> addNewTransactionalPattern(@RequestBody NoviSablonTransakcijeDTO noviSablonTransakcijeDTO) {
-
-        SablonTransakcije sablonTransakcije = transakcijaServis.addNewTransactionalPattern((SablonTransakcije) dtoOriginalMapper.newDtoToNewOriginal(noviSablonTransakcijeDTO));
-
-        if(sablonTransakcije != null)
-            return ResponseEntity.status(HttpStatus.OK).body("Operacija dodavanja sablona transakcije je uspesno izvrsena");
-        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Operacija dodavanja sablona nije uspela");
-    }
-    /////////////////////////////////////////////////////////////////////////
-    @Tag(name = "TRANSAKCIJE", description = "Transakcija API")
-    @Operation(summary ="BRISANJE JEDNOG TRANSAKCIONOG SABLONA",description = "prosledjuje se id transakcije ciji sablon treba da se obrise")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "uspesno obrisan transakcioni sablon"),
-    })
-    @DeleteMapping(value = "/deleteTransactionalPattern/{transactionPatternId}",produces = MediaType.TEXT_PLAIN_VALUE)
-    public ResponseEntity<String> deleteTransactionalPattern(@PathVariable("transactionPatternId") Long transactionPatternId) {
-
-
-        if(transakcijaServis.deleteTransactionalPattern(transactionPatternId))
-            return new ResponseEntity<>("Operacija brisanja transakcionog sablona je uspesno izvrsena",HttpStatus.OK);
-
-        //return ResponseEntity.status(HttpStatus.OK).body("Operacija brisanja transakcije je uspesno izvrsena");
-        return new ResponseEntity<>("Operacija brisanja transakcionog sablona nije uspesno izvrsena",HttpStatus.NOT_ACCEPTABLE);
-    }
-    @Tag(name = "TRANSAKCIJE", description = "Transakcija API")
-    @Operation(summary ="BRISANJE SVIH TRANSAKCIONIH SABLONA",description = "")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "uspesno obrisani svi sabloni transakcije"),
-    })
-    @DeleteMapping(value = "/deleteAllTransactionalPatterns",produces = MediaType.TEXT_PLAIN_VALUE)
-    public ResponseEntity<String> deleteAllTransactionalPatterns() {
-
-        transakcijaServis.deleteAllTransactionalPatterns();
-
-        return new ResponseEntity<>("Operacija brisanja svih transakcionih sablona je uspesno izvrsena",HttpStatus.OK);
-        //return ResponseEntity.ok("Operacija brisanja svih transakcija je uspesno izvrsena");
-
-    }
 
 }

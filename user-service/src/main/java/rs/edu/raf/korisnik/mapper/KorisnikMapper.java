@@ -37,6 +37,18 @@ public class KorisnikMapper{
         return korisnik;
     }
 
+    public Korisnik registrujKorisnikDtoToKorisnik(RegistrujKorisnikDTO registrujKorisnikDTO) {
+
+        Optional<Korisnik> korisnik = korisnikRepository.findByEmailAndAktivanIsTrue(registrujKorisnikDTO.getEmail());
+
+        if (korisnik.isPresent()){
+            korisnik.get().setPassword(bCryptPasswordEncoder.encode(registrujKorisnikDTO.getPassword()));
+            return korisnik.get();
+        }
+
+        return null;
+    }
+
     public KorisnikDTO korisnikToKorisnikDto(Korisnik korisnik) {
         KorisnikDTO korisnikDTO = new KorisnikDTO();
 

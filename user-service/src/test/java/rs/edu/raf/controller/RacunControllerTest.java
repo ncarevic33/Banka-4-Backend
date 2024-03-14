@@ -41,7 +41,7 @@ public class RacunControllerTest {
         when(racunServis.kreirajDevizniRacun(any(NoviDevizniRacunDTO.class))).thenReturn(devizniRacun);
 
 
-        ResponseEntity<DevizniRacun> response = racunController.dodajDevizniRacun("authorization", noviDevizniRacunDTO);
+        ResponseEntity<DevizniRacun> response = racunController.dodajDevizniRacun(noviDevizniRacunDTO);
 
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -56,7 +56,7 @@ public class RacunControllerTest {
         when(racunServis.kreirajPravniRacun(any(NoviPravniRacunDTO.class))).thenReturn(pravniRacun);
 
 
-        ResponseEntity<PravniRacun> response = racunController.dodajPravniRacun("authorization", noviPravniRacunDTO);
+        ResponseEntity<PravniRacun> response = racunController.dodajPravniRacun(noviPravniRacunDTO);
 
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -71,7 +71,7 @@ public class RacunControllerTest {
         when(racunServis.kreirajTekuciRacun(any(NoviTekuciRacunDTO.class))).thenReturn(tekuciRacun);
 
 
-        ResponseEntity<TekuciRacun> response = racunController.dodajTekuciRacun("authorization", noviTekuciRacunDTO);
+        ResponseEntity<TekuciRacun> response = racunController.dodajTekuciRacun(noviTekuciRacunDTO);
 
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -87,7 +87,7 @@ public class RacunControllerTest {
         when(racunServis.izlistavanjeRacunaJednogKorisnika(anyLong())).thenReturn(racuni);
 
 
-        ResponseEntity<List<RacunDTO>> response = racunController.izlistajRacuneKorisnika("authorization", idKorisnik);
+        ResponseEntity<List<RacunDTO>> response = racunController.izlistajRacuneKorisnika(idKorisnik);
 
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -103,7 +103,7 @@ public class RacunControllerTest {
         when(racunServis.nadjiAktivanRacunPoID(anyLong())).thenReturn(racunDTO);
 
 
-        ResponseEntity<RacunDTO> response = racunController.nadjiRacunPoId("authorization",idRacuna);
+        ResponseEntity<RacunDTO> response = racunController.nadjiRacunPoId(idRacuna);
 
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -119,7 +119,7 @@ public class RacunControllerTest {
         when(racunServis.nadjiAktivanDevizniRacunPoID(anyLong())).thenReturn(devizniRacun);
 
 
-        ResponseEntity<DevizniRacun> response = racunController.nadjiDevizniRacunPoId("authorization", idRacuna);
+        ResponseEntity<DevizniRacun> response = racunController.nadjiDevizniRacunPoId(idRacuna);
 
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -135,7 +135,7 @@ public class RacunControllerTest {
         when(racunServis.nadjiAktivanPravniRacunPoID(anyLong())).thenReturn(pravniRacun);
 
 
-        ResponseEntity<PravniRacun> response = racunController.nadjiPravniRacunPoId("authorization", idRacuna);
+        ResponseEntity<PravniRacun> response = racunController.nadjiPravniRacunPoId(idRacuna);
 
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -151,7 +151,7 @@ public class RacunControllerTest {
         when(racunServis.nadjiAktivanTekuciRacunPoID(anyLong())).thenReturn(tekuciRacun);
 
 
-        ResponseEntity<TekuciRacun> response = racunController.nadjiTekuciRacunPoId("authorization", idRacuna);
+        ResponseEntity<TekuciRacun> response = racunController.nadjiTekuciRacunPoId(idRacuna);
 
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -167,7 +167,7 @@ public class RacunControllerTest {
         when(racunServis.nadjiAktivanRacunPoBrojuRacuna(anyLong())).thenReturn(racunDTO);
 
 
-        ResponseEntity<RacunDTO> response = racunController.nadjiRacunPoBroju("authorization", brojRacuna);
+        ResponseEntity<RacunDTO> response = racunController.nadjiRacunPoBroju(brojRacuna);
 
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -183,7 +183,7 @@ public class RacunControllerTest {
         when(racunServis.nadjiAktivanDevizniRacunPoBrojuRacuna(anyLong())).thenReturn(devizniRacun);
 
 
-        ResponseEntity<DevizniRacun> response = racunController.nadjiDevizniRacunPoBroju("authorization", brojRacuna);
+        ResponseEntity<DevizniRacun> response = racunController.nadjiDevizniRacunPoBroju(brojRacuna);
 
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -199,7 +199,7 @@ public class RacunControllerTest {
         when(racunServis.nadjiAktivanPravniRacunPoBrojuRacuna(anyLong())).thenReturn(pravniRacun);
 
 
-        ResponseEntity<PravniRacun> response = racunController.nadjiPravniRacunPoBroju("authorization", brojRacuna);
+        ResponseEntity<PravniRacun> response = racunController.nadjiPravniRacunPoBroju(brojRacuna);
 
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -215,7 +215,7 @@ public class RacunControllerTest {
         when(racunServis.nadjiAktivanTekuciRacunPoBrojuRacuna(anyLong())).thenReturn(tekuciRacun);
 
 
-        ResponseEntity<TekuciRacun> response = racunController.nadjiTekuciRacunPoBroju("authorization", brojRacuna);
+        ResponseEntity<TekuciRacun> response = racunController.nadjiTekuciRacunPoBroju(brojRacuna);
 
 
         assertEquals(HttpStatus.OK, response.getStatusCode());

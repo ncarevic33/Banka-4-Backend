@@ -111,7 +111,7 @@ public class RacunSeeder implements CommandLineRunner {
         pravniRacunRepository.saveAll(pRacuni);
 
         List<TekuciRacun> tRacuni = new ArrayList<>();
-        TekuciRacun tr1 = new TekuciRacun(444000000900000033L, 11111L, new BigDecimal("0"), new BigDecimal("0"), 22222L, TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()), TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()) + 5*31536000L, v8.getNaziv(), true, "Studentski", new BigDecimal("0.5"), new BigDecimal("0"));
+        TekuciRacun tr1 = new TekuciRacun(444000000900000033L, 1L, new BigDecimal("1000"), new BigDecimal("1000"), 22222L, TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()), TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()) + 5*31536000L, v8.getNaziv(), true, "Studentski", new BigDecimal("0.5"), new BigDecimal("0"));
         tRacuni.add(tr1);
         TekuciRacun tr2 = new TekuciRacun(444000000910000033L, 11111L, new BigDecimal("0"), new BigDecimal("0"), 22222L, TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()), TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()) + 5*31536000L, v8.getNaziv(), true, "Licni", new BigDecimal("0"), new BigDecimal("300"));
         tRacuni.add(tr2);
