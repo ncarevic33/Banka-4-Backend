@@ -162,7 +162,7 @@ public class RacunMapperTests {
         RacunDTO dto = rm.devizniRacunToRacunDTO(dr);
 
         assertEquals(dto.getId(), dr.getId());
-        assertEquals(dto.getBrojRacuna(), dr.getBrojRacuna());
+        assertEquals(dto.getBrojRacuna(), dr.getBrojRacuna().toString());
         assertEquals(dto.getVlasnik(), dr.getVlasnik());
         assertEquals(dto.getStanje(), dr.getStanje());
         assertEquals(dto.getRaspolozivoStanje(), dr.getRaspolozivoStanje());
