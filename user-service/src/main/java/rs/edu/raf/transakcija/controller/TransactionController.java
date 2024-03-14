@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import rs.edu.raf.korisnik.model.Korisnik;
+import rs.edu.raf.racun.dto.RacunDTO;
 import rs.edu.raf.transakcija.dto.*;
 import rs.edu.raf.transakcija.mapper.DtoOriginalMapper;
 import rs.edu.raf.transakcija.model.PrenosSredstava;
@@ -64,20 +66,6 @@ public class TransactionController {
     }
     /////////////////////////////////////////////////////////////////////////////////////////
 
-    @Tag(name = "TRANSAKCIJE", description = "Transakcija API")
-    @Operation(summary ="DOHVATANJE TRANSAKCIJA PREKO ID KORISNIKA",description = "prosledjuje se  u path param id korisnika cije transakcije trebaju da se vrate")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "uspesno vracene transakcije korisnika"),
-    })
-    @GetMapping(value = "/getAllTransactionsByKorisnikId/{korisnikId}",produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<Object>> getAllTransactionsByKorisnikId(@PathVariable("korisnikId") Long clientId) {
-
-        List<Object> transactions = transakcijaServis.getAllTransactionsByKorisnikId(clientId);
-
-        if(transactions != null)
-            return new ResponseEntity<>((List<Object>) dtoOriginalMapper.originalToDtoWithId(transactions), HttpStatus.OK);
-        return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
-    }
 
     @Tag(name = "TRANSAKCIJE", description = "Transakcija API")
     @Operation(summary ="DOHVATANJE SVIH UPLATA TRANSAKCIJA PO BROJU RACUNA",description = "prosledjuje se u path param id racuna cije transakcije trebaju da se vrate")

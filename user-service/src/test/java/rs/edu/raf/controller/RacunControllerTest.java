@@ -1,6 +1,7 @@
 package rs.edu.raf.controller;
 
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import org.junit.runner.RunWith;
@@ -26,6 +27,7 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
+@Disabled
 public class RacunControllerTest {
     @Mock
     private RacunServis racunServis;

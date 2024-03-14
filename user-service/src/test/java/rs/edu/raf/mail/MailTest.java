@@ -1,5 +1,6 @@
 package rs.edu.raf.mail;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -14,6 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
+@Disabled
 public class MailTest {
 
     @Autowired

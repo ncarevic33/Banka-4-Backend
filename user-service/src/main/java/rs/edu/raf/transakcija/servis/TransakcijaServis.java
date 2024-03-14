@@ -1,5 +1,6 @@
 package rs.edu.raf.transakcija.servis;
 
+import rs.edu.raf.korisnik.model.Korisnik;
 import rs.edu.raf.transakcija.dto.NoviPrenosSredstavaDTO;
 import rs.edu.raf.transakcija.dto.NovaUplataDTO;
 import rs.edu.raf.transakcija.dto.PrenosSredstavaDTO;
@@ -22,7 +23,7 @@ public interface TransakcijaServis {
 
     //DODATO
     //potrebno je napraviti opciju za pregled svih transakcija po id klijenta
-    List<Object> getAllTransactionsByKorisnikId(Long korisnikId);
+    Korisnik getAllTransactionsByKorisnikId(Long korisnikId);
 
 
     //potrebno je napraviti opciju za pregled svih transakcija po racunu

@@ -14,6 +14,7 @@ public class RadnikMapper {
     public Radnik noviRadnikDtoToRadnik(NoviRadnikDTO noviRadnikDTO){
         Radnik radnik = new Radnik();
 
+        radnik.setId(null);
         radnik.setIme(noviRadnikDTO.getIme());
         radnik.setPrezime(noviRadnikDTO.getPrezime());
         radnik.setJmbg(noviRadnikDTO.getJmbg());
@@ -36,6 +37,7 @@ public class RadnikMapper {
     public RadnikDTO radnikToRadnikDto(Radnik radnik) {
         RadnikDTO radnikDTO = new RadnikDTO();
 
+        radnikDTO.setId(radnik.getId());
         radnikDTO.setIme(radnik.getIme());
         radnikDTO.setPrezime(radnik.getPrezime());
         radnikDTO.setJmbg(radnik.getJmbg());

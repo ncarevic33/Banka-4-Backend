@@ -24,13 +24,14 @@ public class RadnikController {
 
     @PostMapping
     @Operation(description = "Dodaj novog radnika")
-    public ResponseEntity<RadnikDTO> dodajRadnika(@Parameter(description = "Podaci o radniku") NoviRadnikDTO noviRadnikDTO) {
+    public ResponseEntity<RadnikDTO> dodajRadnika(@RequestBody @Parameter(description = "Podaci o radniku") NoviRadnikDTO noviRadnikDTO) {
+        System.out.println(noviRadnikDTO);
         return new ResponseEntity<>(korisnikServis.kreirajNovogRadnika(noviRadnikDTO), HttpStatus.CREATED);
     }
 
     @PutMapping
     @Operation(description = "Izmeni postojeceg radnika")
-    public ResponseEntity<RadnikDTO> izmeniRadnika(@Parameter(description = "Novi podaci o radniku") IzmenaRadnikaDTO izmenaRadnikaDTO) {
+    public ResponseEntity<RadnikDTO> izmeniRadnika(@RequestBody @Parameter(description = "Novi podaci o radniku") IzmenaRadnikaDTO izmenaRadnikaDTO) {
         return new ResponseEntity<>(korisnikServis.izmeniRadnika(izmenaRadnikaDTO),HttpStatus.OK);
     }
 

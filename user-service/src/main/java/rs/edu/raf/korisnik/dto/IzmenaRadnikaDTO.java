@@ -23,14 +23,12 @@ public class IzmenaRadnikaDTO {
 
     private String password;
 
-    @NotNull
     private String pozicija;
 
-    @NotNull
     private String departman;
 
     @PositiveOrZero
     private Long permisije;
 
-    private boolean aktivan;
+    private Boolean aktivan;
 }

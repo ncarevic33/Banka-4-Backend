@@ -21,15 +21,15 @@ public class Korisnik implements UserDetails {
     private String ime;
 
     private String prezime;
-
+    @Column(unique=true)
     private Long jmbg;
 
     private Long datumRodjenja;
 
     private String pol;
-
+    @Column(unique=true)
     private String email;
-
+    @Column(unique=true)
     private String brojTelefona;
 
     private String adresa;

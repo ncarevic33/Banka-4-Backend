@@ -128,7 +128,7 @@ public class KorisnikController {
 
     @PostMapping("/verifikacija")
     @Operation(description = "Verifikacija koda i postavljanje sifre korisnika")
-    public ResponseEntity<KorisnikDTO> registruj(@RequestBody @Parameter(description = "Podaci o korisniku i sfri") RegistrujKorisnikDTO registrujKorisnikDTO) {
+    public ResponseEntity<Boolean> registruj(@RequestBody @Parameter(description = "Podaci o korisniku i sfri") RegistrujKorisnikDTO registrujKorisnikDTO) {
         return new ResponseEntity<>(korisnikServis.registrujNovogKorisnika(registrujKorisnikDTO),HttpStatus.OK);
     }
 

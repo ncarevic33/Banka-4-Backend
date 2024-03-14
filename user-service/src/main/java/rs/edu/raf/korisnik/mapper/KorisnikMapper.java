@@ -8,7 +8,9 @@ import rs.edu.raf.korisnik.dto.KorisnikDTO;
 import rs.edu.raf.korisnik.dto.NoviKorisnikDTO;
 import rs.edu.raf.korisnik.dto.RegistrujKorisnikDTO;
 import rs.edu.raf.korisnik.model.Korisnik;
+import rs.edu.raf.korisnik.model.Radnik;
 import rs.edu.raf.korisnik.repository.KorisnikRepository;
+import rs.edu.raf.korisnik.repository.RadnikRepository;
 
 import java.util.Optional;
 
@@ -18,6 +20,7 @@ public class KorisnikMapper{
 
 
     private KorisnikRepository korisnikRepository;
+    private RadnikRepository radnikRepository;
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
 
@@ -46,6 +49,15 @@ public class KorisnikMapper{
             return korisnik.get();
         }
 
+        return null;
+    }
+
+    public Radnik registrujRadnikDtoToRadnik(RegistrujKorisnikDTO registrujKorisnikDTO){
+        Optional<Radnik> radnik = radnikRepository.findByEmailAndAktivanIsTrue(registrujKorisnikDTO.getEmail());
+        if(radnik.isPresent()){
+            radnik.get().setPassword(bCryptPasswordEncoder.encode(registrujKorisnikDTO.getPassword()));
+            return radnik.get();
+        }
         return null;
     }
 

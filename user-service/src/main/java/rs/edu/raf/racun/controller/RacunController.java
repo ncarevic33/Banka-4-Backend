@@ -13,6 +13,7 @@ import rs.edu.raf.racun.model.Firma;
 import rs.edu.raf.racun.model.PravniRacun;
 import rs.edu.raf.racun.model.TekuciRacun;
 import rs.edu.raf.racun.servis.RacunServis;
+import rs.edu.raf.transakcija.dto.RealizacijaTransakcije;
 
 import java.util.List;
 
@@ -72,6 +73,13 @@ public class RacunController {
     public ResponseEntity<RacunDTO> nadjiRacunPoBroju(@PathVariable("brojRacuna") Long brojRacuna){
         return new ResponseEntity<>(racunServis.nadjiAktivanRacunPoBrojuRacuna(brojRacuna), HttpStatus.OK);
     }
+
+    @ApiOperation(value = "Nadji racun po broju racuna")
+    @PutMapping("/deleteRacunPoBroju/{brojRacuna}")
+    public ResponseEntity<Boolean> obrisiRacun(@PathVariable("brojRacuna") Long brojRacuna) {
+        return new ResponseEntity<>(racunServis.deaktiviraj(brojRacuna),HttpStatus.OK);
+    }
+
     @ApiOperation(value = "Nadji devizni racun po broju racuna")
     @GetMapping("/nadjiDevizniRacunPoBroju/{brojRacuna}")
     public ResponseEntity<DevizniRacun> nadjiDevizniRacunPoBroju(@PathVariable("brojRacuna") Long brojRacuna){

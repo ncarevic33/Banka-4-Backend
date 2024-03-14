@@ -13,7 +13,7 @@ public class RealizacijaTransakcije {
 
     private Long brojRacuna;
 
-    private boolean aktivan;
+    private Boolean aktivan;
 
     private BigDecimal rezervisanaSredstva;
 

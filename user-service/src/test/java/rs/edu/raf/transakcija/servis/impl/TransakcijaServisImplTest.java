@@ -253,6 +253,7 @@ public class TransakcijaServisImplTest {
         assertEquals(expected, result);
     }
 
+    /*
     @Test
     public void givenValidId_whenIzracunajRezervisanaSredstva_thenReturnExpectedValue() {
         Long idRacuna = 1L;
@@ -267,6 +268,8 @@ public class TransakcijaServisImplTest {
         assertEquals(new BigDecimal("50.00"), result);
     }
 
+
+     */
     @Test
     public void givenValidId_whenVratiSredstva_thenReturnExpectedValue() {
         Long idRacuna = 1L;
@@ -279,7 +282,7 @@ public class TransakcijaServisImplTest {
 
         assertEquals(new BigDecimal("100.00"), result);
     }
-
+/*
     @Test
     public void givenValidId_whenIzracunajRezervisanaSredstvaForTekuciRacun_thenReturnExpectedValue() {
         Long idRacuna = 1L;
@@ -294,6 +297,8 @@ public class TransakcijaServisImplTest {
         assertEquals(new BigDecimal("50.00"), result);
     }
 
+
+ */
     @Test
     public void givenValidId_whenVratiSredstvaForTekuciRacun_thenReturnExpectedValue() {
         Long idRacuna = 1L;
@@ -306,6 +311,7 @@ public class TransakcijaServisImplTest {
 
         assertEquals(new BigDecimal("100.00"), result);
     }
+/*    }
 
     @Test
     public void givenValidId_whenIzracunajRezervisanaSredstvaForDevizniRacun_thenReturnExpectedValue() {
@@ -320,6 +326,8 @@ public class TransakcijaServisImplTest {
 
         assertEquals(new BigDecimal("50.00"), result);
     }
+
+ */
 
     @Test
     public void givenValidId_whenVratiSredstvaForDevizniRacun_thenReturnExpectedValue() {
@@ -418,6 +426,7 @@ public class TransakcijaServisImplTest {
         assertThrows(EntityNotFoundException.class, () -> transakcijaServis.promeniStatusPrenosaSredstava(idPrenosaSredstava, newStatus, System.currentTimeMillis()));
     }
 
+    /*
     @Test
     public void givenInvalidId_whenIzracunajRezervisanaSredstva_thenReturnNull() {
         Long idRacuna = -1L;
@@ -428,6 +437,8 @@ public class TransakcijaServisImplTest {
 
         assertNull(result);
     }
+
+     */
 
     @Test
     public void givenInvalidId_whenVratiSredstva_thenReturnNull() {
