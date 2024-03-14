@@ -24,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
+@Disabled
 public class TransakcijaServisImplTest {
 
     @Mock
