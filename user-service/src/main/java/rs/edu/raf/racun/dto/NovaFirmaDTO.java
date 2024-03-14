@@ -1,0 +1,21 @@
+package rs.edu.raf.racun.dto;
+
+import lombok.Data;
+
+@Data
+public class NovaFirmaDTO {
+
+    private String nazivPreduzeca;
+
+    private String brojTelefona;
+
+    private String brojFaksa;
+
+    private Integer PIB;
+
+    private Integer maticniBroj;
+
+    private Integer sifraDelatnosti;
+
+    private Integer registarskiBroj;
+}
