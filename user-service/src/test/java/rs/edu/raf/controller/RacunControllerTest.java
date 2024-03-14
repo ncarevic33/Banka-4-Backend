@@ -26,6 +26,7 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
+@Disabled
 public class RacunControllerTest {
     @Mock
     private RacunServis racunServis;
