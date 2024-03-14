@@ -40,18 +40,18 @@ public class SpringSecurityConfig implements WebSecurityCustomizer {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
-                .cors()
-                .and()
+//                .cors()
+//                .and()
                 .authorizeRequests(authorize -> authorize
                         .requestMatchers("/swagger-ui/**","/api-docs/**","/swagger-resources/**").permitAll()
                         .requestMatchers("/korisnik/login","/korisnik/generate-login","/generate-reset","/verifikacija","/reset-password").permitAll()
                         .requestMatchers(HttpMethod.PUT,"/korisnik","/korisnik/change-password").authenticated()
-                        .requestMatchers(HttpMethod.GET,"/korisnik","/korisnik/**").access("@permissionEvaluator.hasPermission(authentication, null,'" + Permisije.listanje_korisnika + "')")
-                        .requestMatchers(HttpMethod.POST,"/korisnik/add").access("@permissionEvaluator.hasPermission(authentication, null,'" + Permisije.dodavanje_korisnika + "')")
+                        .requestMatchers(HttpMethod.GET,"/korisnik","/korisnik/**","/racuni/izlistajSveFirme").access("@permissionEvaluator.hasPermission(authentication, null,'" + Permisije.listanje_korisnika + "')")
+                        .requestMatchers(HttpMethod.POST,"/korisnik/add","/racuni/kreirajFirmu").access("@permissionEvaluator.hasPermission(authentication, null,'" + Permisije.dodavanje_korisnika + "')")
                         .requestMatchers(HttpMethod.GET,"/radnik","/radnik/**").access("@permissionEvaluator.hasPermission(authentication, null,'" + Permisije.listanje_radnika + "')")
                         .requestMatchers(HttpMethod.PUT,"/radnik").access("@permissionEvaluator.hasPermission(authentication, null,'" + Permisije.editovanje_radnika + "')")
                         .requestMatchers(HttpMethod.POST,"/radnik").access("@permissionEvaluator.hasPermission(authentication, null,'" + Permisije.dodavanje_radnika + "')")
-
+                        .requestMatchers("/racuni/dodajDevizni","/racuni/dodajPravni","/racuni/dodajTekuci").access("@permissionEvaluator.hasPermission(authentication, null,'" + Permisije.kreiranje_racuna + "')")
                         .anyRequest().authenticated()
                 )
                 .csrf().disable()
@@ -59,17 +59,17 @@ public class SpringSecurityConfig implements WebSecurityCustomizer {
         return httpSecurity.build();
     }
 
-    @Bean
-    public CorsFilter corsFilter() {
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        CorsConfiguration config = new CorsConfiguration();
-        config.setAllowCredentials(true);
-        config.addAllowedOrigin("http://localhost:3000");
-        config.addAllowedHeader("*");
-        config.addAllowedMethod("*");
-        source.registerCorsConfiguration("/**", config);
-        return new CorsFilter(source);
-    }
+//    @Bean
+//    public CorsFilter corsFilter() {
+//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//        CorsConfiguration config = new CorsConfiguration();
+//        config.setAllowCredentials(true);
+//        config.addAllowedOrigin("http://localhost:3000");
+//        config.addAllowedHeader("*");
+//        config.addAllowedMethod("*");
+//        source.registerCorsConfiguration("/**", config);
+//        return new CorsFilter(source);
+//    }
 
     @Override
     public void customize(WebSecurity web) {

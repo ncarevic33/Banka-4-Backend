@@ -198,8 +198,8 @@ public class RacunServisImpl implements RacunServis {
                     return false;
                 }
             }
+            korisnik.setPovezaniRacuni(korisnik.getPovezaniRacuni().concat("," + devizniRacun.getBrojRacuna()));
         }
-        korisnik.setPovezaniRacuni(korisnik.getPovezaniRacuni().concat("," + devizniRacun.getBrojRacuna()));
         this.devizniRacunRepository.save(devizniRacun);
         this.korisnikRepository.save(korisnik);
         return true;

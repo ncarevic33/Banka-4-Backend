@@ -62,11 +62,9 @@ public class KorisnikServisImpl implements KorisnikServis {
     @Override
     public KorisnikDTO registrujNovogKorisnika(RegistrujKorisnikDTO registrujKorisnikDTO) {
 
-        Optional<Korisnik> korisnik = korisnikRepository.findByEmailAndAktivanIsTrue(registrujKorisnikDTO.getEmail());
-
-        if (korisnik.isPresent()){
-            korisnik.get().setPassword(registrujKorisnikDTO.getPassword());
-            return korisnikMapper.korisnikToKorisnikDto(korisnikRepository.save(korisnik.get()));
+        if(kodServis.dobarKod(registrujKorisnikDTO.getEmail(),registrujKorisnikDTO.getCode(),false)) {
+            Korisnik korisnik = korisnikMapper.registrujKorisnikDtoToKorisnik(registrujKorisnikDTO);
+            return korisnikMapper.korisnikToKorisnikDto(korisnikRepository.save(korisnik));
         }
 
         return null;
@@ -144,7 +142,7 @@ public class KorisnikServisImpl implements KorisnikServis {
             korisnik.get().setEmail(izmenaKorisnikaDTO.getEmail());
             korisnik.get().setBrojTelefona(izmenaKorisnikaDTO.getBrojTelefona());
             korisnik.get().setAdresa(izmenaKorisnikaDTO.getAdresa());
-            korisnik.get().setPassword(izmenaKorisnikaDTO.getPassword());
+            korisnik.get().setPassword(bCryptPasswordEncoder.encode(izmenaKorisnikaDTO.getPassword()));
             korisnik.get().setPovezaniRacuni(izmenaKorisnikaDTO.getPovezaniRacuni());
             korisnik.get().setAktivan(izmenaKorisnikaDTO.isAktivan());
 
@@ -179,7 +177,7 @@ public class KorisnikServisImpl implements KorisnikServis {
             radnik.get().setPol(izmenaRadnikaDTO.getPol());
             radnik.get().setBrojTelefona(izmenaRadnikaDTO.getBrojTelefona());
             radnik.get().setAdresa(izmenaRadnikaDTO.getAdresa());
-            radnik.get().setPassword(izmenaRadnikaDTO.getPassword());
+            radnik.get().setPassword(bCryptPasswordEncoder.encode(izmenaRadnikaDTO.getPassword()));
             radnik.get().setPozicija(izmenaRadnikaDTO.getPozicija());
             radnik.get().setDepartman(izmenaRadnikaDTO.getDepartman());
             radnik.get().setPermisije(izmenaRadnikaDTO.getPermisije());

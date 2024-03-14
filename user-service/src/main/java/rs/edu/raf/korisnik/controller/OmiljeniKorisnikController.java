@@ -1,6 +1,7 @@
 package rs.edu.raf.korisnik.controller;
 
 import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -13,6 +14,8 @@ import rs.edu.raf.korisnik.servis.OmiljeniKorisnikServis;
 @RequestMapping("/omiljeni-korisnik")
 @Tag(name = "OmiljeniKorisnik", description = "Operacije nad Omiljenim Korisnicima")
 @AllArgsConstructor
+@SecurityRequirement(name = "jwt")
+@CrossOrigin(origins = "*")
 public class OmiljeniKorisnikController {
 
     private OmiljeniKorisnikServis omiljeniKorisnikServis;

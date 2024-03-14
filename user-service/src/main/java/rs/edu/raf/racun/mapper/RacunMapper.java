@@ -114,7 +114,7 @@ public class RacunMapper {
     public RacunDTO devizniRacunToRacunDTO(DevizniRacun dr) {
         RacunDTO dto = new RacunDTO();
         dto.setId(dr.getId());
-        dto.setBrojRacuna(dr.getBrojRacuna());
+        dto.setBrojRacuna(dr.getBrojRacuna().toString());
         dto.setVlasnik(dr.getVlasnik());
         dto.setStanje(dr.getStanje());
         dto.setRaspolozivoStanje(dr.getRaspolozivoStanje());
@@ -129,7 +129,7 @@ public class RacunMapper {
     public RacunDTO pravniRacunToRacunDTO(PravniRacun pr) {
         RacunDTO dto = new RacunDTO();
         dto.setId(pr.getId());
-        dto.setBrojRacuna(pr.getBrojRacuna());
+        dto.setBrojRacuna(pr.getBrojRacuna().toString());
         dto.setVlasnik(pr.getFirma());
         dto.setStanje(pr.getStanje());
         dto.setRaspolozivoStanje(pr.getRaspolozivoStanje());
@@ -144,7 +144,7 @@ public class RacunMapper {
     public RacunDTO tekuciRacunToRacunDTO(TekuciRacun tr) {
         RacunDTO dto = new RacunDTO();
         dto.setId(tr.getId());
-        dto.setBrojRacuna(tr.getBrojRacuna());
+        dto.setBrojRacuna(tr.getBrojRacuna().toString());
         dto.setVlasnik(tr.getVlasnik());
         dto.setStanje(tr.getStanje());
         dto.setRaspolozivoStanje(tr.getRaspolozivoStanje());

@@ -31,10 +31,11 @@ import java.util.ArrayList;
 @RequestMapping("/korisnik")
 @AllArgsConstructor
 @SecurityRequirement(name="jwt")
+@CrossOrigin(origins = "*")
 public class KorisnikController {
     private KorisnikServis korisnikServis;
     private KodServis kodServis;
-//    private MailServis mailServis;
+    private MailServis mailServis;
     private JwtUtil jwtUtil;
     private final AuthenticationManager authenticationManager;
 
@@ -111,7 +112,7 @@ public class KorisnikController {
         String kod = UUID.randomUUID().toString();
         KorisnikDTO korisnikDTO = korisnikServis.nadjiAktivnogKorisnikaPoEmail(dodavanjeSifreDTO.getEmail());
         kodServis.dodajKod(dodavanjeSifreDTO.getEmail(),kod,new Date(System.currentTimeMillis() + 1000 * 60 * 15).getTime(),false);
-//        mailServis.posaljiMailZaRegistraciju(korisnikDTO, kod);
+        mailServis.posaljiMailZaRegistraciju(korisnikDTO, kod);
         return new ResponseEntity<>("Kod je poslat",HttpStatus.OK);
     }
 
@@ -121,7 +122,7 @@ public class KorisnikController {
         String kod = UUID.randomUUID().toString();
         KorisnikDTO korisnikDTO = korisnikServis.nadjiAktivnogKorisnikaPoEmail(dodavanjeSifreDTO.getEmail());
         kodServis.dodajKod(dodavanjeSifreDTO.getEmail(),kod,new Date(System.currentTimeMillis() + 1000 * 60 * 15).getTime(),true);
-//        mailServis.posaljiMailZaPromenuLozinke(korisnikDTO, kod);
+        mailServis.posaljiMailZaPromenuLozinke(korisnikDTO, kod);
         return new ResponseEntity<>("Kod je poslat",HttpStatus.OK);
     }
 
