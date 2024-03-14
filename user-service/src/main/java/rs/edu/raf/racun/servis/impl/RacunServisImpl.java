@@ -76,7 +76,7 @@ public class RacunServisImpl implements RacunServis {
     public List<RacunDTO> izlistavanjeRacunaJednogKorisnika(Long idKorisnika) {
         Korisnik k = korisnikRepository.findById(idKorisnika).orElse(null);
         List<RacunDTO> racunDTOs = new ArrayList<>();
-        if (k != null) {
+        if (k != null && k.getPovezaniRacuni()!= null) {
             RacunDTO dto;
             List<String> racuni = List.of(k.getPovezaniRacuni().split(","));
             for (String r : racuni) {
