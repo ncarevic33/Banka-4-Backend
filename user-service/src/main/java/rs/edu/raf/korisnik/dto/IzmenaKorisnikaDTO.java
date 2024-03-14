@@ -21,12 +21,11 @@ public class IzmenaKorisnikaDTO {
     @Pattern(regexp = "^(\\+381|0)6\\d{7,8}$\n", message = "Broj telefona mora biti formata +381/0 6 praćen sa 6 ili 7 cifara!")
     private String brojTelefona;
 
-    @NotNull
     private String adresa;
     
     private String password;
     
     private String povezaniRacuni;
 
-    private boolean aktivan;
+    private Boolean aktivan;
 }
