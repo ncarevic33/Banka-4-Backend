@@ -44,7 +44,7 @@ public class SpringSecurityConfig implements WebSecurityCustomizer {
 //                .and()
                 .authorizeRequests(authorize -> authorize
                         .requestMatchers("/swagger-ui/**","/api-docs/**","/swagger-resources/**").permitAll()
-                        .requestMatchers("/korisnik/login","/korisnik/generate-login","/generate-reset","/verifikacija","/reset-password").permitAll()
+                        .requestMatchers("/korisnik/login","/korisnik/generate-login","/korisnik/generate-reset","/korisnik/verifikacija","/korisnik/reset-password").permitAll()
                         .requestMatchers(HttpMethod.PUT,"/korisnik","/korisnik/change-password").authenticated()
                         .requestMatchers(HttpMethod.GET,"/korisnik","/korisnik/**","/racuni/izlistajSveFirme").access("@permissionEvaluator.hasPermission(authentication, null,'" + Permisije.listanje_korisnika + "')")
                         .requestMatchers(HttpMethod.POST,"/korisnik/add","/racuni/kreirajFirmu").access("@permissionEvaluator.hasPermission(authentication, null,'" + Permisije.dodavanje_korisnika + "')")
