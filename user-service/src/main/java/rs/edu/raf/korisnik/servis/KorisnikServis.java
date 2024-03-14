@@ -8,7 +8,7 @@ import java.util.List;
 public interface KorisnikServis {
 
     public KorisnikDTO kreirajNovogKorisnika(NoviKorisnikDTO noviKorisnikDTO);
-    public KorisnikDTO registrujNovogKorisnika(RegistrujKorisnikDTO registrujKorisnikDTO);
+    public boolean registrujNovogKorisnika(RegistrujKorisnikDTO registrujKorisnikDTO);
     public KorisnikDTO promeniSifruKorisnikaUzKod(IzmenaSifreUzKodDto izmenaSifreUzKodDto);
     public KorisnikDTO promeniSifruKorisnika(String email, IzmenaSifreDto izmenaSifreDto);
     public RadnikDTO kreirajNovogRadnika(NoviRadnikDTO noviRadnikDTO);
