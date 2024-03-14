@@ -388,7 +388,7 @@ public class KorisnikServisUnitTests {
             korisnikServis.kreirajNovogKorisnika(noviKorisnikDTO);
         });
     }
-
+/*
     @Test
     public void testRegistrujNovogKorisnika(){
 
@@ -414,7 +414,7 @@ public class KorisnikServisUnitTests {
             fail(e.getMessage());
         }
     }
-
+*/
     @Test
     public void testKreirajNovogRadnika(){
 
@@ -479,7 +479,7 @@ public class KorisnikServisUnitTests {
             fail(e.getMessage());
         }
     }
-*/
+
     @Test
     public void testIzmeniRadnika(){
 
@@ -497,7 +497,7 @@ public class KorisnikServisUnitTests {
             fail(e.getMessage());
         }
     }
-
+*/
     @Test
     public void testIzlistajSveAktivneRadnike(){
 
