@@ -384,7 +384,7 @@ public class RacunServisImplTests {
         RacunDTO dto1 = new RacunDTO();
 
         dto1.setId(dr.getId());
-        dto1.setBrojRacuna(dr.getBrojRacuna());
+        dto1.setBrojRacuna(dr.getBrojRacuna().toString());
         dto1.setVlasnik(dr.getVlasnik());
         dto1.setStanje(dr.getStanje());
         dto1.setRaspolozivoStanje(dr.getRaspolozivoStanje());
@@ -397,7 +397,7 @@ public class RacunServisImplTests {
         TekuciRacun tk = kreirajTekuciRacun();
         RacunDTO dto2 = new RacunDTO();
         dto2.setId(tk.getId());
-        dto2.setBrojRacuna(tk.getBrojRacuna());
+        dto2.setBrojRacuna(tk.getBrojRacuna().toString());
         dto2.setVlasnik(tk.getVlasnik());
         dto2.setStanje(tk.getStanje());
         dto2.setRaspolozivoStanje(tk.getRaspolozivoStanje());
@@ -420,7 +420,7 @@ public class RacunServisImplTests {
         RacunDTO dto = new RacunDTO();
 
         dto.setId(pr.getId());
-        dto.setBrojRacuna(pr.getBrojRacuna());
+        dto.setBrojRacuna(pr.getBrojRacuna().toString());
         dto.setVlasnik(pr.getFirma());
         dto.setStanje(pr.getStanje());
         dto.setRaspolozivoStanje(pr.getRaspolozivoStanje());
