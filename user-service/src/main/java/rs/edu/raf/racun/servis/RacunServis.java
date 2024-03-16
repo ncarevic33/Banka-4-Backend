@@ -28,4 +28,5 @@ public interface RacunServis {
     public String nadjiVrstuRacuna(Long BrojRacuna);
     public List<FirmaDTO> izlistajSveFirme();
     public Firma kreirajFirmu(NovaFirmaDTO firma);
+    public boolean deaktiviraj(Long brojRacuna);
 }

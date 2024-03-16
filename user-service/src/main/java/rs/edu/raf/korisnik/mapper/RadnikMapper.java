@@ -1,90 +1,56 @@
 package rs.edu.raf.korisnik.mapper;
 
 import lombok.AllArgsConstructor;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
-import rs.edu.raf.korisnik.dto.IzmenaSifreUzKodDto;
-import rs.edu.raf.korisnik.dto.KorisnikDTO;
-import rs.edu.raf.korisnik.dto.NoviKorisnikDTO;
-import rs.edu.raf.korisnik.dto.RegistrujKorisnikDTO;
-import rs.edu.raf.korisnik.model.Korisnik;
+import rs.edu.raf.korisnik.dto.NoviRadnikDTO;
+import rs.edu.raf.korisnik.dto.RadnikDTO;
 import rs.edu.raf.korisnik.model.Radnik;
-import rs.edu.raf.korisnik.repository.KorisnikRepository;
 import rs.edu.raf.korisnik.repository.RadnikRepository;
-
-import java.util.Optional;
 
 @Component
 @AllArgsConstructor
-public class KorisnikMapper{
+public class RadnikMapper {
 
+    public Radnik noviRadnikDtoToRadnik(NoviRadnikDTO noviRadnikDTO){
+        Radnik radnik = new Radnik();
 
-    private KorisnikRepository korisnikRepository;
-    private RadnikRepository radnikRepository;
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
+        radnik.setId(null);
+        radnik.setIme(noviRadnikDTO.getIme());
+        radnik.setPrezime(noviRadnikDTO.getPrezime());
+        radnik.setJmbg(noviRadnikDTO.getJmbg());
+        radnik.setDatumRodjenja(noviRadnikDTO.getDatumRodjenja());
+        radnik.setPol(noviRadnikDTO.getPol());
+        radnik.setEmail(noviRadnikDTO.getEmail());
+        radnik.setBrojTelefona(noviRadnikDTO.getBrojTelefona());
+        radnik.setAdresa(noviRadnikDTO.getAdresa());
+        radnik.setUsername(noviRadnikDTO.getUsername());
+        radnik.setPassword(noviRadnikDTO.getPassword());
+        radnik.setSaltPassword(noviRadnikDTO.getSaltPassword());
+        radnik.setPozicija(noviRadnikDTO.getPozicija());
+        radnik.setDepartman(noviRadnikDTO.getDepartman());
+        radnik.setPermisije(noviRadnikDTO.getPermisije());
+        radnik.setAktivan(noviRadnikDTO.isAktivan());
 
-
-    public Korisnik noviKorisnikDtoToKorisnik(NoviKorisnikDTO noviKorisnikDTO) {
-        Korisnik korisnik = new Korisnik();
-
-        korisnik.setIme(noviKorisnikDTO.getIme());
-        korisnik.setPrezime(noviKorisnikDTO.getPrezime());
-        korisnik.setJmbg(noviKorisnikDTO.getJmbg());
-        korisnik.setDatumRodjenja(noviKorisnikDTO.getDatumRodjenja());
-        korisnik.setPol(noviKorisnikDTO.getPol());
-        korisnik.setEmail(noviKorisnikDTO.getEmail());
-        korisnik.setBrojTelefona(noviKorisnikDTO.getBrojTelefona());
-        korisnik.setAdresa(noviKorisnikDTO.getAdresa());
-        korisnik.setAktivan(noviKorisnikDTO.isAktivan());
-
-        return korisnik;
+        return radnik;
     }
 
-    public Korisnik registrujKorisnikDtoToKorisnik(RegistrujKorisnikDTO registrujKorisnikDTO) {
+    public RadnikDTO radnikToRadnikDto(Radnik radnik) {
+        RadnikDTO radnikDTO = new RadnikDTO();
 
-        Optional<Korisnik> korisnik = korisnikRepository.findByEmailAndAktivanIsTrue(registrujKorisnikDTO.getEmail());
+        radnikDTO.setId(radnik.getId());
+        radnikDTO.setIme(radnik.getIme());
+        radnikDTO.setPrezime(radnik.getPrezime());
+        radnikDTO.setJmbg(radnik.getJmbg());
+        radnikDTO.setDatumRodjenja(radnik.getDatumRodjenja());
+        radnikDTO.setPol(radnik.getPol());
+        radnikDTO.setEmail(radnik.getEmail());
+        radnikDTO.setBrojTelefona(radnik.getBrojTelefona());
+        radnikDTO.setAdresa(radnik.getAdresa());
+        radnikDTO.setUsername(radnik.getUsername());
+        radnikDTO.setPozicija(radnik.getPozicija());
+        radnikDTO.setDepartman(radnik.getDepartman());
+        radnikDTO.setPermisije(radnik.getPermisije());
 
-        if (korisnik.isPresent()){
-            korisnik.get().setPassword(bCryptPasswordEncoder.encode(registrujKorisnikDTO.getPassword()));
-            return korisnik.get();
-        }
-
-        return null;
+        return radnikDTO;
     }
-
-    public Radnik registrujRadnikDtoToRadnik(RegistrujKorisnikDTO registrujKorisnikDTO){
-        Optional<Radnik> radnik = radnikRepository.findByEmailAndAktivanIsTrue(registrujKorisnikDTO.getEmail());
-        if(radnik.isPresent()){
-            radnik.get().setPassword(bCryptPasswordEncoder.encode(registrujKorisnikDTO.getPassword()));
-            return radnik.get();
-        }
-        return null;
-    }
-
-    public KorisnikDTO korisnikToKorisnikDto(Korisnik korisnik) {
-        KorisnikDTO korisnikDTO = new KorisnikDTO();
-
-        korisnikDTO.setId(korisnik.getId());
-        korisnikDTO.setIme(korisnik.getIme());
-        korisnikDTO.setPrezime(korisnik.getPrezime());
-        korisnikDTO.setJmbg(korisnik.getJmbg());
-        korisnikDTO.setDatumRodjenja(korisnik.getDatumRodjenja());
-        korisnikDTO.setPol(korisnik.getPol());
-        korisnikDTO.setEmail(korisnik.getEmail());
-        korisnikDTO.setBrojTelefona(korisnik.getBrojTelefona());
-        korisnikDTO.setAdresa(korisnik.getAdresa());
-        korisnikDTO.setPovezaniRacuni(korisnik.getPovezaniRacuni());
-
-        return korisnikDTO;
-    }
-
-    public Korisnik izmenaSifreDtoToKorisnik(IzmenaSifreUzKodDto izmenaSifreUzKodDto) {
-        Optional<Korisnik> korisnik = korisnikRepository.findByEmailAndAktivanIsTrue(izmenaSifreUzKodDto.getEmail());
-        if(korisnik.isPresent()) {
-            korisnik.get().setPassword(bCryptPasswordEncoder.encode(izmenaSifreUzKodDto.getSifra()));
-            return korisnik.get();
-        }
-        return null;
-    }
-
 }

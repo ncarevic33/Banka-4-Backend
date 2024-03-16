@@ -287,4 +287,29 @@ public class RacunServisImpl implements RacunServis {
         return this.firmaRepository.save(f);
     }
 
+    @Override
+    public boolean deaktiviraj(Long brojRacuna) {
+        String  vrsta = nadjiVrstuRacuna(brojRacuna);
+        switch (vrsta){
+            case "PravniRacun" -> {
+                PravniRacun pravniRacun = nadjiAktivanPravniRacunPoBrojuRacuna(brojRacuna);
+                pravniRacun.setAktivan(false);
+                pravniRacunRepository.save(pravniRacun);
+                return true;
+            }
+            case "DevizniRacun" -> {
+                DevizniRacun devizniRacun = nadjiAktivanDevizniRacunPoBrojuRacuna(brojRacuna);
+                devizniRacun.setAktivan(false);
+                devizniRacunRepository.save(devizniRacun);
+                return true;
+            }
+            case "TekuciRacun" -> {
+                TekuciRacun tekuciRacun = nadjiAktivanTekuciRacunPoBrojuRacuna(brojRacuna);
+                tekuciRacun.setAktivan(false);
+                tekuciRacunRepository.save(tekuciRacun);
+                return true;
+            }
+        }
+        return false;
+    }
 }

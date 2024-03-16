@@ -218,6 +218,7 @@ public class KorisnikServisImpl implements KorisnikServis {
     public List<RadnikDTO> izlistajSveAktivneRadnike() {
 
         List<Radnik> radnici = radnikRepository.findAllByAktivanIsTrue();
+        radnici.forEach(System.out::println);
 
         return radnici.stream().map(radnikMapper::radnikToRadnikDto).collect(Collectors.toList());
     }
