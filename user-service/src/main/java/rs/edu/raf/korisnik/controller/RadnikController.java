@@ -3,6 +3,7 @@ package rs.edu.raf.korisnik.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,14 +25,14 @@ public class RadnikController {
 
     @PostMapping
     @Operation(description = "Dodaj novog radnika")
-    public ResponseEntity<RadnikDTO> dodajRadnika(@RequestBody @Parameter(description = "Podaci o radniku") NoviRadnikDTO noviRadnikDTO) {
+    public ResponseEntity<RadnikDTO> dodajRadnika(@RequestBody @Valid @Parameter(description = "Podaci o radniku") NoviRadnikDTO noviRadnikDTO) {
         System.out.println(noviRadnikDTO);
         return new ResponseEntity<>(korisnikServis.kreirajNovogRadnika(noviRadnikDTO), HttpStatus.CREATED);
     }
 
     @PutMapping
     @Operation(description = "Izmeni postojeceg radnika")
-    public ResponseEntity<RadnikDTO> izmeniRadnika(@RequestBody @Parameter(description = "Novi podaci o radniku") IzmenaRadnikaDTO izmenaRadnikaDTO) {
+    public ResponseEntity<RadnikDTO> izmeniRadnika(@RequestBody @Valid @Parameter(description = "Novi podaci o radniku") IzmenaRadnikaDTO izmenaRadnikaDTO) {
         return new ResponseEntity<>(korisnikServis.izmeniRadnika(izmenaRadnikaDTO),HttpStatus.OK);
     }
 

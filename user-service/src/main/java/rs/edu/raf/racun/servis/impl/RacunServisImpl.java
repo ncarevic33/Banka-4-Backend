@@ -1,8 +1,10 @@
 package rs.edu.raf.racun.servis.impl;
 
-import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import rs.edu.raf.korisnik.exceptions.BankAccountNotFoundException;
+import rs.edu.raf.korisnik.exceptions.CompanyNotFoundException;
+import rs.edu.raf.korisnik.exceptions.UserNotFoundException;
 import rs.edu.raf.korisnik.model.Korisnik;
 import rs.edu.raf.korisnik.repository.KorisnikRepository;
 import rs.edu.raf.racun.dto.*;
@@ -18,7 +20,6 @@ import rs.edu.raf.transakcija.repository.DevizniRacunRepository;
 import rs.edu.raf.transakcija.repository.PravniRacunRepository;
 import rs.edu.raf.transakcija.repository.TekuciRacunRepository;
 
-import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -49,8 +50,8 @@ public class RacunServisImpl implements RacunServis {
     public DevizniRacun kreirajDevizniRacun(NoviDevizniRacunDTO noviDevizniRacunDTO) {
         DevizniRacun dr = racunMapper.noviDevizniRacunDTOToDevizniRacun(noviDevizniRacunDTO);
         DevizniRacun drRepo = this.devizniRacunRepository.save(dr);
-        Optional<Korisnik> korisnik = korisnikRepository.findById(drRepo.getVlasnik());
-        korisnik.ifPresent(k -> dodajDevizniRacunKorisniku(drRepo, k));
+        Korisnik korisnik = korisnikRepository.findById(drRepo.getVlasnik()).orElseThrow(()->new UserNotFoundException("User with id " + drRepo.getVlasnik() + "doesn't exist!"));
+        dodajDevizniRacunKorisniku(drRepo,korisnik);
         return drRepo;
     }
 
@@ -58,8 +59,8 @@ public class RacunServisImpl implements RacunServis {
     public PravniRacun kreirajPravniRacun(NoviPravniRacunDTO noviPravniRacunDTO) {
         PravniRacun pr = racunMapper.noviPravniRacunDTOToPravniRacun(noviPravniRacunDTO);
         PravniRacun prRepo = this.pravniRacunRepository.save(pr);
-        Optional<Firma> firma = firmaRepository.findById(prRepo.getFirma());
-        firma.ifPresent(f -> dodajPravniRacunFirmi(prRepo, f));
+        Firma firma = firmaRepository.findById(prRepo.getFirma()).orElseThrow(()->new CompanyNotFoundException("Company with id " + prRepo.getFirma() + " doesn't exist!"));
+        dodajPravniRacunFirmi(prRepo,firma);
         return prRepo;
     }
 
@@ -67,14 +68,14 @@ public class RacunServisImpl implements RacunServis {
     public TekuciRacun kreirajTekuciRacun(NoviTekuciRacunDTO noviTekuciRacunDTO) {
         TekuciRacun tr = racunMapper.noviTekuciRacunDTOToTekuciRacun(noviTekuciRacunDTO);
         TekuciRacun trRepo = this.tekuciRacunRepository.save(tr);
-        Optional<Korisnik> korisnik = korisnikRepository.findById(trRepo.getVlasnik());
-        korisnik.ifPresent(k -> dodajTekuciRacunKorisniku(trRepo, k));
+        Korisnik korisnik = korisnikRepository.findById(trRepo.getVlasnik()).orElseThrow(()->new UserNotFoundException("User with id " + trRepo.getVlasnik() + "doesn't exist!"));
+        dodajTekuciRacunKorisniku(trRepo,korisnik);
         return trRepo;
     }
 
     @Override
     public List<RacunDTO> izlistavanjeRacunaJednogKorisnika(Long idKorisnika) {
-        Korisnik k = korisnikRepository.findById(idKorisnika).orElse(null);
+        Korisnik k = korisnikRepository.findById(idKorisnika).orElseThrow(()->new UserNotFoundException("User with id " + idKorisnika + "doesn't exist!"));
         List<RacunDTO> racunDTOs = new ArrayList<>();
         if (k != null && k.getPovezaniRacuni()!= null) {
             RacunDTO dto;
@@ -82,13 +83,13 @@ public class RacunServisImpl implements RacunServis {
             for (String r : racuni) {
                 String vrsta = nadjiVrstuRacuna(Long.parseLong(r));
                 if (Objects.equals(vrsta, "DevizniRacun")) {
-                    DevizniRacun dr = this.devizniRacunRepository.findByBrojRacunaAndAktivanIsTrue(Long.parseLong(r)).orElse(null);
+                    DevizniRacun dr = this.devizniRacunRepository.findByBrojRacunaAndAktivanIsTrue(Long.parseLong(r)).orElseThrow(()->new BankAccountNotFoundException("Bank account " + r + " not found!"));
                     if (dr != null) {
                         dto = racunMapper.devizniRacunToRacunDTO(dr);
                         racunDTOs.add(dto);
                     }
                 } else if (Objects.equals(vrsta, "TekuciRacun")) {
-                    TekuciRacun tr = this.tekuciRacunRepository.findByBrojRacunaAndAktivanIsTrue(Long.parseLong(r)).orElse(null);
+                    TekuciRacun tr = this.tekuciRacunRepository.findByBrojRacunaAndAktivanIsTrue(Long.parseLong(r)).orElseThrow(()->new BankAccountNotFoundException("Bank account " + r + " not found!"));
                     if (tr != null) {
                         dto = racunMapper.tekuciRacunToRacunDTO(tr);
                         racunDTOs.add(dto);
@@ -96,12 +97,12 @@ public class RacunServisImpl implements RacunServis {
                 }
             }
         } else {
-            Firma f = firmaRepository.findById(idKorisnika).orElse(null);
+            Firma f = firmaRepository.findById(idKorisnika).orElseThrow(()->new CompanyNotFoundException("Company from user with id " + idKorisnika + " doesn't exist!"));
             if (f != null) {
                 RacunDTO dto;
                 List<String> racuni = List.of(f.getPovezaniRacuni().split(","));
                 for (String r : racuni) {
-                    PravniRacun pr = this.pravniRacunRepository.findByBrojRacunaAndAktivanIsTrue(Long.parseLong(r)).orElse(null);
+                    PravniRacun pr = this.pravniRacunRepository.findByBrojRacunaAndAktivanIsTrue(Long.parseLong(r)).orElseThrow(()->new BankAccountNotFoundException("Bank account " + r + " not found!"));
                     if (pr != null) {
                         dto = racunMapper.pravniRacunToRacunDTO(pr);
                         racunDTOs.add(dto);
@@ -128,41 +129,41 @@ public class RacunServisImpl implements RacunServis {
             dto = racunMapper.tekuciRacunToRacunDTO(tr);
             return dto;
         }
-        return null;
+        throw new BankAccountNotFoundException("Bank account " + id + " not found!");
     }
 
     @Override
     public DevizniRacun nadjiAktivanDevizniRacunPoID(Long id) {
-        return this.devizniRacunRepository.findByIdAndAktivanIsTrue(id).orElse(null);
+        return this.devizniRacunRepository.findByIdAndAktivanIsTrue(id).orElseThrow(()->new BankAccountNotFoundException("Bank account " + id + " not found!"));
     }
 
     @Override
     public PravniRacun nadjiAktivanPravniRacunPoID(Long id) {
-        return this.pravniRacunRepository.findByIdAndAktivanIsTrue(id).orElse(null);
+        return this.pravniRacunRepository.findByIdAndAktivanIsTrue(id).orElseThrow(()->new BankAccountNotFoundException("Bank account " + id + " not found!"));
     }
 
     @Override
     public TekuciRacun nadjiAktivanTekuciRacunPoID(Long id) {
-        return this.tekuciRacunRepository.findByIdAndAktivanIsTrue(id).orElse(null);
+        return this.tekuciRacunRepository.findByIdAndAktivanIsTrue(id).orElseThrow(()->new BankAccountNotFoundException("Bank account " + id + " not found!"));
     }
 
     @Override
     public RacunDTO nadjiAktivanRacunPoBrojuRacuna(Long BrojRacuna) {
         RacunDTO dto;
         if (BrojRacuna % 100 == 11) {
-            DevizniRacun dr = this.devizniRacunRepository.findByBrojRacunaAndAktivanIsTrue(BrojRacuna).orElse(null);
+            DevizniRacun dr = this.devizniRacunRepository.findByBrojRacunaAndAktivanIsTrue(BrojRacuna).orElseThrow(()->new BankAccountNotFoundException("Bank account " + BrojRacuna + " not found!"));
             if (dr != null) {
                 dto = racunMapper.devizniRacunToRacunDTO(dr);
                 return dto;
             }
         } else if (BrojRacuna % 100 == 22) {
-            PravniRacun pr = this.pravniRacunRepository.findByBrojRacunaAndAktivanIsTrue(BrojRacuna).orElse(null);
+            PravniRacun pr = this.pravniRacunRepository.findByBrojRacunaAndAktivanIsTrue(BrojRacuna).orElseThrow(()->new BankAccountNotFoundException("Bank account " + BrojRacuna + " not found!"));
             if (pr != null) {
                 dto = racunMapper.pravniRacunToRacunDTO(pr);
                 return dto;
             }
         } else if (BrojRacuna % 100 == 33) {
-            TekuciRacun tr = this.tekuciRacunRepository.findByBrojRacunaAndAktivanIsTrue(BrojRacuna).orElse(null);
+            TekuciRacun tr = this.tekuciRacunRepository.findByBrojRacunaAndAktivanIsTrue(BrojRacuna).orElseThrow(()->new BankAccountNotFoundException("Bank account " + BrojRacuna + " not found!"));
             if (tr != null) {
                 dto = racunMapper.tekuciRacunToRacunDTO(tr);
                 return dto;
@@ -173,17 +174,17 @@ public class RacunServisImpl implements RacunServis {
 
     @Override
     public DevizniRacun nadjiAktivanDevizniRacunPoBrojuRacuna(Long BrojRacuna) {
-        return this.devizniRacunRepository.findByBrojRacunaAndAktivanIsTrue(BrojRacuna).orElse(null);
+        return this.devizniRacunRepository.findByBrojRacunaAndAktivanIsTrue(BrojRacuna).orElseThrow(()->new BankAccountNotFoundException("Bank account " + BrojRacuna + " not found!"));
     }
 
     @Override
     public PravniRacun nadjiAktivanPravniRacunPoBrojuRacuna(Long BrojRacuna) {
-        return this.pravniRacunRepository.findByBrojRacunaAndAktivanIsTrue(BrojRacuna).orElse(null);
+        return this.pravniRacunRepository.findByBrojRacunaAndAktivanIsTrue(BrojRacuna).orElseThrow(()->new BankAccountNotFoundException("Bank account " + BrojRacuna + " not found!"));
     }
 
     @Override
     public TekuciRacun nadjiAktivanTekuciRacunPoBrojuRacuna(Long BrojRacuna) {
-        return this.tekuciRacunRepository.findByBrojRacunaAndAktivanIsTrue(BrojRacuna).orElse(null);
+        return this.tekuciRacunRepository.findByBrojRacunaAndAktivanIsTrue(BrojRacuna).orElseThrow(()->new BankAccountNotFoundException("Bank account " + BrojRacuna + " not found!"));
     }
 
     @Override

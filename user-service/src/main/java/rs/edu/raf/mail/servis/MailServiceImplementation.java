@@ -7,6 +7,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import rs.edu.raf.korisnik.dto.KorisnikDTO;
 import rs.edu.raf.korisnik.dto.KorisnikDTO;
+import rs.edu.raf.korisnik.exceptions.MailNotSendException;
 
 @Service("MailServiceImplementation")
 public class MailServiceImplementation implements MailServis{
@@ -37,7 +38,7 @@ public class MailServiceImplementation implements MailServis{
             exception.printStackTrace();
         }
 
-        return false;
+        throw new MailNotSendException("Mail za registraciju nije poslat");
     }
 
     @Override
@@ -62,6 +63,6 @@ public class MailServiceImplementation implements MailServis{
             exception.printStackTrace();
         }
 
-        return false;
+        throw new MailNotSendException("Mail za promenu lozinke nije poslat");
     }
 }

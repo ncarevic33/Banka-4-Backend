@@ -10,13 +10,13 @@ public class IzmenaRadnikaDTO {
 
     private Long id;
 
-    @Pattern(regexp = "^[a-zA-Z]+$\n", message = "Samo jedno ili više slova su dozvoljena!")
+    @Pattern(regexp = "^[a-zA-Z]+$", message = "Samo jedno ili više slova su dozvoljena!")
     private String prezime;
 
     @Pattern(regexp = "^[M|F]$", message = "Pol može biti M ili F!")
     private String pol;
 
-    @Pattern(regexp = "^(\\+381|0)6\\d{7,8}$\n", message = "Broj telefona mora biti formata +381/0 6 praćen sa 6 ili 7 cifara!")
+    @Pattern(regexp = "^(\\+381|0)6\\d{7,8}$", message = "Broj telefona mora biti formata +381/0 6 praćen sa 6 ili 7 cifara!")
     private String brojTelefona;
 
     private String adresa;
