@@ -14,7 +14,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-@IdClass(CurrencyId.class)
+@IdClass(InflationId.class)
 public class Inflation {
 
     @Id

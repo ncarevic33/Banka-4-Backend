@@ -7,7 +7,7 @@ import java.io.Serializable;
 
 @NoArgsConstructor
 @AllArgsConstructor
-public class CurrencyId implements Serializable {
+public class InflationId implements Serializable {
 
     private String currency;
 
