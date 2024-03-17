@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -45,7 +46,7 @@ public class KorisnikController {
             @ApiResponse(responseCode = "200", description = "Uspesno logovanje"),
             @ApiResponse(responseCode = "401", description = "Losi kredencijali")
     })
-    public ResponseEntity<String> login(@RequestBody @Parameter(description = "Kredencijali za logovanje") LoginDto loginRequest) {
+    public ResponseEntity<String> login(@RequestBody @Valid @Parameter(description = "Kredencijali za logovanje") LoginDto loginRequest) {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
         } catch (Exception e){
@@ -58,7 +59,7 @@ public class KorisnikController {
 
     @PostMapping("/add")
     @Operation(description = "Dodaj novog korisnika")
-    public ResponseEntity<KorisnikDTO> dodajKorisnika(@RequestBody @Parameter(description = "Podaci o korisniku") NoviKorisnikDTO noviKorisnikDTO) {
+    public ResponseEntity<KorisnikDTO> dodajKorisnika(@RequestBody @Valid @Parameter(description = "Podaci o korisniku") NoviKorisnikDTO noviKorisnikDTO) {
         return new ResponseEntity<>(korisnikServis.kreirajNovogKorisnika(noviKorisnikDTO), HttpStatus.OK);
     }
 
@@ -68,7 +69,7 @@ public class KorisnikController {
             @ApiResponse(responseCode = "200", description = "Uspesna promena korisnika"),
             @ApiResponse(responseCode = "403", description = "Mozes samo sebi da menjas podatke")
     })
-    public ResponseEntity<KorisnikDTO> izmeniKorisnika(@RequestBody @Parameter(description = "Novi podaci o korisniku") IzmenaKorisnikaDTO izmenaKorisnikaDTO) {
+    public ResponseEntity<KorisnikDTO> izmeniKorisnika(@RequestBody @Valid @Parameter(description = "Novi podaci o korisniku") IzmenaKorisnikaDTO izmenaKorisnikaDTO) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = "";
         Long permission = 0L;
@@ -108,33 +109,33 @@ public class KorisnikController {
 
     @PostMapping("/generate-login")
     @Operation(description = "Generisanje koda pri prvom logovanju korisnika")
-    public ResponseEntity<String> generisiKod(@RequestBody @Parameter(description = "Podaci o korisniku") DodavanjeSifreDTO dodavanjeSifreDTO) {
+    public ResponseEntity<String> generisiKod(@RequestBody @Valid @Parameter(description = "Podaci o korisniku") DodavanjeSifreDTO dodavanjeSifreDTO) {
         String kod = UUID.randomUUID().toString();
         KorisnikDTO korisnikDTO = korisnikServis.nadjiAktivnogKorisnikaPoEmail(dodavanjeSifreDTO.getEmail());
-        kodServis.dodajKod(dodavanjeSifreDTO.getEmail(),kod,new Date(System.currentTimeMillis() + 1000 * 60 * 15).getTime(),false);
         mailServis.posaljiMailZaRegistraciju(korisnikDTO, kod);
+        kodServis.dodajKod(dodavanjeSifreDTO.getEmail(),kod,new Date(System.currentTimeMillis() + 1000 * 60 * 15).getTime(),false);
         return new ResponseEntity<>("Kod je poslat",HttpStatus.OK);
     }
 
     @PostMapping("/generate-reset")
     @Operation(description = "Slanje koda za resetovanje sifre na email korisnika")
-    public ResponseEntity<String> generisiKodResetovanje(@RequestBody @Parameter(description = "Podaci o korisniku") DodavanjeSifreDTO dodavanjeSifreDTO) {
+    public ResponseEntity<String> generisiKodResetovanje(@RequestBody @Valid @Parameter(description = "Podaci o korisniku") DodavanjeSifreDTO dodavanjeSifreDTO) {
         String kod = UUID.randomUUID().toString();
         KorisnikDTO korisnikDTO = korisnikServis.nadjiAktivnogKorisnikaPoEmail(dodavanjeSifreDTO.getEmail());
-        kodServis.dodajKod(dodavanjeSifreDTO.getEmail(),kod,new Date(System.currentTimeMillis() + 1000 * 60 * 15).getTime(),true);
         mailServis.posaljiMailZaPromenuLozinke(korisnikDTO, kod);
+        kodServis.dodajKod(dodavanjeSifreDTO.getEmail(),kod,new Date(System.currentTimeMillis() + 1000 * 60 * 15).getTime(),true);
         return new ResponseEntity<>("Kod je poslat",HttpStatus.OK);
     }
 
     @PostMapping("/verifikacija")
     @Operation(description = "Verifikacija koda i postavljanje sifre korisnika")
-    public ResponseEntity<Boolean> registruj(@RequestBody @Parameter(description = "Podaci o korisniku i sfri") RegistrujKorisnikDTO registrujKorisnikDTO) {
+    public ResponseEntity<Boolean> registruj(@RequestBody @Valid @Parameter(description = "Podaci o korisniku i sfri") RegistrujKorisnikDTO registrujKorisnikDTO) {
         return new ResponseEntity<>(korisnikServis.registrujNovogKorisnika(registrujKorisnikDTO),HttpStatus.OK);
     }
 
     @PostMapping("/reset-password")
     @Operation(description = "Postavljanje nove sifre")
-    public ResponseEntity<?> resetPassword(@RequestBody @Parameter(description = "Nova sifra i postojeci podaci") IzmenaSifreUzKodDto izmenaSifreUzKodDto) {
+    public ResponseEntity<?> resetPassword(@RequestBody @Valid @Parameter(description = "Nova sifra i postojeci podaci") IzmenaSifreUzKodDto izmenaSifreUzKodDto) {
         return new ResponseEntity<>(korisnikServis.promeniSifruKorisnikaUzKod(izmenaSifreUzKodDto),HttpStatus.OK);
     }
 

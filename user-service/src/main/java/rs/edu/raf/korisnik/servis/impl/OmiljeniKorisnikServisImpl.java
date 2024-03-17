@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import rs.edu.raf.korisnik.dto.OmiljeniKorisnikDTO;
+import rs.edu.raf.korisnik.exceptions.UserNotFoundException;
 import rs.edu.raf.korisnik.repository.OmiljeniKorisnikRepository;
 import rs.edu.raf.korisnik.servis.OmiljeniKorisnikMapper;
 import rs.edu.raf.korisnik.servis.OmiljeniKorisnikServis;
@@ -35,6 +36,6 @@ public class OmiljeniKorisnikServisImpl implements OmiljeniKorisnikServis {
 
     @Override
     public OmiljeniKorisnikDTO findById(Long id) {
-        return OmiljeniKorisnikMapper.toDTO(omiljeniKorisnikRepository.findById(id).orElse(null));
+        return OmiljeniKorisnikMapper.toDTO(omiljeniKorisnikRepository.findById(id).orElseThrow(()->new UserNotFoundException("Omiljeni korisnik sa id " + id + " ne postoji!")));
     }
 }

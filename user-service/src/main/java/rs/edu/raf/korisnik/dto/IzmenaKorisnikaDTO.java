@@ -9,7 +9,7 @@ public class IzmenaKorisnikaDTO {
     
     private Long id;
 
-    @Pattern(regexp = "^[a-zA-Z]+$\n", message = "Samo jedno ili više slova su dozvoljena!")
+    @Pattern(regexp = "^[a-zA-Z]+$", message = "Samo jedno ili više slova su dozvoljena!")
     private String prezime;
 
     @Pattern(regexp = "^[M|F]$", message = "Pol može biti M ili F!")
@@ -18,7 +18,7 @@ public class IzmenaKorisnikaDTO {
     @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", message = "Email adresa mora biti validna!")
     private String email;
 
-    @Pattern(regexp = "^(\\+381|0)6\\d{7,8}$\n", message = "Broj telefona mora biti formata +381/0 6 praćen sa 6 ili 7 cifara!")
+    @Pattern(regexp = "^(\\+381|0)6\\d{7,8}$", message = "Broj telefona mora biti formata +381/06 praćen sa 6 ili 7 cifara!")
     private String brojTelefona;
 
     private String adresa;
