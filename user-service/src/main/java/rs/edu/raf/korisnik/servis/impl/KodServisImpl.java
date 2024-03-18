@@ -2,6 +2,7 @@ package rs.edu.raf.korisnik.servis.impl;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import rs.edu.raf.korisnik.exceptions.InvalidTokenException;
 import rs.edu.raf.korisnik.model.Kod;
 import rs.edu.raf.korisnik.repository.KodRepository;
 import rs.edu.raf.korisnik.servis.KodServis;
@@ -27,7 +28,8 @@ public class KodServisImpl implements KodServis {
                 kodRepository.delete(k.get());
                 return true;
             }
+            throw new InvalidTokenException("Token " + kod + " is not valid!");
         }
-        return false;
+        throw new InvalidTokenException("Token " + kod + " doesn't exist!");
     }
 }

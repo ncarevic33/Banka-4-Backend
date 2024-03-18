@@ -5,6 +5,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import rs.edu.raf.korisnik.dto.*;
 import rs.edu.raf.korisnik.exceptions.JMBGDateMismatchException;
+import rs.edu.raf.korisnik.exceptions.UserNotFoundException;
 import rs.edu.raf.korisnik.mapper.KorisnikMapper;
 import rs.edu.raf.korisnik.mapper.RadnikMapper;
 import rs.edu.raf.korisnik.model.Korisnik;
@@ -98,7 +99,7 @@ public class KorisnikServisImpl implements KorisnikServis {
                 return korisnikMapper.korisnikToKorisnikDto(korisnikRepository.save(korisnik.get()));
             }
         }
-        return null;
+        throw new UserNotFoundException("User with email " + email + " not found!");
     }
 
     @Override
@@ -166,7 +167,7 @@ public class KorisnikServisImpl implements KorisnikServis {
 
             return korisnikMapper.korisnikToKorisnikDto(korisnikRepository.save(korisnik.get()));
         }
-        return null;
+        throw new UserNotFoundException("User with id " + izmenaKorisnikaDTO.getId() + " not found!");
     }
 
     @Override
@@ -211,7 +212,7 @@ public class KorisnikServisImpl implements KorisnikServis {
             return radnikMapper.radnikToRadnikDto(radnikRepository.save(radnik.get()));
         }
 
-        return null;
+        throw new UserNotFoundException("Employee with id " + izmenaRadnikaDTO.getId() + " not found!");
     }
 
     @Override
@@ -236,7 +237,7 @@ public class KorisnikServisImpl implements KorisnikServis {
 
         Optional<Radnik> radnik = radnikRepository.findByEmailAndAktivanIsTrue(email);
 
-        return radnik.map(radnikMapper::radnikToRadnikDto).orElse(null);
+        return radnik.map(radnikMapper::radnikToRadnikDto).orElseThrow(()->new UserNotFoundException("Employee with phone " + email + " not found!"));
     }
 
     @Override
@@ -244,7 +245,7 @@ public class KorisnikServisImpl implements KorisnikServis {
 
         Optional<Korisnik> korisnik = korisnikRepository.findByEmailAndAktivanIsTrue(email);
 
-        return korisnik.map(korisnikMapper::korisnikToKorisnikDto).orElse(null);
+        return korisnik.map(korisnikMapper::korisnikToKorisnikDto).orElseThrow(()->new UserNotFoundException("User with email " + email + " not found!"));
     }
 
     @Override
@@ -252,7 +253,7 @@ public class KorisnikServisImpl implements KorisnikServis {
 
         Optional<Korisnik> korisnik = korisnikRepository.findByJmbgAndAktivanIsTrue(jmbg);
 
-        return korisnik.map(korisnikMapper::korisnikToKorisnikDto).orElse(null);
+        return korisnik.map(korisnikMapper::korisnikToKorisnikDto).orElseThrow(()->new UserNotFoundException("User with jmbg " + jmbg + " not found!"));
     }
 
     @Override
@@ -260,7 +261,7 @@ public class KorisnikServisImpl implements KorisnikServis {
 
         Optional<Korisnik> korisnik = korisnikRepository.findByBrojTelefonaAndAktivanIsTrue(brojTelefona);
 
-        return korisnik.map(korisnikMapper::korisnikToKorisnikDto).orElse(null);
+        return korisnik.map(korisnikMapper::korisnikToKorisnikDto).orElseThrow(()->new UserNotFoundException("User with phone " + brojTelefona + " not found!"));
     }
 }
 
