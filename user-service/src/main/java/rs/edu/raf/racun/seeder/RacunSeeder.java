@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+
+
 @Component
 public class RacunSeeder implements CommandLineRunner {
 
@@ -54,8 +56,28 @@ public class RacunSeeder implements CommandLineRunner {
         this.transakcijaServis = transakcijaServis;
     }
 
+    //automatski se izvrsava pri pokretanju spring boota za dodavanje entiteta u bazu
     @Override
     public void run(String... args) throws Exception {
+
+        Korisnik korisnik1 = new Korisnik();
+        korisnik1.setIme("N");
+        korisnik1.setPrezime("C");
+        korisnik1.setJmbg(1705000799957L);
+
+        //1705000793457L je long
+        //new Long(1705000793457) je Long
+
+        korisnik1.setDatumRodjenja(958514400000L);
+        korisnik1.setPol("M");
+        korisnik1.setEmail("ncarevic8020rn@raf.rs");
+        korisnik1.setBrojTelefona("+381600176991");
+        korisnik1.setAdresa("Moja adresa");
+        korisnik1.setPassword("$2a$04$3sS/XqJnT7fp.4jQHJoBxuflVAxbLDU4Z3Hp9Ww/USvionp32Y18K");
+        korisnik1.setSaltPassword("S4lt");
+        korisnik1.setPovezaniRacuni("444000000900000033,444000000920000033");
+        korisnik1.setAktivan(true);
+        korisnikRepository.save(korisnik1);
 
         Korisnik korisnik = new Korisnik();
         korisnik.setIme("Petar");
