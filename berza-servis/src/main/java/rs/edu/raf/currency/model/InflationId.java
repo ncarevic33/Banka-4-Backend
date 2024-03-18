@@ -11,8 +11,6 @@ public class InflationId implements Serializable {
 
     private String currency;
 
-    private String year;
-
-    private String inflationRate;
+    private String inflYear;
 
 }

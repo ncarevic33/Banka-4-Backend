@@ -23,9 +23,8 @@ public class Inflation {
 
     @Id
     @NotBlank
-    private String year;
+    private String inflYear;
 
-    @Id
     @NotBlank
     private String inflationRate;
 }
