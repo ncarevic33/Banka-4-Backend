@@ -16,63 +16,42 @@ import java.util.Optional;
 public interface TransakcijaServis {
 
 
-    //potrebno je obezbediti detaljan pregled svake transakcije po id
-    PrenosSredstavaDTO dobaviPrenosSretstavaDTOPoID(Long id);
-    UplataDTO dobaciUplatuSretstavaDTOPoID(Long id);
-    //////////////////////////////////////////////////
+    PrenosSredstavaDTO dobaviPrenosSretstavaDTOPoID(String id);
+    UplataDTO dobaciUplatuSretstavaDTOPoID(String id);
 
-    //DODATO
-    //potrebno je napraviti opciju za pregled svih transakcija po id klijenta
+
     Korisnik getAllTransactionsByKorisnikId(Long korisnikId);
 
-
-    //potrebno je napraviti opciju za pregled svih transakcija po racunu
-
-    //PrenosSredstavaDTO KOJI JE KORISNIK SLAO ILI KOJI MU JE STIGAO
-                                                        //BROJ RACUNA NA KOJI SE SALJE NOVAC ODNOSNO NA KOJI STIZE
     List<PrenosSredstavaDTO> dobaviPrenosSretstavaDTOPoBrojuPrimaoca(Long brojPrimaoca);
-                                                        //BROJ RACUNA SA KOG STIZE NOVAC ODNOSNO SA KOG SE SALJE
     List<PrenosSredstavaDTO> dobaviPrenosSretstavaDTOPoBrojuPosiljaoca(Long brojPosiljaoca);
 
     //UplataDTO KOJI JE KORISNIK SLAO ILI KOJI MU JE STIGAO
     List<UplataDTO> dobaciUplatuSretstavaDTOPoBrojuPrimaoca(Long brojPrimaoca);
     List<UplataDTO> dobaciUplatuSretstavaDTOPoBrojuPosiljaoca(Long brojPosiljaoca);
-    /////////////////////////////////////////////////////////
 
 
-    ///////////////////////////////////////////////////////////////////
-
-    //DODATO
-    //potrebno je napraviti zahteve koji primaju neku od transakcija ( placanje ili transfer) kao i jednokratnu lozinku ukoliko je sve ispravno vraca OK
     boolean proveraIspravnostiUplataTransakcije(Uplata uplata);
     boolean proveraIspravnostiPrenosSredstavaTransakcije(PrenosSredstava prenosSredstava);
-    ///////////////////////////////////////////////////////////
 
-    //DODATO
-    //potrebno je obezbediti listu prethodno sacuvanih sablona sa cesto koriscenim transakcijama
     List<SablonTransakcije> getSavedTransactionalPatterns();
 
-    //DODATO
-    //potrebno je obezbediti dodavanje novih omiljenih sablona
     SablonTransakcije addNewTransactionalPattern(SablonTransakcije sablonTransakcije);
 
-    //DODATO
-    //potrebno je obezbediti brisanje starih sablona
     boolean deleteTransactionalPattern(Long transactionPatternId);
     void deleteAllTransactionalPatterns();
-    ///////////////////////////////////////////////////////////////////
+
 
     PrenosSredstava sacuvajPrenosSredstava(NoviPrenosSredstavaDTO noviPrenosSredstavaDTO);
 
     Uplata sacuvajUplatu(NovaUplataDTO novaUplataDTO);
 
-    Optional<PrenosSredstava> vratiPrenosSredstavaPoId(Long id);
+    Optional<PrenosSredstava> vratiPrenosSredstavaPoId(String id);
 
-    Optional<Uplata> vratiUplatuPoId(Long id);
+    Optional<Uplata> vratiUplatuPoId(String id);
 
-    PrenosSredstavaDTO vratiPrenosSredstavaDtoPoId(Long id);
+    PrenosSredstavaDTO vratiPrenosSredstavaDtoPoId(String id);
 
-    UplataDTO vratiUplatuDtoPoId(Long id);
+    UplataDTO vratiUplatuDtoPoId(String id);
 
     List<PrenosSredstavaDTO> vratiPrenosSredstavaDtoPoRacunuPrimaoca(Long racunPrimaoca);
 
@@ -90,9 +69,9 @@ public interface TransakcijaServis {
 
     BigDecimal vratiSredstva(Long idRacuna);
 
-    Uplata promeniStatusUplate(Long idUplate, String status, Long vremeIzvrsavanja);
+    Uplata promeniStatusUplate(String idUplate, String status, Long vremeIzvrsavanja);
 
-    PrenosSredstava promeniStatusPrenosaSredstava(Long idPrenosaSredstava, String status, Long vremeIzvrsavanja);
+    PrenosSredstava promeniStatusPrenosaSredstava(String idPrenosaSredstava, String status, Long vremeIzvrsavanja);
 
 
 }

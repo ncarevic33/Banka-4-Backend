@@ -1,33 +1,29 @@
 package rs.edu.raf.transakcija.model;
 
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
 @Data
-@Entity
-@AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "placanja")
+@AllArgsConstructor
+@Document(collection = "uplate")
 public class Uplata {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
-    @Column(nullable = false)
     private Long racunPosiljaoca;
 
-    @Column(nullable = false)
     private String nazivPrimaoca;
 
-    @Column(nullable = false)
     private Long racunPrimaoca;
 
-    @Column(nullable = false)
     private BigDecimal iznos;
 
     private Integer pozivNaBroj;
@@ -36,12 +32,11 @@ public class Uplata {
 
     private String svrhaPlacanja;
 
-    @Column(nullable = false)
     private String status;
 
-    @Column(nullable = false)
     private Long vremeTransakcije;
 
-    private Long vremeIzvrsavanja = null;
+    private Long vremeIzvrsavanja;
 
 }
+

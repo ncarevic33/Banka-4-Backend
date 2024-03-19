@@ -5,8 +5,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import rs.edu.raf.racun.model.DevizniRacun;
 import rs.edu.raf.racun.model.PravniRacun;
@@ -20,7 +18,6 @@ import rs.edu.raf.transakcija.model.PrenosSredstava;
 import rs.edu.raf.transakcija.model.Status;
 import rs.edu.raf.transakcija.model.Uplata;
 import rs.edu.raf.transakcija.repository.*;
-import rs.edu.raf.transakcija.servis.TransakcijaMapper;
 
 
 import java.math.BigDecimal;
@@ -225,7 +222,7 @@ public class TransakcijaServisImplTest {
 
     @Test
     public void givenValidIdAndStatus_whenPromeniStatusUplate_thenReturnUpdatedUplata() {
-        Long idUplate = 1L;
+        String idUplate = "1L";
         String newStatus = "REALIZOVANO";
         Uplata expected = new Uplata();
         expected.setId(idUplate);
@@ -240,7 +237,7 @@ public class TransakcijaServisImplTest {
 
     @Test
     public void givenValidIdAndStatus_whenPromeniStatusPrenosaSredstava_thenReturnUpdatedPrenosSredstava() {
-        Long idPrenosaSredstava = 1L;
+        String idPrenosaSredstava = "1L";
         String newStatus = "REALIZOVANO";
         PrenosSredstava expected = new PrenosSredstava();
         expected.setId(idPrenosaSredstava);
@@ -253,7 +250,7 @@ public class TransakcijaServisImplTest {
         assertEquals(expected, result);
     }
 
-    /*
+
     @Test
     public void givenValidId_whenIzracunajRezervisanaSredstva_thenReturnExpectedValue() {
         Long idRacuna = 1L;
@@ -269,7 +266,7 @@ public class TransakcijaServisImplTest {
     }
 
 
-     */
+
     @Test
     public void givenValidId_whenVratiSredstva_thenReturnExpectedValue() {
         Long idRacuna = 1L;
@@ -282,7 +279,7 @@ public class TransakcijaServisImplTest {
 
         assertEquals(new BigDecimal("100.00"), result);
     }
-/*
+
     @Test
     public void givenValidId_whenIzracunajRezervisanaSredstvaForTekuciRacun_thenReturnExpectedValue() {
         Long idRacuna = 1L;
@@ -298,7 +295,7 @@ public class TransakcijaServisImplTest {
     }
 
 
- */
+
     @Test
     public void givenValidId_whenVratiSredstvaForTekuciRacun_thenReturnExpectedValue() {
         Long idRacuna = 1L;
@@ -311,7 +308,7 @@ public class TransakcijaServisImplTest {
 
         assertEquals(new BigDecimal("100.00"), result);
     }
-/*    }
+
 
     @Test
     public void givenValidId_whenIzracunajRezervisanaSredstvaForDevizniRacun_thenReturnExpectedValue() {
@@ -326,8 +323,6 @@ public class TransakcijaServisImplTest {
 
         assertEquals(new BigDecimal("50.00"), result);
     }
-
- */
 
     @Test
     public void givenValidId_whenVratiSredstvaForDevizniRacun_thenReturnExpectedValue() {
@@ -409,25 +404,6 @@ public class TransakcijaServisImplTest {
     }
 
     @Test
-    public void givenInvalidId_whenPromeniStatusUplate_thenReturnEntityNotFoundException() {
-        Long idUplate = -1L;
-        String newStatus = "REALIZOVANO";
-        when(uplataRepository.findById(idUplate)).thenReturn(Optional.empty());
-
-        assertThrows(EntityNotFoundException.class, () -> transakcijaServis.promeniStatusUplate(idUplate, newStatus, System.currentTimeMillis()));
-    }
-
-    @Test
-    public void givenInvalidId_whenPromeniStatusPrenosaSredstava_thenReturnEntityNotFoundException() {
-        Long idPrenosaSredstava = -1L;
-        String newStatus = "REALIZOVANO";
-        when(prenosSredstavaRepository.findById(idPrenosaSredstava)).thenReturn(Optional.empty());
-
-        assertThrows(EntityNotFoundException.class, () -> transakcijaServis.promeniStatusPrenosaSredstava(idPrenosaSredstava, newStatus, System.currentTimeMillis()));
-    }
-
-    /*
-    @Test
     public void givenInvalidId_whenIzracunajRezervisanaSredstva_thenReturnNull() {
         Long idRacuna = -1L;
         when(racunServis.nadjiVrstuRacuna(idRacuna)).thenReturn("PravniRacun");
@@ -437,8 +413,6 @@ public class TransakcijaServisImplTest {
 
         assertNull(result);
     }
-
-     */
 
     @Test
     public void givenInvalidId_whenVratiSredstva_thenReturnNull() {

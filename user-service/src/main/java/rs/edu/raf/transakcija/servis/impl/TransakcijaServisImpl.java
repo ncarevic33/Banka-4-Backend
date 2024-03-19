@@ -4,7 +4,6 @@ import lombok.Data;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import rs.edu.raf.korisnik.model.Korisnik;
-import rs.edu.raf.korisnik.repository.KorisnikRepository;
 import rs.edu.raf.transakcija.dto.RealizacijaTransakcije;
 import rs.edu.raf.racun.model.DevizniRacun;
 import rs.edu.raf.racun.model.PravniRacun;
@@ -48,12 +47,12 @@ public class TransakcijaServisImpl implements TransakcijaServis {
     /////////////////////////////////////////////////////////////////////////
 
     @Override
-    public PrenosSredstavaDTO dobaviPrenosSretstavaDTOPoID(Long id) {
+    public PrenosSredstavaDTO dobaviPrenosSretstavaDTOPoID(String id) {
         return vratiPrenosSredstavaDtoPoId(id);
     }
 
     @Override
-    public UplataDTO dobaciUplatuSretstavaDTOPoID(Long id) {
+    public UplataDTO dobaciUplatuSretstavaDTOPoID(String id) {
         return vratiUplatuDtoPoId(id);
     }
 
@@ -146,24 +145,24 @@ public class TransakcijaServisImpl implements TransakcijaServis {
     }
 
     @Override
-    public Optional<PrenosSredstava> vratiPrenosSredstavaPoId(Long id) {
+    public Optional<PrenosSredstava> vratiPrenosSredstavaPoId(String id) {
         return prenosSredstavaRepository.findById(id);
     }
 
     @Override
-    public Optional<Uplata> vratiUplatuPoId(Long id) {
+    public Optional<Uplata> vratiUplatuPoId(String id) {
         return uplataRepository.findById(id);
     }
 
     @Override
-    public PrenosSredstavaDTO vratiPrenosSredstavaDtoPoId(Long id) {
+    public PrenosSredstavaDTO vratiPrenosSredstavaDtoPoId(String id) {
         return prenosSredstavaRepository.findById(id)
                 .map(TransakcijaMapper::PrenosSredstavaToDto)
                 .orElseThrow(() -> new EntityNotFoundException("Prenos sredstava sa ID-om " + id + " nije pronađen."));
     }
 
     @Override
-    public UplataDTO vratiUplatuDtoPoId(Long id) {
+    public UplataDTO vratiUplatuDtoPoId(String id) {
         return uplataRepository.findById(id)
                 .map(TransakcijaMapper::PlacanjeToDto)
                 .orElseThrow(() -> new EntityNotFoundException("Placanje sa ID-om " + id + " nije pronađeno."));
@@ -250,7 +249,7 @@ public class TransakcijaServisImpl implements TransakcijaServis {
     }
 
     @Override
-    public Uplata promeniStatusUplate(Long idUplate, String status, Long vremeIzvrsavanja) {
+    public Uplata promeniStatusUplate(String idUplate, String status, Long vremeIzvrsavanja) {
         return uplataRepository.findById(idUplate)
                 .map(uplata -> {
                     uplata.setStatus(status);
@@ -261,7 +260,7 @@ public class TransakcijaServisImpl implements TransakcijaServis {
     }
 
     @Override
-    public PrenosSredstava promeniStatusPrenosaSredstava(Long idPrenosaSredstava, String status, Long vremeIzvrsavanja) {
+    public PrenosSredstava promeniStatusPrenosaSredstava(String idPrenosaSredstava, String status, Long vremeIzvrsavanja) {
         return prenosSredstavaRepository.findById(idPrenosaSredstava)
                 .map(prenosSredstava -> {
                     prenosSredstava.setStatus(status);

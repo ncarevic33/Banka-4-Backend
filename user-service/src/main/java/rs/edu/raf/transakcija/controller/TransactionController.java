@@ -11,12 +11,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import rs.edu.raf.korisnik.model.Korisnik;
-import rs.edu.raf.racun.dto.RacunDTO;
 import rs.edu.raf.transakcija.dto.*;
 import rs.edu.raf.transakcija.mapper.DtoOriginalMapper;
 import rs.edu.raf.transakcija.model.PrenosSredstava;
-import rs.edu.raf.transakcija.model.SablonTransakcije;
 import rs.edu.raf.transakcija.model.Uplata;
 import rs.edu.raf.transakcija.servis.OneTimePasswService;
 import rs.edu.raf.transakcija.servis.TransakcijaServis;
@@ -120,7 +117,7 @@ public class TransactionController {
             @ApiResponse(responseCode = "200", description = "uspesno vracena uplata"),
     })
     @GetMapping(value = "/getUplataTransactionByTransactionId/{uplataId}",produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<UplataDTO> getUplataTransactionById(@PathVariable("uplataId") Long transactionId) {
+    public ResponseEntity<UplataDTO> getUplataTransactionById(@PathVariable("uplataId") String transactionId) {
 
         UplataDTO uplataDTO = transakcijaServis.dobaciUplatuSretstavaDTOPoID(transactionId);
         if(uplataDTO != null)
@@ -133,7 +130,7 @@ public class TransactionController {
             @ApiResponse(responseCode = "200", description = "uspesno vracen prenos sredstava"),
     })
     @GetMapping(value = "/getPrenosSredstavaTransactionByTransactionId/{prenosSredstavaId}",produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<PrenosSredstavaDTO> getPrenosSredstavaTransactionById(@PathVariable("prenosSredstavaId") Long transactionId) {
+    public ResponseEntity<PrenosSredstavaDTO> getPrenosSredstavaTransactionById(@PathVariable("prenosSredstavaId") String transactionId) {
 
         PrenosSredstavaDTO prenosSredstavaDTO = transakcijaServis.dobaviPrenosSretstavaDTOPoID(transactionId);
 
