@@ -1,5 +1,7 @@
 package rs.edu.raf.controller;
 
+import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,6 +18,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/exchange")
 //@AllArgsConstructor
+@Tag(name = "Menjacnica", description = "Funkcionalnosti koje omogucava menjacnica")
 public class ExchangeController {
 
 
@@ -27,6 +30,7 @@ public class ExchangeController {
         this.exchangeRateService = exchangeRateService;
     }
 
+    @ApiOperation(value = "Vraca kursnu listu. Dinar je glavna valuta (RSD).")
     @GetMapping
     public ResponseEntity<List<ExchangeRateResponseDto>> getAllCurrencyRates(@RequestAttribute("userId") Long userId){
 //        public ResponseEntity<List<ExchangeRateResponseDto>> getAllCurrencyRates(@RequestAttribute("userId") Long userId){
