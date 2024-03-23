@@ -3,6 +3,7 @@ package rs.edu.raf.berza.opcija.model;
 import jakarta.persistence.*;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
+import jakarta.validation.ValidationException;
 import jakarta.validation.Validator;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -129,14 +130,14 @@ public class Opcija{
         //theta = -1/daniDoIstekaOpcije;
 
     }
-    private static void validateRequiredDataBeforeDeriving(Opcija option, Validator validator) {
+    private void validateRequiredDataBeforeDeriving(Opcija option, Validator validator) {
 
         Set<ConstraintViolation<Opcija>> violations;
 
             violations = validator.validate(option);
             if (!violations.isEmpty()) {
-                throw new RuntimeException("Validacija nije uspela: " + violations.toString());
-
+                //throw new Exception("Validacija nije uspela: " + violations.toString());
+                //throw new RuntimeException("Validacija nije uspela: " + violations.toString());
         }
     }
 }

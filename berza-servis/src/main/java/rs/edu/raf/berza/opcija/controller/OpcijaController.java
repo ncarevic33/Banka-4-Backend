@@ -1,6 +1,7 @@
 package rs.edu.raf.berza.opcija.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -31,8 +32,8 @@ public class OpcijaController {
     })*/
 
     @PostMapping("kreiraj-opciju")
-    @Operation(description = "Kreiraj opciju")
-    public ResponseEntity<OpcijaDto> kreirajOpciju(@RequestBody NovaOpcijaDto novaOpcijaDto) {
+    @Operation(description = "Kreiraj opciju")      //moze @Valid u kontroleru ili u servisu ekplicitno validator
+    public ResponseEntity<OpcijaDto> kreirajOpciju(@Valid @RequestBody NovaOpcijaDto novaOpcijaDto) {
        return new ResponseEntity<>(opcijaServis.save(novaOpcijaDto),HttpStatus.OK);
 
     }
@@ -46,16 +47,27 @@ public class OpcijaController {
 
 
     @PostMapping("/izvrsi-korisnikovu-opciju/{opcijaId}/{userId}")
-    @Operation(description = "Izvrsi put ili call opciju")
-    public ResponseEntity<KorisnikoveKupljeneOpcije> izvrsiKorisnikovuOpciju(@PathVariable("opcijaId") Long opcijaId, @PathVariable("userId") Long userId){
-        return new ResponseEntity<>(opcijaServis.izvrsiOpciju(opcijaId,userId),HttpStatus.OK);
+    @Operation(description = "Izvrsi put ili call opciju\nVraca null pri nedostupnom podatku")
+    public ResponseEntity<KorisnikoveKupljeneOpcije> izvrsiKorisnikovuOpciju(@PathVariable("opcijaId") Long opcijaId, @PathVariable("userId") Long userId) {
+        KorisnikoveKupljeneOpcije korisnikoveKupljeneOpcije = opcijaServis.izvrsiOpciju(opcijaId, userId);
 
+        if (korisnikoveKupljeneOpcije != null) {
+            return ResponseEntity.ok(korisnikoveKupljeneOpcije);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @GetMapping("/stanje-opcije/{opcijaId}")
-    @Operation(description = "Proveri stanje opcije")
+    @Operation(description = "Proveri stanje opcije\nVraca null pri nedostupnom podatku")
     public ResponseEntity<OpcijaStanje> stanjeOpcije(@PathVariable("opcijaId") Long opcijaId){
-        return new ResponseEntity<>(opcijaServis.proveriStanjeOpcije(opcijaId),HttpStatus.OK);
+        OpcijaStanje stanje = opcijaServis.proveriStanjeOpcije(opcijaId);
+
+        if (stanje != null) {
+            return ResponseEntity.ok(stanje);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
 

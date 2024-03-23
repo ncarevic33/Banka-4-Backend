@@ -55,12 +55,14 @@ public class OpcijaServisImpl implements OpcijaServis {
 
 
     private List<Opcija> fetchAllOptionsForAllTickers() throws IOException {
+
         List<String> tickerNames = finansijaApiUtil.fetchTickerNames();
 
         if(tickerNames.size() == 0)
             return new ArrayList<>();
-                                                                                                                //staviti na tickerNames
-        List<OptionYahooApiMap> yahooOpcije = finansijaApiUtil.fetchOptionsFromYahooApi(Collections.singletonList(tickerNames.get(0)));
+                                                                                                                //staviti na sve tickerNames
+                                                                                                                //Collections.singletonList(tickerNames.get(0))
+        List<OptionYahooApiMap> yahooOpcije = finansijaApiUtil.fetchOptionsFromYahooApi(tickerNames.subList(0, 4));
 
         //log.info(String.valueOf(System.currentTimeMillis()));
         log.info("Gotovo fetchovanje sa yahoo api");
@@ -147,6 +149,7 @@ public class OpcijaServisImpl implements OpcijaServis {
 
         Opcija opcija = opcijaMapper.novaOpcijaDtoToOpcija(novaOpcijaDto);
         opcija = opcijaRepository.save(opcija);
+
         return opcijaMapper.opcijaToOpcijaDto(opcija);
     }
 
@@ -167,9 +170,11 @@ public class OpcijaServisImpl implements OpcijaServis {
     @Transactional//sve promene nad bazom se upisuju u bazu tek kada se metoda uspesno zavrsi,ako dodje do izuzetka radi se roll back
     public void azuirajPostojeceOpcije() throws IOException {
 
+
         List<Opcija> noveAzuriraneOpcije = fetchAllOptionsForAllTickers();
+
         List<Opcija> postojeceOpcije = opcijaRepository.findAll();
-        log.info(String.valueOf(noveAzuriraneOpcije));
+
 
         for(Opcija o:noveAzuriraneOpcije){
             Optional<Opcija> postojecaOpcija = postojeceOpcije.stream()
@@ -205,8 +210,10 @@ public class OpcijaServisImpl implements OpcijaServis {
                 }
                 postojeca.izracunajIzvedeneVrednosti(izvedeneVrednostiUtil);
 
+                //azurirana opcija
                 opcijaRepository.save(postojecaOpcija.get());
             });
+            //nova opcija
             if(!postojecaOpcija.isPresent())
                 opcijaRepository.save(o);
 

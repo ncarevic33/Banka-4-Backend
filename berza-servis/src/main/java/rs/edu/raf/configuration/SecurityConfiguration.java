@@ -13,6 +13,6 @@ class SecurityConfiguration implements WebSecurityCustomizer{
 
     @Override
     public void customize(WebSecurity web) {
-        web.ignoring().requestMatchers(new AntPathRequestMatcher("/h2-console/**"),new AntPathRequestMatcher("/opcija/**"));
-    }
+        web.ignoring().requestMatchers(new AntPathRequestMatcher("/h2-console/**"));
+    }                                                               //,new AntPathRequestMatcher("/opcija/**")
 }

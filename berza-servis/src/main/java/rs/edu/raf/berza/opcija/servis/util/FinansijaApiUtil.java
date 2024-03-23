@@ -45,22 +45,32 @@ public class FinansijaApiUtil {
 
             response = httpClient.execute(httpGet);
             allYahooTickersOptions.addAll(jsonParserUtil.parseBytesToYahooOptionObject(response.getEntity().getContent(), ticker));
+            //obavezno zatvoriti resurs
             response.close();
         }
-        validateOptions(allYahooTickersOptions);
-        //System.out.println(allTickersOptions);
+
+        allYahooTickersOptions = validateOptions(allYahooTickersOptions);
         httpGet = null;
+
+        //System.out.println(allTickersOptions);
 
         return allYahooTickersOptions;
     }
-    private static void validateOptions(List<OptionYahooApiMap> options) {
-        Set<ConstraintViolation<OptionYahooApiMap>> violations;
+    private List<OptionYahooApiMap> validateOptions(List<OptionYahooApiMap> options) {
+
+        List<OptionYahooApiMap> validOptions = new ArrayList<>();
+
         for (OptionYahooApiMap option : options) {
-            violations = validator.validate(option);
-            if (!violations.isEmpty()) {
-                throw new RuntimeException("Validacija nije uspela: " + violations.toString());
-            }
+            Set<ConstraintViolation<OptionYahooApiMap>> violations = validator.validate(option);
+            if (violations.isEmpty()) {
+                validOptions.add(option);
+            }//else {
+            // throw new Exception("Validacija nije uspela: " + violations.toString());
+            // throw new RuntimeException("Validacija nije uspela: " + violations.toString());
+            // }
         }
+        //vracamo samo validne
+        return validOptions;
     }
     public List<String> fetchTickerNames() throws IOException {
 
@@ -75,8 +85,10 @@ public class FinansijaApiUtil {
 
         allTickerNames.addAll(jsonParserUtil.parseBytesToTickerNames(response.getEntity().getContent()));
 
-        //log.info(String.valueOf(allTickerNames));
+        //obavezno zatvoriti resurs
+        response.close();
 
+        //log.info(String.valueOf(allTickerNames));
         httpGet = null;
 
         return allTickerNames;
