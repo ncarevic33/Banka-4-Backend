@@ -22,20 +22,20 @@ public class IzvedeneVrednostiUtil {
         double sigma = impliedVolatility;
         double timeToExpiration = calculateTimeToExpirationInYears(expiration);
 
-        if(timeToExpiration == 0){//opcija je istekla
+        if(timeToExpiration == 0)//opcija je istekla
             return 0;
-        }
+
         double d1 = (Math.log(S / K) + (r + 0.5 * Math.pow(sigma, 2)) * timeToExpiration) / (sigma * Math.sqrt(timeToExpiration));
 
         double d2 = d1 - sigma * Math.sqrt(timeToExpiration);
         double N_d1 = cumulativeProbability(d1);
         double N_d2 = cumulativeProbability(d2);
 
-        System.out.println("timeToExp "+timeToExpiration);
-        System.out.println("NaN "+Math.sqrt(timeToExpiration));
-
+        //System.out.println("timeToExp "+timeToExpiration);
+        //System.out.println("NaN "+Math.sqrt(timeToExpiration));
 
         double callOptionValue = S * N_d1 - K * Math.exp(-r * timeToExpiration) * N_d2;
+
         return callOptionValue;
     }
 

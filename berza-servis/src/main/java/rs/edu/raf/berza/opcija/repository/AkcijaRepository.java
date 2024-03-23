@@ -5,7 +5,9 @@ import org.springframework.stereotype.Repository;
 import rs.edu.raf.berza.opcija.model.Akcija;
 
 import java.util.List;
+import java.util.Optional;
+
 @Repository
 public interface AkcijaRepository extends JpaRepository<Akcija,Long> {
-    Akcija findFirstByTicker(String ticker);
+    Optional<Akcija> findFirstByTicker(String ticker);
 }

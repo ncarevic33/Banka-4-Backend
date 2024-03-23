@@ -11,8 +11,8 @@ public enum OpcijaStanje {
     OUT_OF_MONEY,//kada izvrsenje opcije(put ili call) donosi gubitak vlasniku
     AT_THE_MONEY,//cena izvrsenja opcije odnosno akcija u okviru opcije==cena osnovne akcije odnsono nema profita
 
-    UNEXERCISED,//neiskoriscena
-    EXERCISED,//iskoriscena
+    //UNEXERCISED,//neiskoriscena
+    //EXERCISED,//iskoriscena
 
     EXPIRED,//istekao datum
     SOLD,//prodata opcija

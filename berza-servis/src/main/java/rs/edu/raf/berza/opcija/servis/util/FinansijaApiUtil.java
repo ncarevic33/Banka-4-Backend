@@ -49,6 +49,8 @@ public class FinansijaApiUtil {
         }
         validateOptions(allYahooTickersOptions);
         //System.out.println(allTickersOptions);
+        httpGet = null;
+
         return allYahooTickersOptions;
     }
     private static void validateOptions(List<OptionYahooApiMap> options) {
@@ -74,6 +76,8 @@ public class FinansijaApiUtil {
         allTickerNames.addAll(jsonParserUtil.parseBytesToTickerNames(response.getEntity().getContent()));
 
         //log.info(String.valueOf(allTickerNames));
+
+        httpGet = null;
 
         return allTickerNames;
 

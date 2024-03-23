@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Entity
 @Data
-public class KorisnikoveOpcije {
+public class KorisnikoveKupljeneOpcije {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,4 +16,9 @@ public class KorisnikoveOpcije {
 
     private Long opcijaId;
 
+    private Long akcijaId;
+
+    private double akcijaTickerCenaPrilikomIskoriscenja;//stvarna cena akcija prilikom iskoriscenja opcije
+
+    private boolean iskoriscena;//bilo da je put ili call iskorisceno
 }

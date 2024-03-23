@@ -1,6 +1,5 @@
 package rs.edu.raf.berza.opcija.servis.impl;
 
-import io.cucumber.java.bs.A;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,10 +39,7 @@ public class OpcijaServisImpl implements OpcijaServis {
     private FinansijaApiUtil finansijaApiUtil;
 
     @Autowired
-    private KorisnikAkcijaRepository korisnikAkcijaRepository;
-
-    @Autowired
-    private KorisnikoveOpcijeRepository korisnikOpcijaRepository;
+    private KorisnikoveKupljeneOpcijeRepository korisnikKupljeneOpcijeRepository;
 
     @Autowired
     private AkcijaRepository akcijaRepository;
@@ -81,51 +77,54 @@ public class OpcijaServisImpl implements OpcijaServis {
     }
 
     @Override
-    public List<OpcijaDto> findByStockAndDateAndStrike(String ticker, LocalDateTime datumIstekaVazenja, double strikePrice) {
+    public List<OpcijaDto> findByStockAndDateAndStrike(String ticker, LocalDateTime datumIstekaVazenja, Double strikePrice) {
+
         List<Opcija> opcije = this.opcijaRepository.findByStockAndDateAndStrike(ticker,datumIstekaVazenja,strikePrice);//(page-1)*6
         return opcije.stream().map(opcija -> opcijaMapper.opcijaToOpcijaDto(opcija)).collect(Collectors.toList());
     }
 
     @Override
-    @Transactional
-    public boolean izvrsiOpciju(Long opcijaId,Long userId) {
-                                                            //moze ih biti vise pa uzimamo prvu
-        KorisnikoveOpcije korisnikKupljenaOpcija = korisnikOpcijaRepository.findFirstByOpcijaIdAndKorisnikId(opcijaId, userId).orElse(null);
+    @Transactional//izdvajamo opciju i akciju jer su nezavisne promene
+    public KorisnikoveKupljeneOpcije izvrsiOpciju(Long opcijaId,Long userId) {
+                                                                                                        //moze ih biti vise pa uzimamo prvu neiskoriscenu
+        KorisnikoveKupljeneOpcije korisnikKupljenaOpcija = korisnikKupljeneOpcijeRepository.findFirstByOpcijaIdAndKorisnikIdAndIskoriscenaFalse(opcijaId, userId).orElse(null);
         Opcija opcija = opcijaRepository.findById(opcijaId).orElse(null);
         Korisnik korisnik = korisnikRepository.findById(userId).orElse(null);
 
         if(korisnik == null || korisnikKupljenaOpcija == null || opcija == null || opcija.getOpcijaStanje().equals(OpcijaStanje.EXPIRED))//nema ni jednu konkretnu kupljenu opciju
-            return false;
+            return null;
 
 
-        Akcija akcija = akcijaRepository.findFirstByTicker(opcija.getTicker());
+        Akcija akcija = akcijaRepository.findFirstByTicker(opcija.getTicker()).orElse(null);
 
+        if(akcija == null)
+            return null;
 
-        KorisnikKupljeneAkcije korisnikKupljeneAkcije = new KorisnikKupljeneAkcije();
-        korisnikKupljeneAkcije.setKorisnikId(korisnik.getId());
-        korisnikKupljeneAkcije.setContractSize(opcija.getContractSize());
-        korisnikKupljeneAkcije.setStrikePrice(opcija.getStrikePrice());
-        korisnikKupljeneAkcije.setAkcijaTickerTrenutnaCena(akcija.getAkcijaTickerTrenutnaCena());
-        korisnikKupljeneAkcije.setOpcijaTip(opcija.getOptionType().equals(OpcijaTip.PUT)?OpcijaTip.PUT:OpcijaTip.CALL);
-        korisnikAkcijaRepository.save(korisnikKupljeneAkcije);
+        akcija.getAkcijaTickerTrenutnaCena();
 
-                                    //ako korisnik ima vise istih opcija brisemo prvu bilo koju
-        korisnikOpcijaRepository.deleteFirstByOpcijaIdAndKorisnikId(opcijaId,userId);
+        korisnikKupljenaOpcija.setAkcijaTickerCenaPrilikomIskoriscenja(akcija.getAkcijaTickerTrenutnaCena());
+        korisnikKupljenaOpcija.setIskoriscena(true);
 
-        return true;
+        return korisnikKupljeneOpcijeRepository.save(korisnikKupljenaOpcija);
     }
 
 
     @Override
     public OpcijaStanje proveriStanjeOpcije(Long opcijaId){
 
-        Opcija opcija = opcijaRepository.findById(opcijaId).get();
+        Opcija opcija = opcijaRepository.findById(opcijaId).orElse(null);
 
+        if(opcija == null || opcija.getOpcijaStanje() == null)
+            return null;
 
         if (opcija.getOpcijaStanje().equals(OpcijaStanje.EXPIRED))
             return OpcijaStanje.EXPIRED;
 
-        Akcija akcija = akcijaRepository.findFirstByTicker(opcija.getTicker());
+        Akcija akcija = akcijaRepository.findFirstByTicker(opcija.getTicker()).orElse(null);
+
+        if(akcija == null)
+            return null;
+
         OpcijaStanje opcijaStanje = null;
 
         if(opcija.getStrikePrice() > akcija.getAkcijaTickerTrenutnaCena() && opcija.getOptionType().equals(OpcijaTip.PUT))
@@ -153,15 +152,15 @@ public class OpcijaServisImpl implements OpcijaServis {
 
     @Override
     //optional je ili objekat ili null(ako ne postoji u bazi)
-    public Optional<Opcija> findById(Long id) {
-        return opcijaRepository.findById(id);
+    public Opcija findById(Long id) {
+        return opcijaRepository.findById(id).orElse(null);
     }
 
 
 
 
-    @Cacheable(value = "opcijeCache", key = "'opcijeCache'")
-    @CacheEvict(value = "opcijeCache", allEntries = true)//azurira kes metoda sama sebi
+    //@Cacheable(value = "opcijeCache", key = "'opcijeCache'")
+    //@CacheEvict(value = "opcijeCache", allEntries = true)//azurira kes metoda sama sebi
     @Override
     //poseban thread obradjuje
     @Scheduled(fixedRate = 10000)

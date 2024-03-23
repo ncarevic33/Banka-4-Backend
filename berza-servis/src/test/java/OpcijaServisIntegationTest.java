@@ -3,11 +3,8 @@ import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.junit.BeforeClass;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.jupiter.MockitoExtension;
 import rs.edu.raf.berza.opcija.model.OpcijaTip;
 import rs.edu.raf.berza.opcija.servis.IzvedeneVrednostiUtil;
@@ -23,15 +20,13 @@ import java.util.List;
 
 import static io.restassured.RestAssured.given;
 import static org.apache.logging.log4j.ThreadContext.isEmpty;
-import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-//@ExtendWith(MockitoExtension.class)
+@ExtendWith(MockitoExtension.class)
 //@RunWith(MockitoJUnitRunner.class)
 //@PrepareForTest(FinansijaApiUtil.class)
 public class OpcijaServisIntegationTest {

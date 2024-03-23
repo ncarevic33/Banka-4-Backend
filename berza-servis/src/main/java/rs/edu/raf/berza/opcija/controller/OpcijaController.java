@@ -9,13 +9,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import rs.edu.raf.berza.opcija.dto.NovaOpcijaDto;
 import rs.edu.raf.berza.opcija.dto.OpcijaDto;
+import rs.edu.raf.berza.opcija.model.KorisnikoveKupljeneOpcije;
 import rs.edu.raf.berza.opcija.model.OpcijaStanje;
 import rs.edu.raf.berza.opcija.servis.OpcijaServis;
 
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.time.*;
 import java.util.Date;
 import java.util.List;
 
@@ -47,11 +45,10 @@ public class OpcijaController {
     }
 
 
-    @PostMapping("/izvrsi-opciju/{opcijaId}/{userId}")
+    @PostMapping("/izvrsi-korisnikovu-opciju/{opcijaId}/{userId}")
     @Operation(description = "Izvrsi put ili call opciju")
-    public ResponseEntity<String> izvrsiOpciju(@PathVariable("opcijaId") Long opcijaId,@PathVariable("userId") Long userId){
-        opcijaServis.izvrsiOpciju(opcijaId,userId);
-        return new ResponseEntity<>("Operacija izvrsena",HttpStatus.OK);
+    public ResponseEntity<KorisnikoveKupljeneOpcije> izvrsiKorisnikovuOpciju(@PathVariable("opcijaId") Long opcijaId, @PathVariable("userId") Long userId){
+        return new ResponseEntity<>(opcijaServis.izvrsiOpciju(opcijaId,userId),HttpStatus.OK);
 
     }
 
@@ -63,17 +60,18 @@ public class OpcijaController {
 
 
     //query parametri
-    @Operation(description = "Filtriraj opcije")
+    @Operation(description = "Filtriraj opcije\nDostupni parametri:datumIsteka(u milisec),ticker,strikePrice\nParametri mogu biti prosledjeni u bilo kom redosledu i bilo koji se moze izostaviti")
     @GetMapping(value = "/filtriraj-opcije", produces = MediaType.APPLICATION_JSON_VALUE)
                                                         //parametri se moraju zvati ovako ako su prosledjeni ali ne moraju biti svi prosledjeni onda ce biti null
     public ResponseEntity<List<OpcijaDto>> filtrirajOpcije(@RequestParam(name = "ticker",required = false) String ticker,
-                                                           @RequestParam(name = "datumIsteka",required = false) String datumIsteka,//u milisec
+                                                           @RequestParam(name = "datumIsteka",required = false) Long datumIsteka,//u milisec
                                                            @RequestParam(name = "strikePrice",required = false) Double strikePrice
                                                         ){
         LocalDateTime localDate = null;
-        if(datumIsteka != null)
-        localDate = LocalDateTime.ofInstant(Instant.ofEpochMilli(Long.parseLong(datumIsteka)),ZoneId.systemDefault()); // Konvertovanje u LocalDate
-
+        if(datumIsteka != null) {
+            //localDate = LocalDateTime.ofInstant(Instant.ofEpochMilli(datumIsteka),ZoneId.systemDefault()); // Konvertovanje u LocalDate
+            LocalDateTime.ofInstant(Instant.ofEpochSecond(datumIsteka), ZoneOffset.systemDefault());
+        }
         return new ResponseEntity<>(this.opcijaServis.findByStockAndDateAndStrike(ticker,localDate,strikePrice), HttpStatus.OK);
     }
     /////////////////////////////////////////////////////////////////////////

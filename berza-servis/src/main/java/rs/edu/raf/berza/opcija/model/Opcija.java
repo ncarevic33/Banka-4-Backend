@@ -115,10 +115,10 @@ public class Opcija{
         theta =  (optionType.equals(OpcijaTip.CALL)?izvedeneVrednostiUtil.calculateThetaCall((double) trenutnaCenaOsnovneAkcijeKompanije, strikePrice, 0.05,impliedVolatility, (double) expiration):izvedeneVrednostiUtil.calculateThetaPut((double) trenutnaCenaOsnovneAkcijeKompanije, strikePrice, 0.05,impliedVolatility, (double) expiration));
         maintenanceMargin = izvedeneVrednostiUtil.calculateMaintenanceMargin(marketCap,0.2);
 
-        System.out.println(vrednostOpcijeBlackScholes);
-        System.out.println(marketCap);
-        System.out.println(theta);
-        System.out.println(maintenanceMargin);
+//        System.out.println(vrednostOpcijeBlackScholes);
+//        System.out.println(marketCap);
+//        System.out.println(theta);
+//        System.out.println(maintenanceMargin);
 
         //vrednostPozicije = (strikePrice-trenutnaCenaOsnovneAkcije)*contractSize;
         //vrednostPozicije = vrednostOpcijeBlackScholes*brojUgovora;
