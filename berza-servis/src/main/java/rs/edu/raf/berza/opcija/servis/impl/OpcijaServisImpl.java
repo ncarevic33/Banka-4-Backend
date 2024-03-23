@@ -1,16 +1,18 @@
 package rs.edu.raf.berza.opcija.servis.impl;
 
-import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import rs.edu.raf.berza.opcija.dto.NovaOpcijaDto;
 import rs.edu.raf.berza.opcija.dto.OpcijaDto;
 import rs.edu.raf.berza.opcija.mapper.OpcijaMapper;
-import rs.edu.raf.berza.opcija.model.Opcija;
-import rs.edu.raf.berza.opcija.repository.OpcijaRepository;
+import rs.edu.raf.berza.opcija.model.*;
+import rs.edu.raf.berza.opcija.repository.*;
 import rs.edu.raf.berza.opcija.servis.OpcijaServis;
 import rs.edu.raf.berza.opcija.servis.util.FinansijaApiUtil;
 import rs.edu.raf.berza.opcija.servis.util.OptionYahooApiMap;
@@ -30,46 +32,41 @@ public class OpcijaServisImpl implements OpcijaServis {
     private final static Logger log = LoggerFactory.getLogger(OpcijaServisImpl.class.getSimpleName());
 
     @Autowired
+    private KorisnikAkcijaRepository korisnikAkcijaRepository;
+
+    @Autowired
+    private KorisnikoveOpcijeRepository korisnikOpcijaRepository;
+
+    @Autowired
+    private AkcijaRepository akcijaRepository;
+
+    @Autowired
+    private KorisnikRepository korisnikRepository;
+
+    @Autowired
     private OpcijaMapper opcijaMapper;
 
     @Autowired
     private OpcijaRepository opcijaRepository;
 
-    @PostConstruct
-    public void init() throws IOException {
-        Thread backgroundFirstTimeFetching = new Thread(() -> {
-            try {
-                opcijaRepository.saveAll(fetchAllOptionsForAllTickers());
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
-        backgroundFirstTimeFetching.start();
-    }
 
     private List<Opcija> fetchAllOptionsForAllTickers() throws IOException {
         List<String> tickerNames = FinansijaApiUtil.fetchTickerNames();
 
         if(tickerNames.size() == 0)
             return new ArrayList<>();
+                                                                                                                //staviti na tickerNames
+        List<OptionYahooApiMap> yahooOpcije = FinansijaApiUtil.fetchOptionsFromYahooApi(Collections.singletonList(tickerNames.get(0)));
 
-        //opcijaRepository.saveAll(FinansijaApiUtil.fetchOptionsFromYahooApi(tickerNames));
-        List<OptionYahooApiMap> opcije = FinansijaApiUtil.fetchOptionsFromYahooApi(tickerNames);
-
-        log.info("gotovo");
-        return opcije.stream().map(yahooOpcija -> opcijaMapper.yahooOpcijaToOpcija(yahooOpcija)).collect(Collectors.toList());
+        //log.info(String.valueOf(System.currentTimeMillis()));
+        log.info("Gotovo fetchovanje sa yahoo api");
+        return yahooOpcije.stream().map(yahooOpcija -> opcijaMapper.yahooOpcijaToOpcija(yahooOpcija)).collect(Collectors.toList());
     }
 
     @Override
-    public List<OpcijaDto> findAll() throws InterruptedException {
-
+    public List<OpcijaDto> findAll()  {
 
         List<Opcija> opcije = opcijaRepository.findAll();
-        /*List<OpcijaDto> opcijaDtos = new ArrayList<>();
-        for(Opcija o:opcije){
-            opcijaDtos.add(opcijaMapper.opcijaToOpcijaDto(o));
-        }*/
 
         return opcije.stream().map(opcija -> opcijaMapper.opcijaToOpcijaDto(opcija)).collect(Collectors.toList());
 
@@ -82,15 +79,62 @@ public class OpcijaServisImpl implements OpcijaServis {
     }
 
     @Override
-    public boolean izvrsiOpciju(Long opcijaId) {
-        Optional<Opcija> opcija = opcijaRepository.findById(opcijaId);
+    @Transactional
+    public boolean izvrsiOpciju(Long opcijaId,Long userId) {
+                                                            //moze ih biti vise pa uzimamo prvu
+        KorisnikoveOpcije korisnikKupljenaOpcija = korisnikOpcijaRepository.findFirstByOpcijaIdAndKorisnikId(opcijaId, userId).orElse(null);
+        Opcija opcija = opcijaRepository.findById(opcijaId).orElse(null);
+        Korisnik korisnik = korisnikRepository.findById(userId).orElse(null);
 
-        return false;
-    }
-    public OpcijaDto proveriStanjeOpcije(Long opcijaId){
-        return null;
+        if(korisnik == null || korisnikKupljenaOpcija == null || opcija == null || opcija.getOpcijaStanje().equals(OpcijaStanje.EXPIRED))//nema ni jednu konkretnu kupljenu opciju
+            return false;
+
+
+        Akcija akcija = akcijaRepository.findFirstByTicker(opcija.getTicker());
+
+
+        KorisnikKupljeneAkcije korisnikKupljeneAkcije = new KorisnikKupljeneAkcije();
+        korisnikKupljeneAkcije.setKorisnikId(korisnik.getId());
+        korisnikKupljeneAkcije.setContractSize(opcija.getContractSize());
+        korisnikKupljeneAkcije.setStrikePrice(opcija.getStrikePrice());
+        korisnikKupljeneAkcije.setAkcijaTickerTrenutnaCena(akcija.getAkcijaTickerTrenutnaCena());
+        korisnikKupljeneAkcije.setOpcijaTip(opcija.getOptionType().equals(OpcijaTip.PUT)?OpcijaTip.PUT:OpcijaTip.CALL);
+        korisnikAkcijaRepository.save(korisnikKupljeneAkcije);
+
+                                    //ako korisnik ima vise istih opcija brisemo prvu bilo koju
+        korisnikOpcijaRepository.deleteFirstByOpcijaIdAndKorisnikId(opcijaId,userId);
+
+        return true;
     }
 
+
+    @Override
+    public OpcijaStanje proveriStanjeOpcije(Long opcijaId){
+
+        Opcija opcija = opcijaRepository.findById(opcijaId).get();
+
+
+        if (opcija.getOpcijaStanje().equals(OpcijaStanje.EXPIRED))
+            return OpcijaStanje.EXPIRED;
+
+        Akcija akcija = akcijaRepository.findFirstByTicker(opcija.getTicker());
+        OpcijaStanje opcijaStanje = null;
+
+        if(opcija.getStrikePrice() > akcija.getAkcijaTickerTrenutnaCena() && opcija.getOptionType().equals(OpcijaTip.PUT))
+            opcijaStanje = OpcijaStanje.IN_THE_MONEY;
+        else if(opcija.getStrikePrice() < akcija.getAkcijaTickerTrenutnaCena() && opcija.getOptionType().equals(OpcijaTip.PUT))
+            opcijaStanje = OpcijaStanje.OUT_OF_MONEY;
+
+        if(opcija.getStrikePrice() < akcija.getAkcijaTickerTrenutnaCena() && opcija.getOptionType().equals(OpcijaTip.CALL))
+            opcijaStanje = OpcijaStanje.IN_THE_MONEY;
+        else if(opcija.getStrikePrice() > akcija.getAkcijaTickerTrenutnaCena() && opcija.getOptionType().equals(OpcijaTip.CALL))
+            opcijaStanje = OpcijaStanje.OUT_OF_MONEY;
+
+        if(opcijaStanje == null)
+            return OpcijaStanje.AT_THE_MONEY;
+
+        return opcijaStanje;
+    }
     @Override
     public OpcijaDto save(NovaOpcijaDto novaOpcijaDto) {
 
@@ -106,17 +150,28 @@ public class OpcijaServisImpl implements OpcijaServis {
     }
 
 
+
+
+    @Cacheable(value = "opcijeCache", key = "'opcijeCache'")
+    @CacheEvict(value = "opcijeCache", allEntries = true)//azurira kes metoda sama sebi
     @Override
-    @Scheduled(fixedRate = 9000)
+    //poseban thread obradjuje
+    @Scheduled(fixedRate = 10000)
+    @Transactional//sve promene nad bazom se upisuju u bazu tek kada se metoda uspesno zavrsi,ako dodje do izuzetka radi se roll back
     public void azuirajPostojeceOpcije() throws IOException {
+
         List<Opcija> noveAzuriraneOpcije = fetchAllOptionsForAllTickers();
         List<Opcija> postojeceOpcije = opcijaRepository.findAll();
+        log.info(String.valueOf(noveAzuriraneOpcije));
 
         for(Opcija o:noveAzuriraneOpcije){
             Optional<Opcija> postojecaOpcija = postojeceOpcije.stream()
                     .filter(opcija -> opcija.getContractSymbol().equals(o.getContractSymbol()))
                     .findFirst();
 
+            //moze i brisanje svih opcija pa ponovno dodavanje
+            /////////////////////////////////////////////////////
+            //azuriramo postojece opcije
             postojecaOpcija.ifPresent(postojeca ->{
                 postojeca.setStrikePrice(o.getStrikePrice());
                 postojeca.setLastPrice(o.getLastPrice());
@@ -135,9 +190,19 @@ public class OpcijaServisImpl implements OpcijaServis {
 
                 postojeca.setDatumIstekaVazenja(o.getDatumIstekaVazenja());
 
+                LocalDateTime trenutnoVreme = LocalDateTime.now();
+
+                if(o.getDatumIstekaVazenja().isBefore(trenutnoVreme)) {
+                    postojeca.setOpcijaStanje(OpcijaStanje.EXPIRED);
+                    //postojeca.setIstaIstorijaGroupId();
+                }
                 postojeca.izracunajIzvedeneVrednosti();
 
+                opcijaRepository.save(postojecaOpcija.get());
             });
+            if(!postojecaOpcija.isPresent())
+                opcijaRepository.save(o);
+
         }
 
     }

@@ -1,5 +1,6 @@
 package rs.edu.raf.berza.opcija.servis.util;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import rs.edu.raf.berza.opcija.model.OpcijaTip;
@@ -8,24 +9,53 @@ import rs.edu.raf.berza.opcija.model.OpcijaTip;
 @NoArgsConstructor
 public class OptionYahooApiMap {
 
+    @NotNull
     private String contractSymbol;
-    private double strike;
-    private String currency;
-    private double lastPrice;
-    private double change;
-    private double percentChange;
-    private double bid;
-    private double ask;
-    private String contractSize;
-    private long expiration;//broj sekundi od 1970
-    private long lastTradeDate;//broj sekundi od 1970
-    private double impliedVolatility;
-    private boolean inTheMoney;
 
+    @NotNull
+    private Double strike;
+
+    @NotNull
+    private String currency;
+
+    @NotNull
+    private Double lastPrice;
+
+    @NotNull
+    private Double change;
+
+    @NotNull
+    private Double percentChange;
+
+    @NotNull
+    private Double bid;
+
+    @NotNull
+    private Double ask;
+
+    @NotNull
+    private String contractSize;
+
+    @NotNull
+    private Long expiration;//broj sekundi od 1970
+
+    @NotNull
+    private Long lastTradeDate;//broj sekundi od 1970
+
+    @NotNull
+    private Double impliedVolatility;
+
+    @NotNull
+    private Boolean inTheMoney;
+
+    @NotNull
     private String ticker;
+
+    @NotNull
     private OpcijaTip opcijaTip;
 
-    private long volume;
-    private long openInterest;
+    private Long volume;
+
+    private Long openInterest;
 
 }

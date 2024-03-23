@@ -23,7 +23,7 @@ public class JsonParserUtil {
 
 
     //json kao bajtovi iz http body
-    public static List<OptionYahooApiMap> parseBytesToOptionObject(InputStream inputStream, String ticker) throws IOException {
+    public static List<OptionYahooApiMap> parseBytesToYahooOptionObject(InputStream inputStream, String ticker) throws IOException {
 
 
         List<OptionYahooApiMap> parsedOptions = new ArrayList<>();

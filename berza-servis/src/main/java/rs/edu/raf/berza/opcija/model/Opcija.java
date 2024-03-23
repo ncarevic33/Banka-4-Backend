@@ -1,13 +1,16 @@
 package rs.edu.raf.berza.opcija.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import rs.edu.raf.berza.opcija.servis.ProceniVrednostOpcijeBlackScholes;
+import rs.edu.raf.berza.opcija.servis.IzvedeneVrednostiUtil;
 
 import java.time.*;
-import java.util.List;
+import java.util.Set;
 
 
 @Entity
@@ -36,6 +39,10 @@ public class Opcija{
     private Long id;
 
 
+    @Column
+    //za grupisanje po istoriji i dohvatanje istorije
+    private Long istaIstorijaGroupId;
+
 
     @Column(nullable = false)
     private String ticker;//stockSymbol odnosno kompanija cije se opcije(ugovori) prodaju ili kupuju odnosno cije se akcije prodaju ili kupuju opcijom
@@ -44,7 +51,10 @@ public class Opcija{
     private String contractSymbol;//ticker_nekiIdUgovora
 
 
+    @Column
+    //opcija ulazi u istoriju ako joj se promeni cena ili istekne datum
     private double strikePrice;//cena izvrsenja opcije odnosno cena akcija opcije koja je dogovorena i nezavisna je od trenutnaCenaOsnovneAkcije
+
     private double impliedVolatility;
     private double openInterest;//koliko ih je zainteresovano za ovu opciju
     private LocalDateTime settlementDate;
@@ -55,15 +65,15 @@ public class Opcija{
 
 
     private long ukupanBrojIzdatihAkcijaKompanije;
-    private long trenutnaCenaOsnovneAkcijeKompanije;//stockPrice(currentAssetPrice )
+    private long trenutnaCenaOsnovneAkcijeKompanije;//stockPrice(currentAssetPrice)
     private long brojUgovora;//broj ugovora koje obuhvata opcija!
 
 
     //1 OPCIJA SADRZI VISE ISTIH UGOVORA,NE KUPUJE SE OPCIJA VEC NJENI UGOVORI
 
-    //////////////////////////////////////////
-    //izvedene vrednosti na osnovu relevantnih formula i cene osnovne akcije
 
+    //IZVEDENE VREDNOSTI NA OSNOVU RELEVANTNE FORMULE I CENE OSNOVNE AKCIJE
+    //////////////////////////////////////////
     private LocalDateTime datumIstekaVazenja;//datum kada opcija istice izveden iz expiration
 
     private long vrednostPozicije;
@@ -93,22 +103,35 @@ public class Opcija{
 
     public void izracunajIzvedeneVrednosti(){
 
-        /*vrednostOpcijeBlackScholes = ProceniVrednostOpcijeBlackScholes.proceniVrednostOpcije(strikePrice,
-                                                                                            trenutnaCenaOsnovneAkcijeKompanije,
-                                                                                            datumIstekaVazenja,
-                                                                                            ,vol,);
-*/
+        Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+        validateRequiredDataBeforeDeriving(this,validator);
+
+        vrednostOpcijeBlackScholes = (long) IzvedeneVrednostiUtil.calculateBlackScholesValue(trenutnaCenaOsnovneAkcijeKompanije,
+                                                                                            strikePrice,
+                                                                                            impliedVolatility,
+                                                                                            expiration);
+
+        marketCap = trenutnaCenaOsnovneAkcijeKompanije*ukupanBrojIzdatihAkcijaKompanije;
+        theta = (long) (optionType.equals(OpcijaTip.CALL)?IzvedeneVrednostiUtil.calculateThetaCall((double) trenutnaCenaOsnovneAkcijeKompanije, strikePrice, 0.05,impliedVolatility, (double) expiration):IzvedeneVrednostiUtil.calculateThetaPut((double) trenutnaCenaOsnovneAkcijeKompanije, strikePrice, 0.05,impliedVolatility, (double) expiration));
+        maintenanceMargin = (long) IzvedeneVrednostiUtil.calculateMaintenanceMargin(marketCap,0.2);
+
         //vrednostPozicije = (strikePrice-trenutnaCenaOsnovneAkcije)*contractSize;
         //vrednostPozicije = vrednostOpcijeBlackScholes*brojUgovora;
         //vrednostPozicije = (vrednostOpcijeBlackScholes-strikePrice)*brojUgovora
         //vrednostPozicije=(vrednostOpcijeBlackScholes*contractSize*brojUgovora)-(trenutnaCenaOsnovneAkcije*contractSize*brojUgovora)
-
         //maintenanceMargin = (long) (0.2*vrednostPozicije);
-        maintenanceMargin = (long) (0.5*contractSize*lastPrice);
-
-        marketCap = trenutnaCenaOsnovneAkcijeKompanije*ukupanBrojIzdatihAkcijaKompanije;
-
+        //maintenanceMargin = (long) (0.5*contractSize*lastPrice);
         //theta = -1/daniDoIstekaOpcije;
 
+    }
+    private static void validateRequiredDataBeforeDeriving(Opcija option, Validator validator) {
+
+        Set<ConstraintViolation<Opcija>> violations;
+
+            violations = validator.validate(option);
+            if (!violations.isEmpty()) {
+                throw new RuntimeException("Validacija nije uspela: " + violations.toString());
+
+        }
     }
 }

@@ -3,6 +3,7 @@ package rs.edu.raf.berza.opcija.servis;
 import rs.edu.raf.berza.opcija.dto.NovaOpcijaDto;
 import rs.edu.raf.berza.opcija.dto.OpcijaDto;
 import rs.edu.raf.berza.opcija.model.Opcija;
+import rs.edu.raf.berza.opcija.model.OpcijaStanje;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -21,8 +22,8 @@ public interface OpcijaServis {
 
         List<OpcijaDto> findByStockAndDateAndStrike(String ticker, LocalDateTime datumIstekaVazenja, double strikePrice);
 
-        boolean izvrsiOpciju(Long opcijaId);
+        boolean izvrsiOpciju(Long opcijaId,Long userId);
 
-        OpcijaDto proveriStanjeOpcije(Long opcijaId);
+        OpcijaStanje proveriStanjeOpcije(Long opcijaId);
 
 }
