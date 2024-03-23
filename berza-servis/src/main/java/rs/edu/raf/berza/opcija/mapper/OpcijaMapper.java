@@ -1,11 +1,14 @@
 package rs.edu.raf.berza.opcija.mapper;
 
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import rs.edu.raf.berza.opcija.dto.NovaOpcijaDto;
 import rs.edu.raf.berza.opcija.dto.OpcijaDto;
 import rs.edu.raf.berza.opcija.model.Opcija;
 import rs.edu.raf.berza.opcija.model.OpcijaStanje;
+import rs.edu.raf.berza.opcija.model.OpcijaTip;
+import rs.edu.raf.berza.opcija.servis.IzvedeneVrednostiUtil;
 import rs.edu.raf.berza.opcija.servis.util.OptionYahooApiMap;
 
 import java.time.Instant;
@@ -15,6 +18,8 @@ import java.time.ZoneOffset;
 @Component
 public class OpcijaMapper {
 
+    @Autowired
+    private IzvedeneVrednostiUtil izvedeneVrednostiUtil;
 
     //OD FRONTA
     public Opcija novaOpcijaDtoToOpcija(NovaOpcijaDto novaOpcijaDto){
@@ -70,6 +75,11 @@ public class OpcijaMapper {
         opcija.setContractSize(optionYahooApiMap.getContractSize().equals("REGULAR")?100:0);
         opcija.setExpiration(optionYahooApiMap.getExpiration());
 
+        //PREDEFINISANO JER NEMA NA API
+        opcija.setTrenutnaCenaOsnovneAkcijeKompanije(60);
+        opcija.setUkupanBrojIzdatihAkcijaKompanije(1000);
+        ////////////////
+
         opcija.setDatumIstekaVazenja(LocalDateTime.ofInstant(Instant.ofEpochSecond(opcija.getExpiration()),ZoneOffset.systemDefault()));
 
 
@@ -80,7 +90,14 @@ public class OpcijaMapper {
             //opcija.setIstaIstorijaGroupId();
         }
 
-        opcija.izracunajIzvedeneVrednosti();
+        //POTREBNI PARAMETRI ZA IZVEDENE VREDNOSTI
+        //trenutnaCenaOsnovneAkcijeKompanije//nema na api
+        //strikePrice
+        //impliedVolatility
+        //expiration
+        //ukupanBrojIzdatihAkcijaKompanije//nema na api
+
+        opcija.izracunajIzvedeneVrednosti(izvedeneVrednostiUtil);
 
         return opcija;
     }

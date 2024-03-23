@@ -1,5 +1,6 @@
 package rs.edu.raf.berza.opcija.servis.impl;
 
+import io.cucumber.java.bs.A;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import rs.edu.raf.berza.opcija.dto.OpcijaDto;
 import rs.edu.raf.berza.opcija.mapper.OpcijaMapper;
 import rs.edu.raf.berza.opcija.model.*;
 import rs.edu.raf.berza.opcija.repository.*;
+import rs.edu.raf.berza.opcija.servis.IzvedeneVrednostiUtil;
 import rs.edu.raf.berza.opcija.servis.OpcijaServis;
 import rs.edu.raf.berza.opcija.servis.util.FinansijaApiUtil;
 import rs.edu.raf.berza.opcija.servis.util.OptionYahooApiMap;
@@ -30,6 +32,12 @@ import java.util.stream.Collectors;
 public class OpcijaServisImpl implements OpcijaServis {
 
     private final static Logger log = LoggerFactory.getLogger(OpcijaServisImpl.class.getSimpleName());
+
+    @Autowired
+    private IzvedeneVrednostiUtil izvedeneVrednostiUtil;
+
+    @Autowired
+    private FinansijaApiUtil finansijaApiUtil;
 
     @Autowired
     private KorisnikAkcijaRepository korisnikAkcijaRepository;
@@ -51,12 +59,12 @@ public class OpcijaServisImpl implements OpcijaServis {
 
 
     private List<Opcija> fetchAllOptionsForAllTickers() throws IOException {
-        List<String> tickerNames = FinansijaApiUtil.fetchTickerNames();
+        List<String> tickerNames = finansijaApiUtil.fetchTickerNames();
 
         if(tickerNames.size() == 0)
             return new ArrayList<>();
                                                                                                                 //staviti na tickerNames
-        List<OptionYahooApiMap> yahooOpcije = FinansijaApiUtil.fetchOptionsFromYahooApi(Collections.singletonList(tickerNames.get(0)));
+        List<OptionYahooApiMap> yahooOpcije = finansijaApiUtil.fetchOptionsFromYahooApi(Collections.singletonList(tickerNames.get(0)));
 
         //log.info(String.valueOf(System.currentTimeMillis()));
         log.info("Gotovo fetchovanje sa yahoo api");
@@ -196,7 +204,7 @@ public class OpcijaServisImpl implements OpcijaServis {
                     postojeca.setOpcijaStanje(OpcijaStanje.EXPIRED);
                     //postojeca.setIstaIstorijaGroupId();
                 }
-                postojeca.izracunajIzvedeneVrednosti();
+                postojeca.izracunajIzvedeneVrednosti(izvedeneVrednostiUtil);
 
                 opcijaRepository.save(postojecaOpcija.get());
             });

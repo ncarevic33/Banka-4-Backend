@@ -83,9 +83,9 @@ public class Opcija{
     private OpcijaStanje opcijaStanje;
 
     private long marketCap;//trzisna vrednost kompanije
-    private long maintenanceMargin;//minimalni iznos na racunu vlasnika opcije
-    private long theta;
-    private long vrednostOpcijeBlackScholes;//teorijska vrednost opcije ali se zapravo cena opcije formira na osnovu ponude i potraznje
+    private double maintenanceMargin;//minimalni iznos na racunu vlasnika opcije
+    private double theta;
+    private double vrednostOpcijeBlackScholes;//teorijska vrednost opcije ali se zapravo cena opcije formira na osnovu ponude i potraznje
     //////////////////////////////////////////
     //POLJA SA YAHOO APIJA
     private String currency;
@@ -101,19 +101,24 @@ public class Opcija{
     private long volume;
 
 
-    public void izracunajIzvedeneVrednosti(){
+    public void izracunajIzvedeneVrednosti(IzvedeneVrednostiUtil izvedeneVrednostiUtil){
 
         Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
         validateRequiredDataBeforeDeriving(this,validator);
 
-        vrednostOpcijeBlackScholes = (long) IzvedeneVrednostiUtil.calculateBlackScholesValue(trenutnaCenaOsnovneAkcijeKompanije,
+        vrednostOpcijeBlackScholes = izvedeneVrednostiUtil.calculateBlackScholesValue(trenutnaCenaOsnovneAkcijeKompanije,
                                                                                             strikePrice,
                                                                                             impliedVolatility,
                                                                                             expiration);
 
         marketCap = trenutnaCenaOsnovneAkcijeKompanije*ukupanBrojIzdatihAkcijaKompanije;
-        theta = (long) (optionType.equals(OpcijaTip.CALL)?IzvedeneVrednostiUtil.calculateThetaCall((double) trenutnaCenaOsnovneAkcijeKompanije, strikePrice, 0.05,impliedVolatility, (double) expiration):IzvedeneVrednostiUtil.calculateThetaPut((double) trenutnaCenaOsnovneAkcijeKompanije, strikePrice, 0.05,impliedVolatility, (double) expiration));
-        maintenanceMargin = (long) IzvedeneVrednostiUtil.calculateMaintenanceMargin(marketCap,0.2);
+        theta =  (optionType.equals(OpcijaTip.CALL)?izvedeneVrednostiUtil.calculateThetaCall((double) trenutnaCenaOsnovneAkcijeKompanije, strikePrice, 0.05,impliedVolatility, (double) expiration):izvedeneVrednostiUtil.calculateThetaPut((double) trenutnaCenaOsnovneAkcijeKompanije, strikePrice, 0.05,impliedVolatility, (double) expiration));
+        maintenanceMargin = izvedeneVrednostiUtil.calculateMaintenanceMargin(marketCap,0.2);
+
+        System.out.println(vrednostOpcijeBlackScholes);
+        System.out.println(marketCap);
+        System.out.println(theta);
+        System.out.println(maintenanceMargin);
 
         //vrednostPozicije = (strikePrice-trenutnaCenaOsnovneAkcije)*contractSize;
         //vrednostPozicije = vrednostOpcijeBlackScholes*brojUgovora;

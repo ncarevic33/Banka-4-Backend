@@ -1,11 +1,6 @@
 package rs.edu.raf.berza.opcija.servis;
 
-import org.apache.commons.math3.distribution.NormalDistribution;
-import org.apache.commons.math3.special.Erf;
-
 import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 
 public class IzvedeneVrednostiUtil {
 
@@ -17,27 +12,34 @@ public class IzvedeneVrednostiUtil {
     //glavna razlika opcija i kupovine akcije u realnom vremenu jeste sto opcija ima fiksnu cenu akcije
     //odnosno iako trenutna cena akcije menja vrednost, cena akcije u opciji ostaje nepromenjena
 
-    public static double calculateBlackScholesValue(double trenutnaCenaOsnovneAkcijeKompanije,
+    public double calculateBlackScholesValue(double trenutnaCenaOsnovneAkcijeKompanije,
                                                     double strikePrice,
                                                     double impliedVolatility,
-                                                    double expiration) {
+                                                    long expiration) {
         double S = trenutnaCenaOsnovneAkcijeKompanije;
         double K = strikePrice;
         double r = 0.05; //pretpostavljena vrednost bezrizicne kamatne stope
         double sigma = impliedVolatility;
-        double timeToExpiration = calculateTimeToExpiration(expiration);
+        double timeToExpiration = calculateTimeToExpirationInYears(expiration);
 
+        if(timeToExpiration == 0){//opcija je istekla
+            return 0;
+        }
         double d1 = (Math.log(S / K) + (r + 0.5 * Math.pow(sigma, 2)) * timeToExpiration) / (sigma * Math.sqrt(timeToExpiration));
-        double d2 = d1 - sigma * Math.sqrt(timeToExpiration);
 
+        double d2 = d1 - sigma * Math.sqrt(timeToExpiration);
         double N_d1 = cumulativeProbability(d1);
         double N_d2 = cumulativeProbability(d2);
+
+        System.out.println("timeToExp "+timeToExpiration);
+        System.out.println("NaN "+Math.sqrt(timeToExpiration));
+
 
         double callOptionValue = S * N_d1 - K * Math.exp(-r * timeToExpiration) * N_d2;
         return callOptionValue;
     }
 
-    private static double cumulativeProbability(double x) {
+    private double cumulativeProbability(double x) {
         double t = 1.0 / (1.0 + 0.2316419 * Math.abs(x));
         double d = 0.39894228 * Math.exp(-x * x / 2.0);
         double p = 1 - d * t * (0.319381530 + t * (-0.356563782 + t * (1.781477937 + t * (-1.821255978 + t * 1.330274429))));
@@ -53,38 +55,42 @@ public class IzvedeneVrednostiUtil {
     }
     */
 
-    private static double calculateTimeToExpiration(double expiration) {
+    private double calculateTimeToExpirationInYears(double expiration) {
         long nowSeconds = Instant.now().getEpochSecond();
         long expirationSeconds = (long) expiration;
-        return ((double) (expirationSeconds - nowSeconds)) / (365 * 24 * 60 * 60); // Pretvara u godine
+        double timeInSeconds = expirationSeconds - nowSeconds;
+        if (timeInSeconds <= 0) {
+            return 0; // Opcija je već istekla, pa vreme do isteka treba biti 0
+        }
+        return timeInSeconds / (365 * 24 * 60 * 60); // Pretvara u godine
     }
 
-    public static double calculateThetaCall(double S, double K, double r, double sigma, double T) {
+    public double calculateThetaCall(double S, double K, double r, double sigma, double T) {
         double d1 = (Math.log(S / K) + (r + 0.5 * Math.pow(sigma, 2)) * T) / (sigma * Math.sqrt(T));
         double d2 = d1 - sigma * Math.sqrt(T);
         double N_prime_d1 = probabilityDensityFunction(d1);
 
         return -((S * N_prime_d1 * sigma) / (2 * Math.sqrt(T))) - (r * K * Math.exp(-r * T) * cumulativeProbability(d2));
     }
-    public static double calculateThetaPut(double S, double K, double r, double sigma, double T) {
+    public double calculateThetaPut(double S, double K, double r, double sigma, double T) {
         double d1 = (Math.log(S / K) + (r + 0.5 * Math.pow(sigma, 2)) * T) / (sigma * Math.sqrt(T));
         double d2 = d1 - sigma * Math.sqrt(T);
         double N_prime_d1 = probabilityDensityFunction(d1);
 
         return -((S * N_prime_d1 * sigma) / (2 * Math.sqrt(T))) + (r * K * Math.exp(-r * T) * cumulativeProbability(-d2));
     }
-    // Funkcija za izračunavanje gustine verovatnoće normalne distribucije
-    public static double probabilityDensityFunction(double x) {
+    //funkcija za izracunavanje gustine verovatnoce normalne distribucije
+    public double probabilityDensityFunction(double x) {
         return Math.exp(-x * x / 2) / Math.sqrt(2 * Math.PI);
     }
 
-    public static double calculateMaintenanceMargin(double marketCap, double marginPercentage) {
+    public double calculateMaintenanceMargin(double marketCap, double marginPercentage) {
         return marketCap * (marginPercentage / 100.0);
     }
 
 
                         //i za call i za put opcije
-    /*public static double proceniVrednostOpcije(
+    /*public double proceniVrednostOpcije(
                                         //stvarna trenutna trzisna cena akcije koja se menja u svakom trenutku
                                         double trenutnaCenaOsnovneAkcije,
 

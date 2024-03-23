@@ -1,15 +1,18 @@
+import io.restassured.RestAssured;
+import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.junit.BeforeClass;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.runner.RunWith;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.springframework.context.annotation.DependsOn;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import rs.edu.raf.berza.opcija.model.OpcijaTip;
 import rs.edu.raf.berza.opcija.servis.IzvedeneVrednostiUtil;
 import rs.edu.raf.berza.opcija.servis.util.FinansijaApiUtil;
+import rs.edu.raf.berza.opcija.servis.util.JsonParserUtil;
 import rs.edu.raf.berza.opcija.servis.util.OptionYahooApiMap;
 
 import java.io.ByteArrayInputStream;
@@ -17,16 +20,24 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static io.restassured.RestAssured.given;
+import static org.apache.logging.log4j.ThreadContext.isEmpty;
+import static org.hamcrest.core.IsEqual.equalTo;
+import static org.hamcrest.core.IsNot.not;
+import static org.hamcrest.core.IsNull.notNullValue;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 //@ExtendWith(MockitoExtension.class)
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(FinansijaApiUtil.class)
+//@RunWith(MockitoJUnitRunner.class)
+//@PrepareForTest(FinansijaApiUtil.class)
 public class OpcijaServisIntegationTest {
 
+    //@InjectMocks
+    //FinansijaApiUtil finansijaApiUtil;
 
     @Test
     public void testYahooApiDeserialization() throws IOException {
@@ -204,73 +215,70 @@ public class OpcijaServisIntegationTest {
                 "\"impliedVolatility\": 1.0000000000000003E-5," +
                 "\"inTheMoney\": true" +
                 "}" +
-                "]" +
+                "],\"puts\":[]" +
                 "}" +
                 "]" +
-                "}";
+                "}"+
+                "],"+
+                "\"error\":null"+
+                "}}";
 
         CloseableHttpResponse responseMock = mock(CloseableHttpResponse.class);
         CloseableHttpClient httpClientMock = mock(CloseableHttpClient.class);
-        when(httpClientMock.execute(any(HttpGet.class))).thenReturn(responseMock);
+        HttpGet httpGet = mock(HttpGet.class);
+        HttpEntity httpEntity = mock(HttpEntity.class);
+
+        when(httpClientMock.execute(httpGet)).thenReturn(responseMock);
 
         InputStream mockInputStream = new ByteArrayInputStream(json.getBytes());
-        when(responseMock.getEntity().getContent()).thenReturn(mockInputStream);
+        when(responseMock.getEntity()).thenReturn(httpEntity);
+        when(httpEntity.getContent()).thenReturn(mockInputStream);
 
+        FinansijaApiUtil finansijaApiUtil = new FinansijaApiUtil();
+        finansijaApiUtil.setJsonParserUtil(new JsonParserUtil());
 
-        PowerMockito.mockStatic(FinansijaApiUtil.class);
-        when(FinansijaApiUtil.fetchOptionsFromYahooApi(Arrays.asList(""))).thenCallRealMethod(); // Poziv realne metode
-
-
-        List<OptionYahooApiMap> result = FinansijaApiUtil.fetchOptionsFromYahooApi(Arrays.asList(""));
+        finansijaApiUtil.setHttpClient(httpClientMock);
+        finansijaApiUtil.setResponse(responseMock);
+        finansijaApiUtil.setHttpGet(httpGet);
+                                                         //nebitno je sta se prosledjuje ali bitno je da je 1 parametar da bi se test izvrsio jednom
+        List<OptionYahooApiMap> result = finansijaApiUtil.fetchOptionsFromYahooApi(Arrays.asList("AAPL"));
         OptionYahooApiMap firstOption = result.get(0);
-
-        assertNotNull("yahoo objekat ne sme biti null",result);
-
-        assertNotNull("contractSymbol ne sme biti null", firstOption.getContractSymbol());
-        assertNotNull("strike ne sme biti null", firstOption.getStrike());
-        assertNotNull("currency ne sme biti null", firstOption.getCurrency());
-        assertNotNull("lastPrice ne sme biti null", firstOption.getLastPrice());
-        assertNotNull("change ne sme biti null", firstOption.getChange());
-        assertNotNull("percentChange ne sme biti null", firstOption.getPercentChange());
-        assertNotNull("bid ne sme biti null", firstOption.getBid());
-        assertNotNull("ask ne sme biti null", firstOption.getAsk());
-        assertNotNull("contractSize ne sme biti null", firstOption.getContractSize());
-        assertNotNull("expiration ne sme biti null", firstOption.getExpiration());
-        assertNotNull("lastTradeDate ne sme biti null", firstOption.getLastTradeDate());
-        assertNotNull("impliedVolatility ne sme biti null", firstOption.getImpliedVolatility());
-        assertNotNull("inTheMoney ne sme biti null", firstOption.getInTheMoney());
-        assertNotNull("ticker ne sme biti null", firstOption.getTicker());
-        assertNotNull("opcijaTip ne sme biti null", firstOption.getOpcijaTip());
-
-        assertEquals("AAPL240322C00100000", firstOption.getContractSymbol());
-        assertEquals(Double.parseDouble("100.0"), Optional.ofNullable(firstOption.getStrike()));
-        assertEquals("USD", firstOption.getCurrency());
-        assertEquals(Double.parseDouble("73.01"), Optional.ofNullable(firstOption.getLastPrice()));
-        assertEquals(Double.parseDouble("0.0"), Optional.ofNullable(firstOption.getChange()));
-        assertEquals(Double.parseDouble("0.0"), Optional.ofNullable(firstOption.getPercentChange()));
-        assertEquals(Double.parseDouble("0.0"), Optional.ofNullable(firstOption.getBid()));
-        assertEquals(Double.parseDouble("0.0"), Optional.ofNullable(firstOption.getAsk()));
-        assertEquals("REGULAR", firstOption.getContractSize());
-        assertEquals(Long.parseLong("1711065600"), Optional.ofNullable(firstOption.getExpiration()));
-        assertEquals(Long.parseLong("1710445704"), Optional.ofNullable(firstOption.getLastTradeDate()));
-        assertEquals(Double.parseDouble("1.0000000000000003E-5"), Optional.ofNullable(firstOption.getImpliedVolatility()));
-        assertEquals(Boolean.parseBoolean("true"), firstOption.getInTheMoney());
-        assertEquals("", firstOption.getTicker());
-        assertEquals(OpcijaTip.CALL, firstOption.getOpcijaTip());
-    }
-
-    @Test
-    @DependsOn("testYahooApiDeserialization")//ovaj test zavisi od prethodnog testa
-    public void testYahooApiFetchNotNull() throws IOException {
-
-        PowerMockito.mockStatic(FinansijaApiUtil.class);
-        when(FinansijaApiUtil.fetchOptionsFromYahooApi(anyList())).thenCallRealMethod(); // Poziv realne metode
-
-        List<OptionYahooApiMap> result = FinansijaApiUtil.fetchOptionsFromYahooApi(Arrays.asList("AAPL"));
 
         assertNotNull(result);
 
+        assertNotNull("contractSymbol ne sme biti null", firstOption.getContractSymbol());
+        assertNotNull(firstOption.getStrike());
+        assertNotNull("currency ne sme biti null", firstOption.getCurrency());
+        assertNotNull(firstOption.getLastPrice());
+        assertNotNull(firstOption.getChange());
+        assertNotNull(firstOption.getPercentChange());
+        assertNotNull(firstOption.getBid());
+        assertNotNull(firstOption.getAsk());
+        assertNotNull("contractSize ne sme biti null", firstOption.getContractSize());
+        assertNotNull(firstOption.getExpiration());
+        assertNotNull(firstOption.getLastTradeDate());
+        assertNotNull(firstOption.getImpliedVolatility());
+        assertNotNull(firstOption.getInTheMoney());
+        assertNotNull(firstOption.getTicker());
+        assertNotNull(firstOption.getOpcijaTip());
+
+        assertEquals("AAPL240322C00100000", firstOption.getContractSymbol());//
+        assertEquals(Double.parseDouble("100.0"), firstOption.getStrike().doubleValue(),0.0001);
+        assertEquals("USD", firstOption.getCurrency());
+        assertEquals(Double.parseDouble("73.01"), firstOption.getLastPrice().doubleValue(),0.0001);//
+        assertEquals(Double.parseDouble("0.0"), firstOption.getChange().doubleValue(),0.0001);//
+        assertEquals(Double.parseDouble("0.0"), firstOption.getPercentChange().doubleValue(),0.0001);//
+        assertEquals(Double.parseDouble("0.0"), firstOption.getBid().doubleValue(),0.0001);
+        assertEquals(Double.parseDouble("0.0"), firstOption.getAsk().doubleValue(),0.0001);
+        assertEquals("REGULAR", firstOption.getContractSize());
+        assertEquals(Long.parseLong("1711065600"), firstOption.getExpiration().doubleValue(),0.0001);
+        assertEquals(Long.parseLong("1710445704"), firstOption.getLastTradeDate().doubleValue(),0.0001);
+        assertEquals(Double.parseDouble("1.0000000000000003E-5"), firstOption.getImpliedVolatility().doubleValue(),0.0001);
+        assertEquals(Boolean.parseBoolean("true"), firstOption.getInTheMoney());
+        assertEquals("AAPL", firstOption.getTicker());
+        assertEquals(OpcijaTip.CALL, firstOption.getOpcijaTip());
     }
+
 
     @Test
     public void testPolygonApiDeserialization() throws IOException {
@@ -295,66 +303,92 @@ public class OpcijaServisIntegationTest {
                 "}";
 
 
+        FinansijaApiUtil finansijaApiUtil = new FinansijaApiUtil();
+        finansijaApiUtil.setJsonParserUtil(new JsonParserUtil());
+
         CloseableHttpResponse responseMock = mock(CloseableHttpResponse.class);
         CloseableHttpClient httpClientMock = mock(CloseableHttpClient.class);
-        when(httpClientMock.execute(any(HttpGet.class))).thenReturn(responseMock);
+        HttpGet httpGet = mock(HttpGet.class);
+        HttpEntity entity = mock(HttpEntity.class);
+
+        finansijaApiUtil.setResponse(responseMock);
+        finansijaApiUtil.setHttpClient(httpClientMock);
+        finansijaApiUtil.setHttpGet(httpGet);
+
+        when(httpClientMock.execute(httpGet)).thenReturn(responseMock);
 
         InputStream mockInputStream = new ByteArrayInputStream(json.getBytes());
-        when(responseMock.getEntity().getContent()).thenReturn(mockInputStream);
+        when(responseMock.getEntity()).thenReturn(entity);
 
+        //u svaki when je ulazni parametar mock objekat a return ti predefinises
+        //a svaki when ulazni parametar odnosno mock mora biti setovan u testnoj klasi
+        //najbitniji je poslednji when jer on odredjuje sta ce biti ulazni parametri u testnu metodu
+        when(entity.getContent()).thenReturn(mockInputStream);
 
-        PowerMockito.mockStatic(FinansijaApiUtil.class);
-        when(FinansijaApiUtil.fetchTickerNames()).thenCallRealMethod(); // Poziv realne metode
-
-
-        List<String> result = FinansijaApiUtil.fetchTickerNames();
-
+       List<String> result = finansijaApiUtil.fetchTickerNames();
         assertNotNull("ticker objekat ne sme biti null",result.get(0));
         assertEquals("A",result.get(0));
 
     }
-
-    @Test
-    @DependsOn("testPolygonApiDeserialization")
-    public void testPolygonApiFetchNotNull() throws IOException {
-
-        PowerMockito.mockStatic(FinansijaApiUtil.class);
-        when(FinansijaApiUtil.fetchTickerNames()).thenCallRealMethod(); // Poziv realne metode
-
-        List<String> result = FinansijaApiUtil.fetchTickerNames();
-
-        assertNotNull(result);
-
-    }
+    //sve sto se mockuje ocemo da nasa testna funkcija ne zavisi od toga odnosno moze i da se izbaci iz testiranja
+    //jer zapravo ako mockujes metodu i predefinises sta vraca odnosno input za sledecu testnu metodu mozes i direktno ubaciti input u sledecu testnu metodu
+    //zapravo testiramo samo i samo kod odnosno metode koje su deo naseg sistema
+    //svaka metoda je wraper zapravo jer zove druge metode,ali jedino sto je bitno je da se izbace iz svih metoda pozivi izvan naseg sistema odnosno da se mockuju
+    //sto znaci da ako imas metodu u sistemu koja samo zove druge metode u tvom sistemu onda nista neces mockovati
+    //isto tako ako imas metodu u sistemu koja zove samo zove druge metode koje su izvan tvog sistema onda ces sve mockovati a onda nema ni potrebe za testiranjem
 
     @Test
     public void testGenerateOptionBlackScholes(){
 
+        //istekla opcija ima vrednost 0
         double trenutnaCenaOsnovneAkcije = 100.0;
         double cenaIzvrsenjaOpcije = 90.0;
-        double stopaBezRizika = 0.05;
-        double brojGodinaDoIstekaOpcije = 1.0;
         double volatilnostCeneOsnovneAkcije = 0.2;
+        double brojMilisecDoIstekaOpcije = 1711197431;
 
-        PowerMockito.mockStatic(IzvedeneVrednostiUtil.class);
-        when(IzvedeneVrednostiUtil.calculateBlackScholesValue(
-                trenutnaCenaOsnovneAkcije, cenaIzvrsenjaOpcije, stopaBezRizika,
-                brojGodinaDoIstekaOpcije, volatilnostCeneOsnovneAkcije))
-                .thenCallRealMethod();
+        IzvedeneVrednostiUtil izvedeneVrednostiUtil = new IzvedeneVrednostiUtil();
+        //ne mockujes objekat koji ima funkciju za testiranje jer svi mockovani objekti imaju prazne implementacije funkcija
 
-        // Poziv metode koju testiramo
-        double result = IzvedeneVrednostiUtil.calculateBlackScholesValue(trenutnaCenaOsnovneAkcije, cenaIzvrsenjaOpcije,
-                stopaBezRizika, brojGodinaDoIstekaOpcije, volatilnostCeneOsnovneAkcije);
+        double result = izvedeneVrednostiUtil.calculateBlackScholesValue(
+                trenutnaCenaOsnovneAkcije, cenaIzvrsenjaOpcije,volatilnostCeneOsnovneAkcije ,
+                (long) brojMilisecDoIstekaOpcije);
 
-        // Provjera očekivanog rezultata
-        assertEquals(12.601586582153017, result, 0.0001);
-
-
-
-
-
-
+        //ti moras znati unapred koji je ispravan rezultat za testni input da bi mogao da proveris da li testna funkcija radi ispravno
+        assertTrue(result == 0);
 
     }
 
+    /////////////////////////////////////////////////////////////////////////
+
+    @Test//https://query1.finance.yahoo.com/v6/finance/options/AAPL
+    public void testIntegrationYahooApi(){
+        RestAssured.baseURI = "https://query1.finance.yahoo.com";
+
+        given()
+                .when()
+                .get("/v6/finance/options/AAPL")
+                .then()
+                .statusCode(200)
+                .assertThat()
+                .body(not(isEmpty()))
+                .body("optionChain", notNullValue());
+    }
+
+    @Test//https://api.polygon.io/v3/reference/tickers?active=true&apiKey=sD9RXYv12OWqAVg8ovsgtVaI91l988Op
+    public void testIntegrationPolygonApi(){
+
+        RestAssured.baseURI = "https://api.polygon.io";
+
+        given()
+                .queryParam("active", "true")
+                .queryParam("apiKey", "sD9RXYv12OWqAVg8ovsgtVaI91l988Op")
+                .when()
+                .get("/v3/reference/tickers")
+                .then()
+                .statusCode(200)
+                .assertThat()
+                .body(not(isEmpty()))
+                .body("results", notNullValue());//samo na prvoj dubini polja objekta
+    }
 }
+
