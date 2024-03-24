@@ -34,7 +34,7 @@ public class OpcijaDto {
 
 
     private long ukupanBrojIzdatihAkcijaKompanije;
-    private long trenutnaCenaOsnovneAkcijeKompanije;//stockPrice(currentAssetPrice )
+    private long trenutnaCenaOsnovneAkcijeKompanije;//stockPrice(currentAssetPrice)
     private long brojUgovora;//broj ugovora koje obuhvata opcija!
 
 

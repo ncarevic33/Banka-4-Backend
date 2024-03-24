@@ -3,8 +3,12 @@ package rs.edu.raf.berza.opcija.servis.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,10 +24,7 @@ import rs.edu.raf.berza.opcija.servis.util.OptionYahooApiMap;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 //direktno komunicira sa bazom i sluzi za operacije nad entitetom pre upisa u bazu
@@ -31,6 +32,9 @@ import java.util.stream.Collectors;
 public class OpcijaServisImpl implements OpcijaServis {
 
     private final static Logger log = LoggerFactory.getLogger(OpcijaServisImpl.class.getSimpleName());
+
+    @Autowired
+    private CacheManager cacheManager;
 
     @Autowired
     private IzvedeneVrednostiUtil izvedeneVrednostiUtil;
@@ -69,13 +73,30 @@ public class OpcijaServisImpl implements OpcijaServis {
         return yahooOpcije.stream().map(yahooOpcija -> opcijaMapper.yahooOpcijaToOpcija(yahooOpcija)).collect(Collectors.toList());
     }
 
+    //CITA IZ CACHE A AKO NE POSTOJI ONDA IZ BAZE
     @Override
     public List<OpcijaDto> findAll()  {
 
-        List<Opcija> opcije = opcijaRepository.findAll();
+        List<Opcija> opcije = new ArrayList<>();
+        Cache cache = cacheManager.getCache("opcijeCache");
 
+        if (cache != null) {
+            Map<Object, Object> cacheMap = (Map<Object, Object>) cache.getNativeCache();
+            if (cacheMap != null) {
+                for (Map.Entry<Object, Object> entry : cacheMap.entrySet()) {
+                    Object value = entry.getValue();
+                    if (value instanceof Opcija) {
+                        opcije.add((Opcija) value);
+                    }
+                }
+            }
+        }
+        if(opcije.size() != 0) {
+            log.info("findAll iz cache");
+            return opcije.stream().map(opcija -> opcijaMapper.opcijaToOpcijaDto(opcija)).collect(Collectors.toList());
+        }
+            opcije = opcijaRepository.findAll();
         return opcije.stream().map(opcija -> opcijaMapper.opcijaToOpcijaDto(opcija)).collect(Collectors.toList());
-
     }
 
     @Override
@@ -153,20 +174,33 @@ public class OpcijaServisImpl implements OpcijaServis {
         return opcijaMapper.opcijaToOpcijaDto(opcija);
     }
 
+    //CITA IZ CACHE A AKO NE POSTOJI ONDA IZ BAZE
     @Override
     //optional je ili objekat ili null(ako ne postoji u bazi)
-    public Opcija findById(Long id) {
-        return opcijaRepository.findById(id).orElse(null);
+    public OpcijaDto findById(Long id) {
+        Cache cache = cacheManager.getCache("opcijeCache");
+
+        if (cache != null) {
+            Map<Object, Object> cacheMap = (Map<Object, Object>) cache.getNativeCache();
+
+            if (cacheMap != null) {
+                for (Map.Entry<Object, Object> entry : cacheMap.entrySet()) {
+                    Object key = entry.getKey();
+                    Object value = entry.getValue();
+                    if (value instanceof Opcija && key.equals(id)) {
+                        log.info("findById iz cache");
+                        return opcijaMapper.opcijaToOpcijaDto((Opcija) value);
+                    }
+                }
+            }
+        }
+        return opcijaMapper.opcijaToOpcijaDto(opcijaRepository.findById(id).orElse(null));//ne postoji cache
     }
 
 
-
-
-    //@Cacheable(value = "opcijeCache", key = "'opcijeCache'")
-    //@CacheEvict(value = "opcijeCache", allEntries = true)//azurira kes metoda sama sebi
+    //UBACUJE U CACHE KAD GOD SE AZURIRA
     @Override
-    //poseban thread obradjuje
-    @Scheduled(fixedRate = 10000)
+    @Scheduled(fixedRate = 10000)//poseban thread obradjuje
     @Transactional//sve promene nad bazom se upisuju u bazu tek kada se metoda uspesno zavrsi,ako dodje do izuzetka radi se roll back
     public void azuirajPostojeceOpcije() throws IOException {
 
@@ -208,15 +242,21 @@ public class OpcijaServisImpl implements OpcijaServis {
                     postojeca.setOpcijaStanje(OpcijaStanje.EXPIRED);
                     //postojeca.setIstaIstorijaGroupId();
                 }
-                postojeca.izracunajIzvedeneVrednosti(izvedeneVrednostiUtil);
+                Akcija akcija = akcijaRepository.findFirstByTicker(postojeca.getTicker()).orElse(null);
+                                                                            //promeniti u akcija
+                postojeca.izracunajIzvedeneVrednosti(izvedeneVrednostiUtil,new Akcija());
 
-                //azurirana opcija
-                opcijaRepository.save(postojecaOpcija.get());
+                //azurirana opcija                                                      //id                            obj
+                cacheManager.getCache("opcijeCache").put(opcijaRepository.save(postojecaOpcija.get()).getId(),postojecaOpcija.get());
             });
             //nova opcija
-            if(!postojecaOpcija.isPresent())
-                opcijaRepository.save(o);
+            if(!postojecaOpcija.isPresent()) {
+                Akcija akcija = akcijaRepository.findFirstByTicker(o.getTicker()).orElse(null);
+                                                                    //promeniti u akcija
+                o.izracunajIzvedeneVrednosti(izvedeneVrednostiUtil,new Akcija());
 
+                cacheManager.getCache("opcijeCache").put(opcijaRepository.save(o).getId(),o);
+            }
         }
 
     }

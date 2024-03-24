@@ -45,9 +45,15 @@ public class OpcijaController {
 
     }
 
+    @GetMapping("opcija-po-id/{opcijaId}")
+    @Operation(description = "uzmi opciju po id")
+    public ResponseEntity<OpcijaDto> findOne(@PathVariable("opcijaId") Long opcijaId) throws InterruptedException {
+        return new ResponseEntity<>(opcijaServis.findById(opcijaId),HttpStatus.OK);
+
+    }
 
     @PostMapping("/izvrsi-korisnikovu-opciju/{opcijaId}/{userId}")
-    @Operation(description = "Izvrsi put ili call opciju\nVraca null pri nedostupnom podatku")
+    @Operation(description = "Izvrsi put ili call opciju\nVraca not found pri nedostupnom podatku")
     public ResponseEntity<KorisnikoveKupljeneOpcije> izvrsiKorisnikovuOpciju(@PathVariable("opcijaId") Long opcijaId, @PathVariable("userId") Long userId) {
         KorisnikoveKupljeneOpcije korisnikoveKupljeneOpcije = opcijaServis.izvrsiOpciju(opcijaId, userId);
 
@@ -59,7 +65,7 @@ public class OpcijaController {
     }
 
     @GetMapping("/stanje-opcije/{opcijaId}")
-    @Operation(description = "Proveri stanje opcije\nVraca null pri nedostupnom podatku")
+    @Operation(description = "Proveri stanje opcije\nVraca not found pri nedostupnom podatku")
     public ResponseEntity<OpcijaStanje> stanjeOpcije(@PathVariable("opcijaId") Long opcijaId){
         OpcijaStanje stanje = opcijaServis.proveriStanjeOpcije(opcijaId);
 

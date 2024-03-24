@@ -16,7 +16,7 @@ public interface OpcijaServis {
 
         OpcijaDto save(NovaOpcijaDto option);
 
-        Opcija findById(Long id);
+        OpcijaDto findById(Long id);
 
         void azuirajPostojeceOpcije() throws IOException;
 

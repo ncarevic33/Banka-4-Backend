@@ -18,6 +18,8 @@ public class Akcija {
     @Column(nullable = false)
     private String ticker;
 
-    private double akcijaTickerTrenutnaCena;
+    //PREDEFINISANO JER NEMA NA API
+    private double akcijaTickerTrenutnaCena = 60;//menja se
+    private long ukupanBrojIzdatihAkcijaKompanije = 1000;
 
 }

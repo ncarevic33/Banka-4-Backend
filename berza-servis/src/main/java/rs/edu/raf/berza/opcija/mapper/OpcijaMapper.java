@@ -38,21 +38,24 @@ public class OpcijaMapper {
     //KA FRONTU
     public OpcijaDto opcijaToOpcijaDto(Opcija opcija){
 
+        if(opcija == null)
+            return null;
+
         OpcijaDto opcijaDto = new OpcijaDto();
 
-        opcijaDto.setId(opcija.getId());//
-        opcijaDto.setStrikePrice(opcija.getStrikePrice());//
-        opcijaDto.setLastPrice(opcija.getLastPrice());//
-        opcijaDto.setBid(opcija.getBid());//
-        opcijaDto.setContractSymbol(opcija.getContractSymbol());//
-        opcijaDto.setOptionType(opcija.getOptionType());//
-        opcijaDto.setAsk(opcija.getAsk());//
-        opcijaDto.setTicker(opcija.getTicker());//
-        opcijaDto.setChange(opcija.getChange());//
-        opcijaDto.setPercentChange(opcija.getPercentChange());//
-        opcijaDto.setImpliedVolatility(opcija.getImpliedVolatility());//
-        opcijaDto.setOpenInterest(opcija.getOpenInterest());//
-        opcijaDto.setContractSize(opcija.getContractSize());//
+        opcijaDto.setId(opcija.getId());
+        opcijaDto.setStrikePrice(opcija.getStrikePrice());
+        opcijaDto.setLastPrice(opcija.getLastPrice());
+        opcijaDto.setBid(opcija.getBid());
+        opcijaDto.setContractSymbol(opcija.getContractSymbol());
+        opcijaDto.setOptionType(opcija.getOptionType());
+        opcijaDto.setAsk(opcija.getAsk());
+        opcijaDto.setTicker(opcija.getTicker());
+        opcijaDto.setChange(opcija.getChange());
+        opcijaDto.setPercentChange(opcija.getPercentChange());
+        opcijaDto.setImpliedVolatility(opcija.getImpliedVolatility());
+        opcijaDto.setOpenInterest(opcija.getOpenInterest());
+        opcijaDto.setContractSize(opcija.getContractSize());
 
         opcijaDto.setInTheMoney(opcija.isInTheMoney());
         opcijaDto.setExpiration(opcija.getExpiration());
@@ -64,6 +67,9 @@ public class OpcijaMapper {
     }
 
     public Opcija yahooOpcijaToOpcija(OptionYahooApiMap optionYahooApiMap){
+
+        if(optionYahooApiMap == null)
+            return null;
 
         Opcija opcija = new Opcija();
         Akcija akcija = akcijaRepository.findFirstByTicker(optionYahooApiMap.getTicker()).orElse(null);
@@ -84,8 +90,8 @@ public class OpcijaMapper {
         opcija.setExpiration(optionYahooApiMap.getExpiration());
 
         //PREDEFINISANO JER NEMA NA API
-        opcija.setTrenutnaCenaOsnovneAkcijeKompanije(60);
-        opcija.setUkupanBrojIzdatihAkcijaKompanije(1000);
+        //opcija.setTrenutnaCenaOsnovneAkcijeKompanije(60);
+        //opcija.setUkupanBrojIzdatihAkcijaKompanije(1000);
         ////////////////
         //opcija.setDatumIstekaVazenja(LocalDateTime.ofInstant(Instant.ofEpochMilli(opcija.getExpiration()),ZoneId.systemDefault()));
         opcija.setDatumIstekaVazenja(LocalDateTime.ofInstant(Instant.ofEpochSecond(opcija.getExpiration()),ZoneOffset.systemDefault()));
@@ -121,8 +127,8 @@ public class OpcijaMapper {
         //impliedVolatility
         //expiration
         //ukupanBrojIzdatihAkcijaKompanije//nema na api
-
-        opcija.izracunajIzvedeneVrednosti(izvedeneVrednostiUtil);
+                                                                //promeniti u akcija
+        opcija.izracunajIzvedeneVrednosti(izvedeneVrednostiUtil,new Akcija());
 
         return opcija;
     }

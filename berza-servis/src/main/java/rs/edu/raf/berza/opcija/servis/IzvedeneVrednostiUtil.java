@@ -49,7 +49,7 @@ public class IzvedeneVrednostiUtil {
             return 1 - p;
         }
     }
-    /*  // Funkcija za izračunavanje kumulativne distribucije normalne distribucije
+    /*//Funkcija za izracunavanje kumulativne distribucije normalne distribucije
     public static double cumulativeProbability(double x) {
         return 0.5 * (1 + Erf.erf(x / Math.sqrt(2)));
     }
@@ -60,9 +60,9 @@ public class IzvedeneVrednostiUtil {
         long expirationSeconds = (long) expiration;
         double timeInSeconds = expirationSeconds - nowSeconds;
         if (timeInSeconds <= 0) {
-            return 0; // Opcija je već istekla, pa vreme do isteka treba biti 0
+            return 0; //opcija je vec istekla, pa vreme do isteka treba biti 0
         }
-        return timeInSeconds / (365 * 24 * 60 * 60); // Pretvara u godine
+        return timeInSeconds / (365 * 24 * 60 * 60); //pretvara u godine
     }
 
     public double calculateThetaCall(double S, double K, double r, double sigma, double T) {
