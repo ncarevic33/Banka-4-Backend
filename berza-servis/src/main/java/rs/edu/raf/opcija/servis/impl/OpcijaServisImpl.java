@@ -1,26 +1,25 @@
-package rs.edu.raf.berza.opcija.servis.impl;
+package rs.edu.raf.opcija.servis.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import rs.edu.raf.berza.opcija.dto.NovaOpcijaDto;
-import rs.edu.raf.berza.opcija.dto.OpcijaDto;
-import rs.edu.raf.berza.opcija.mapper.OpcijaMapper;
-import rs.edu.raf.berza.opcija.model.*;
-import rs.edu.raf.berza.opcija.repository.*;
-import rs.edu.raf.berza.opcija.servis.IzvedeneVrednostiUtil;
-import rs.edu.raf.berza.opcija.servis.OpcijaServis;
-import rs.edu.raf.berza.opcija.servis.util.FinansijaApiUtil;
-import rs.edu.raf.berza.opcija.servis.util.OptionYahooApiMap;
+import rs.edu.raf.opcija.dto.NovaOpcijaDto;
+import rs.edu.raf.opcija.dto.OpcijaDto;
+import rs.edu.raf.opcija.mapper.OpcijaMapper;
+import rs.edu.raf.opcija.model.*;
+import rs.edu.raf.opcija.repository.AkcijaRepository;
+import rs.edu.raf.opcija.repository.KorisnikRepository;
+import rs.edu.raf.opcija.servis.IzvedeneVrednostiUtil;
+import rs.edu.raf.opcija.servis.OpcijaServis;
+import rs.edu.raf.opcija.servis.util.FinansijaApiUtil;
+import rs.edu.raf.opcija.servis.util.OptionYahooApiMap;
+import rs.edu.raf.opcija.repository.KorisnikoveKupljeneOpcijeRepository;
+import rs.edu.raf.opcija.repository.OpcijaRepository;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -108,7 +107,7 @@ public class OpcijaServisImpl implements OpcijaServis {
 
     @Override
     @Transactional//izdvajamo opciju i akciju jer su nezavisne promene
-    public KorisnikoveKupljeneOpcije izvrsiOpciju(Long opcijaId,Long userId) {
+    public KorisnikoveKupljeneOpcije izvrsiOpciju(Long opcijaId, Long userId) {
                                                                                                         //moze ih biti vise pa uzimamo prvu neiskoriscenu
         KorisnikoveKupljeneOpcije korisnikKupljenaOpcija = korisnikKupljeneOpcijeRepository.findFirstByOpcijaIdAndKorisnikIdAndIskoriscenaFalse(opcijaId, userId).orElse(null);
         Opcija opcija = opcijaRepository.findById(opcijaId).orElse(null);

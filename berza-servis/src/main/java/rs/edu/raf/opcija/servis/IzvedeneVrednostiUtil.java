@@ -1,4 +1,4 @@
-package rs.edu.raf.berza.opcija.servis;
+package rs.edu.raf.opcija.servis;
 
 import java.time.Instant;
 

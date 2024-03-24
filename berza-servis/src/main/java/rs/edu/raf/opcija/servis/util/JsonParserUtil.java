@@ -1,4 +1,4 @@
-package rs.edu.raf.berza.opcija.servis.util;
+package rs.edu.raf.opcija.servis.util;
 
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rs.edu.raf.berza.opcija.model.OpcijaTip;
+import rs.edu.raf.opcija.model.OpcijaTip;
 
 import java.io.BufferedReader;
 import java.io.IOException;

@@ -1,4 +1,4 @@
-package rs.edu.raf.berza.opcija.controller;
+package rs.edu.raf.opcija.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -6,16 +6,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-import rs.edu.raf.berza.opcija.dto.NovaOpcijaDto;
-import rs.edu.raf.berza.opcija.dto.OpcijaDto;
-import rs.edu.raf.berza.opcija.model.KorisnikoveKupljeneOpcije;
-import rs.edu.raf.berza.opcija.model.OpcijaStanje;
-import rs.edu.raf.berza.opcija.servis.OpcijaServis;
+import rs.edu.raf.opcija.dto.NovaOpcijaDto;
+import rs.edu.raf.opcija.dto.OpcijaDto;
+import rs.edu.raf.opcija.model.KorisnikoveKupljeneOpcije;
+import rs.edu.raf.opcija.model.OpcijaStanje;
+import rs.edu.raf.opcija.servis.OpcijaServis;
 
 import java.time.*;
-import java.util.Date;
 import java.util.List;
 
 @RestController

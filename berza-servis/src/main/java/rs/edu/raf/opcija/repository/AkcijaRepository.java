@@ -1,10 +1,9 @@
-package rs.edu.raf.berza.opcija.repository;
+package rs.edu.raf.opcija.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import rs.edu.raf.berza.opcija.model.Akcija;
+import rs.edu.raf.opcija.model.Akcija;
 
-import java.util.List;
 import java.util.Optional;
 
 @Repository

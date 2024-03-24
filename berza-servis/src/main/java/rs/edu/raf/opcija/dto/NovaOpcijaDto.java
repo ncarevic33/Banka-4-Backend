@@ -1,4 +1,4 @@
-package rs.edu.raf.berza.opcija.dto;
+package rs.edu.raf.opcija.dto;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;

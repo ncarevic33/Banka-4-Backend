@@ -1,8 +1,8 @@
-package rs.edu.raf.berza.opcija.dto;
+package rs.edu.raf.opcija.dto;
 
 import lombok.Data;
-import rs.edu.raf.berza.opcija.model.OpcijaStanje;
-import rs.edu.raf.berza.opcija.model.OpcijaTip;
+import rs.edu.raf.opcija.model.OpcijaStanje;
+import rs.edu.raf.opcija.model.OpcijaTip;
 
 import java.time.LocalDateTime;
 

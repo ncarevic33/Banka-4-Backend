@@ -1,9 +1,9 @@
-package rs.edu.raf.berza.opcija.servis.util;
+package rs.edu.raf.opcija.servis.util;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import rs.edu.raf.berza.opcija.model.OpcijaTip;
+import rs.edu.raf.opcija.model.OpcijaTip;
 
 @Data
 @NoArgsConstructor

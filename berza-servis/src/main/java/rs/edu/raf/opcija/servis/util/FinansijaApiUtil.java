@@ -1,4 +1,4 @@
-package rs.edu.raf.berza.opcija.servis.util;
+package rs.edu.raf.opcija.servis.util;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
@@ -8,7 +8,6 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.mockito.Mock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,14 +1,13 @@
-package rs.edu.raf.berza.opcija.model;
+package rs.edu.raf.opcija.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
-import jakarta.validation.ValidationException;
 import jakarta.validation.Validator;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import rs.edu.raf.berza.opcija.servis.IzvedeneVrednostiUtil;
+import rs.edu.raf.opcija.servis.IzvedeneVrednostiUtil;
 
 import java.time.*;
 import java.util.Set;
@@ -102,7 +101,7 @@ public class Opcija{
     private long volume;
 
 
-    public void izracunajIzvedeneVrednosti(IzvedeneVrednostiUtil izvedeneVrednostiUtil,Akcija akcija){
+    public void izracunajIzvedeneVrednosti(IzvedeneVrednostiUtil izvedeneVrednostiUtil, Akcija akcija){
 
         Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
         validateRequiredDataBeforeDeriving(this,validator);
@@ -115,19 +114,6 @@ public class Opcija{
         marketCap = akcija.getAkcijaTickerTrenutnaCena()*akcija.getUkupanBrojIzdatihAkcijaKompanije();
         theta =  (optionType.equals(OpcijaTip.CALL)?izvedeneVrednostiUtil.calculateThetaCall((double) akcija.getAkcijaTickerTrenutnaCena(), strikePrice, 0.05,impliedVolatility, (double) expiration):izvedeneVrednostiUtil.calculateThetaPut((double) akcija.getAkcijaTickerTrenutnaCena(), strikePrice, 0.05,impliedVolatility, (double) expiration));
         maintenanceMargin = izvedeneVrednostiUtil.calculateMaintenanceMargin(marketCap,0.2);
-
-//        System.out.println(vrednostOpcijeBlackScholes);
-//        System.out.println(marketCap);
-//        System.out.println(theta);
-//        System.out.println(maintenanceMargin);
-
-        //vrednostPozicije = (strikePrice-trenutnaCenaOsnovneAkcije)*contractSize;
-        //vrednostPozicije = vrednostOpcijeBlackScholes*brojUgovora;
-        //vrednostPozicije = (vrednostOpcijeBlackScholes-strikePrice)*brojUgovora
-        //vrednostPozicije=(vrednostOpcijeBlackScholes*contractSize*brojUgovora)-(trenutnaCenaOsnovneAkcije*contractSize*brojUgovora)
-        //maintenanceMargin = (long) (0.2*vrednostPozicije);
-        //maintenanceMargin = (long) (0.5*contractSize*lastPrice);
-        //theta = -1/daniDoIstekaOpcije;
 
     }
     private void validateRequiredDataBeforeDeriving(Opcija option, Validator validator) {

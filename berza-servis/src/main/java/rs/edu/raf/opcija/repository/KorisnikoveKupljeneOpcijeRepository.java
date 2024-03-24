@@ -1,8 +1,8 @@
-package rs.edu.raf.berza.opcija.repository;
+package rs.edu.raf.opcija.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import rs.edu.raf.berza.opcija.model.KorisnikoveKupljeneOpcije;
+import rs.edu.raf.opcija.model.KorisnikoveKupljeneOpcije;
 
 import java.util.Optional;
 

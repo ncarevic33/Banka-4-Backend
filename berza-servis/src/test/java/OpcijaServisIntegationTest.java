@@ -6,11 +6,11 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
-import rs.edu.raf.berza.opcija.model.OpcijaTip;
-import rs.edu.raf.berza.opcija.servis.IzvedeneVrednostiUtil;
-import rs.edu.raf.berza.opcija.servis.util.FinansijaApiUtil;
-import rs.edu.raf.berza.opcija.servis.util.JsonParserUtil;
-import rs.edu.raf.berza.opcija.servis.util.OptionYahooApiMap;
+import rs.edu.raf.opcija.model.OpcijaTip;
+import rs.edu.raf.opcija.servis.IzvedeneVrednostiUtil;
+import rs.edu.raf.opcija.servis.util.FinansijaApiUtil;
+import rs.edu.raf.opcija.servis.util.JsonParserUtil;
+import rs.edu.raf.opcija.servis.util.OptionYahooApiMap;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;

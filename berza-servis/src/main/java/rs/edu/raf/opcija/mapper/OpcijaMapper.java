@@ -1,21 +1,20 @@
-package rs.edu.raf.berza.opcija.mapper;
+package rs.edu.raf.opcija.mapper;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import rs.edu.raf.berza.opcija.dto.NovaOpcijaDto;
-import rs.edu.raf.berza.opcija.dto.OpcijaDto;
-import rs.edu.raf.berza.opcija.model.Akcija;
-import rs.edu.raf.berza.opcija.model.Opcija;
-import rs.edu.raf.berza.opcija.model.OpcijaStanje;
-import rs.edu.raf.berza.opcija.model.OpcijaTip;
-import rs.edu.raf.berza.opcija.repository.AkcijaRepository;
-import rs.edu.raf.berza.opcija.servis.IzvedeneVrednostiUtil;
-import rs.edu.raf.berza.opcija.servis.util.OptionYahooApiMap;
+import rs.edu.raf.opcija.dto.NovaOpcijaDto;
+import rs.edu.raf.opcija.dto.OpcijaDto;
+import rs.edu.raf.opcija.model.Akcija;
+import rs.edu.raf.opcija.model.Opcija;
+import rs.edu.raf.opcija.model.OpcijaStanje;
+import rs.edu.raf.opcija.model.OpcijaTip;
+import rs.edu.raf.opcija.repository.AkcijaRepository;
+import rs.edu.raf.opcija.servis.IzvedeneVrednostiUtil;
+import rs.edu.raf.opcija.servis.util.OptionYahooApiMap;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.ZoneOffset;
 
 @Component

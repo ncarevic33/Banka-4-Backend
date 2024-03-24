@@ -1,4 +1,4 @@
-package rs.edu.raf.berza.opcija.model;
+package rs.edu.raf.opcija.model;
 
 public enum OpcijaStanje {
     //call je kupovina akcija po ceni iz opcije nezavisno od trenutne cene akcije

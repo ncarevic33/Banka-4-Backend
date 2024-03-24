@@ -1,10 +1,9 @@
-package rs.edu.raf.berza.opcija.servis;
+package rs.edu.raf.opcija.servis;
 
-import rs.edu.raf.berza.opcija.dto.NovaOpcijaDto;
-import rs.edu.raf.berza.opcija.dto.OpcijaDto;
-import rs.edu.raf.berza.opcija.model.KorisnikoveKupljeneOpcije;
-import rs.edu.raf.berza.opcija.model.Opcija;
-import rs.edu.raf.berza.opcija.model.OpcijaStanje;
+import rs.edu.raf.opcija.dto.NovaOpcijaDto;
+import rs.edu.raf.opcija.dto.OpcijaDto;
+import rs.edu.raf.opcija.model.KorisnikoveKupljeneOpcije;
+import rs.edu.raf.opcija.model.OpcijaStanje;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
