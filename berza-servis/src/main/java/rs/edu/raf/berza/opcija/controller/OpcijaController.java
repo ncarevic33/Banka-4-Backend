@@ -47,9 +47,13 @@ public class OpcijaController {
 
     @GetMapping("opcija-po-id/{opcijaId}")
     @Operation(description = "uzmi opciju po id")
-    public ResponseEntity<OpcijaDto> findOne(@PathVariable("opcijaId") Long opcijaId) throws InterruptedException {
-        return new ResponseEntity<>(opcijaServis.findById(opcijaId),HttpStatus.OK);
-
+    public ResponseEntity<OpcijaDto> findOne(@PathVariable("opcijaId") Long opcijaId) {
+        OpcijaDto opcijaDto = opcijaServis.findById(opcijaId);
+        if (opcijaDto != null) {
+            return ResponseEntity.ok(opcijaDto);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @PostMapping("/izvrsi-korisnikovu-opciju/{opcijaId}/{userId}")
