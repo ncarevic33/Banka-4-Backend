@@ -4,9 +4,9 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import rs.edu.raf.onetimepasswords.OneTimePassword;
-import rs.edu.raf.onetimepasswords.OneTimePasswordRepository;
-import rs.edu.raf.onetimepasswords.OneTimePasswordService;
+import rs.edu.raf.model.OneTimePassword;
+import rs.edu.raf.repository.OneTimePasswordRepository;
+import rs.edu.raf.servis.impl.OneTimePasswordService;
 
 import java.time.LocalDateTime;
 

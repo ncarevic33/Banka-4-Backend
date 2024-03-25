@@ -3,13 +3,11 @@ package rs.edu.raf.mail;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import rs.edu.raf.korisnik.dto.KorisnikDTO;
-import rs.edu.raf.korisnik.dto.KorisnikDTO;
-import rs.edu.raf.mail.servis.MailServiceImplementation;
+import rs.edu.raf.dto.KorisnikDTO;
+import rs.edu.raf.servis.impl.MailServiceImplementation;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
