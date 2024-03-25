@@ -4,16 +4,14 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import rs.edu.raf.korisnik.dto.OmiljeniKorisnikDTO;
-import rs.edu.raf.korisnik.model.OmiljeniKorisnik;
-import rs.edu.raf.korisnik.repository.OmiljeniKorisnikRepository;
-import rs.edu.raf.korisnik.servis.OmiljeniKorisnikMapper;
-import rs.edu.raf.korisnik.servis.OmiljeniKorisnikServis;
+import rs.edu.raf.dto.OmiljeniKorisnikDTO;
+import rs.edu.raf.model.OmiljeniKorisnik;
+import rs.edu.raf.repository.OmiljeniKorisnikRepository;
+import rs.edu.raf.mapper.OmiljeniKorisnikMapper;
 
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @Disabled
