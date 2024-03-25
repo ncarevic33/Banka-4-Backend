@@ -42,11 +42,11 @@ public class FinansijaApiUtil {
         List<OptionYahooApiMap> allYahooTickersOptions = new ArrayList<>();
 
         for(String ticker : tickers) {
-            if(httpGet==null)
+            if(httpGet==null){//ako ne radimo test
                 httpGet = new HttpGet("https://query1.finance.yahoo.com/v6/finance/options/" + ticker);
-
-            response = httpClient.execute(httpGet);
-            httpGet = null;
+                response = httpClient.execute(httpGet);
+                httpGet = null;
+            }else response = httpClient.execute(httpGet);//ako radimo test
             allYahooTickersOptions.addAll(jsonParserUtil.parseBytesToYahooOptionObject(response.getEntity().getContent(), ticker));
             //obavezno zatvoriti resurs
             response.close();
@@ -80,7 +80,7 @@ public class FinansijaApiUtil {
 
         //api key je token(kao da si poslao username i password)
         //httpGet.setHeader("Authorization","sD9RXYv12OWqAVg8ovsgtVaI91l988Op");
-        if(httpGet==null)
+        if(httpGet==null)//ako ne radimo test
             httpGet = new HttpGet("https://api.polygon.io/v3/reference/tickers?active=true&apiKey=sD9RXYv12OWqAVg8ovsgtVaI91l988Op");
 
         response = httpClient.execute(httpGet);
@@ -99,18 +99,20 @@ public class FinansijaApiUtil {
 
     public List<GlobalQuoteApiMap> fetchGlobalQuote(List<String> tickerNames) throws IOException {
 
-        List<GlobalQuoteApiMap> allGlobalQuoteApiMap = new ArrayList<>();
-
+        List<GlobalQuoteApiMap> allGlobalQuoteApiMap = new ArrayList<>();                                                       //K2S940RX1TZYB0T1
+                                                                                                                                //4D528NVJMHJ6UR1X
         for(String ticker : tickerNames) {                                                                                      //A9OROHDG6WFRDS62
-            if (httpGet == null) {                                                                                              //PYBCOV2EOC716Q0Q
-                httpGet = new HttpGet("https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=" + ticker + "&apikey=4D528NVJMHJ6UR1X");
-                httpGetAlpha = new HttpGet("https://www.alphavantage.co/query?function=OVERVIEW&symbol=" + ticker + "&apikey=4D528NVJMHJ6UR1X");
+            if (httpGet == null) {//ako ne radimo test                                                                                              //PYBCOV2EOC716Q0Q
+                httpGet = new HttpGet("https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=" + ticker + "&apikey=K2S940RX1TZYB0T1");
+                httpGetAlpha = new HttpGet("https://www.alphavantage.co/query?function=OVERVIEW&symbol=" + ticker + "&apikey=K2S940RX1TZYB0T1");
+                response = httpClient.execute(httpGet);
+                responseAlpha = httpClient.execute(httpGetAlpha);
+                httpGet = null;
+                httpGetAlpha = null;
+            }else {//ako radimo test
+                response = httpClient.execute(httpGet);
+                responseAlpha = httpClient.execute(httpGetAlpha);
             }
-            response = httpClient.execute(httpGet);
-            responseAlpha = httpClient.execute(httpGetAlpha);
-            httpGet = null;
-            httpGetAlpha = null;
-
             GlobalQuoteApiMap globalQuoteApiMap = jsonParserUtil.parseBytesToGlobalQuoteObject(response.getEntity().getContent(),responseAlpha.getEntity().getContent());
             if (globalQuoteApiMap != null)
                 allGlobalQuoteApiMap.add(globalQuoteApiMap);

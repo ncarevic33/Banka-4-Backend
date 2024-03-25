@@ -166,8 +166,8 @@ public class JsonParserUtil {
 
         if(mainNodeAlpha == null)
             return null;
-
-        JsonNode globalQuote = mainNode.get("'Global Quote'");
+                                                //'Global Quote'
+        JsonNode globalQuote = mainNode.get("Global Quote");
         if (globalQuote != null) {
             JsonNode sharesOutstanding = mainNodeAlpha.get("SharesOutstanding");
 

@@ -82,6 +82,10 @@ public class OpcijaServisImpl implements OpcijaServis {
                                                                                             //Collections.singletonList(tickerNames.get(0))
         List<GlobalQuoteApiMap> globalQuotes = finansijaApiUtil.fetchGlobalQuote(tickerNames.subList(0, 4));
 
+        if(globalQuotes.size() == 0) {
+            log.info("Nije uspelo fetchovanje sa alphavantage api");
+            return new ArrayList<>();
+        }
         log.info("Gotovo fetchovanje sa alphavantage api");
 
         return globalQuotes.stream().map(globalQuote -> opcijaMapper.globalQuoteApiToGlobalQuote(globalQuote)).collect(Collectors.toList());
