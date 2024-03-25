@@ -6,15 +6,19 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
+import rs.edu.raf.opcija.model.GlobalQuote;
 import rs.edu.raf.opcija.model.OpcijaTip;
 import rs.edu.raf.opcija.servis.IzvedeneVrednostiUtil;
 import rs.edu.raf.opcija.servis.util.FinansijaApiUtil;
+import rs.edu.raf.opcija.servis.util.GlobalQuoteApiMap;
 import rs.edu.raf.opcija.servis.util.JsonParserUtil;
 import rs.edu.raf.opcija.servis.util.OptionYahooApiMap;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.List;
 
@@ -332,6 +336,130 @@ public class OpcijaServisIntegationTest {
     //sto znaci da ako imas metodu u sistemu koja samo zove druge metode u tvom sistemu onda nista neces mockovati
     //isto tako ako imas metodu u sistemu koja zove samo zove druge metode koje su izvan tvog sistema onda ces sve mockovati a onda nema ni potrebe za testiranjem
 
+
+    @Test
+    public void testAlphaVantageApiDeserialization() throws IOException, ParseException {
+
+        String json = "{" +
+                "\"Global Quote\": {" +
+                "\"01. symbol\": \"AAPL\"," +
+                "\"02. open\": \"171.7600\"," +
+                "\"03. high\": \"173.0500\"," +
+                "\"04. low\": \"170.0600\"," +
+                "\"05. price\": \"172.2800\"," +
+                "\"06. volume\": \"71160138\"," +
+                "\"07. latest trading day\": \"2024-03-22\"," +
+                "\"08. previous close\": \"171.3700\"," +
+                "\"09. change\": \"0.9100\"," +
+                "\"10. change percent\": \"0.5310%\"" +
+                "}" +
+                "}";
+
+        String json2 =  "{" +
+                        "\"Symbol\": \"AAPL\"," +
+                        "\"AssetType\": \"Common Stock\"," +
+                        "\"Name\": \"Apple Inc\"," +
+                        "\"Description\": \"Apple Inc. is an American multinational technology company that specializes in consumer electronics, computer software, and online services. Apple is the world's largest technology company by revenue (totalling $274.5 billion in 2020) and, since January 2021, the world's most valuable company. As of 2021, Apple is the world's fourth-largest PC vendor by unit sales, and fourth-largest smartphone manufacturer. It is one of the Big Five American information technology companies, along with Amazon, Google, Microsoft, and Facebook.\"," +
+                        "\"CIK\": \"320193\"," +
+                        "\"Exchange\": \"NASDAQ\"," +
+                        "\"Currency\": \"USD\"," +
+                        "\"Country\": \"USA\"," +
+                        "\"Sector\": \"TECHNOLOGY\"," +
+                        "\"Industry\": \"ELECTRONIC COMPUTERS\"," +
+                        "\"Address\": \"ONE INFINITE LOOP, CUPERTINO, CA, US\"," +
+                        "\"FiscalYearEnd\": \"September\"," +
+                        "\"LatestQuarter\": \"2023-12-31\"," +
+                        "\"MarketCapitalization\": \"2660330373000\"," +
+                        "\"EBITDA\": \"130108998000\"," +
+                        "\"PERatio\": \"26.83\"," +
+                        "\"PEGRatio\": \"2.12\"," +
+                        "\"BookValue\": \"4.793\"," +
+                        "\"DividendPerShare\": \"0.95\"," +
+                        "\"DividendYield\": \"0.0056\"," +
+                        "\"EPS\": \"6.42\"," +
+                        "\"RevenuePerShareTTM\": \"24.65\"," +
+                        "\"ProfitMargin\": \"0.262\"," +
+                        "\"OperatingMarginTTM\": \"0.338\"," +
+                        "\"ReturnOnAssetsTTM\": \"0.212\"," +
+                        "\"ReturnOnEquityTTM\": \"1.543\"," +
+                        "\"RevenueTTM\": \"385706000000\"," +
+                        "\"GrossProfitTTM\": \"170782000000\"," +
+                        "\"DilutedEPSTTM\": \"6.42\"," +
+                        "\"QuarterlyEarningsGrowthYOY\": \"0.16\"," +
+                        "\"QuarterlyRevenueGrowthYOY\": \"0.021\"," +
+                        "\"AnalystTargetPrice\": \"201.28\"," +
+                        "\"AnalystRatingStrongBuy\": \"10\"," +
+                        "\"AnalystRatingBuy\": \"17\"," +
+                        "\"AnalystRatingHold\": \"12\"," +
+                        "\"AnalystRatingSell\": \"2\"," +
+                        "\"AnalystRatingStrongSell\": \"0\"," +
+                        "\"TrailingPE\": \"26.83\"," +
+                        "\"ForwardPE\": \"26.39\"," +
+                        "\"PriceToSalesRatioTTM\": \"6.9\"," +
+                        "\"PriceToBookRatio\": \"35.9\"," +
+                        "\"EVToRevenue\": \"6.99\"," +
+                        "\"EVToEBITDA\": \"20.19\"," +
+                        "\"Beta\": \"1.289\"," +
+                        "\"52WeekHigh\": \"199.37\"," +
+                        "\"52WeekLow\": \"155.15\"," +
+                        "\"50DayMovingAverage\": \"182.33\"," +
+                        "\"200DayMovingAverage\": \"183.71\"," +
+                        "\"SharesOutstanding\": \"15441900000\"," +
+                        "\"DividendDate\": \"2024-02-15\"," +
+                        "\"ExDividendDate\": \"2024-02-09\"" +
+                        "}";
+
+        FinansijaApiUtil finansijaApiUtil = new FinansijaApiUtil();
+        finansijaApiUtil.setJsonParserUtil(new JsonParserUtil());
+
+        CloseableHttpResponse responseMock1 = mock(CloseableHttpResponse.class);
+        CloseableHttpResponse responseMock2 = mock(CloseableHttpResponse.class);
+        CloseableHttpClient httpClientMock = mock(CloseableHttpClient.class);
+        HttpGet httpGet1 = mock(HttpGet.class);
+        HttpGet httpGet2 = mock(HttpGet.class);
+        HttpEntity entity1 = mock(HttpEntity.class);
+        HttpEntity entity2 = mock(HttpEntity.class);
+
+        finansijaApiUtil.setResponse(responseMock1);
+        finansijaApiUtil.setResponseAlpha(responseMock2);
+        finansijaApiUtil.setHttpClient(httpClientMock);
+        finansijaApiUtil.setHttpGet(httpGet1);
+        finansijaApiUtil.setHttpGetAlpha(httpGet2);
+
+        when(httpClientMock.execute(httpGet1)).thenReturn(responseMock1);
+        when(httpClientMock.execute(httpGet2)).thenReturn(responseMock2);
+
+        InputStream mockInputStream1 = new ByteArrayInputStream(json.getBytes());
+        InputStream mockInputStream2 = new ByteArrayInputStream(json2.getBytes());
+        when(responseMock1.getEntity()).thenReturn(entity1);
+        when(responseMock2.getEntity()).thenReturn(entity2);
+
+        when(entity1.getContent()).thenReturn(mockInputStream1);
+        when(entity2.getContent()).thenReturn(mockInputStream2);
+
+        List<GlobalQuoteApiMap> result = finansijaApiUtil.fetchGlobalQuote(Arrays.asList("AAPL"));
+        GlobalQuoteApiMap globalQuoteApiMap = result.get(0);
+
+        assertNotNull(globalQuoteApiMap.getChangePercent());
+        assertNotNull(globalQuoteApiMap.getLatestTradingDay());
+        assertNotNull(globalQuoteApiMap.getSharesOutstanding());
+        assertNotNull(globalQuoteApiMap.getSymbol());
+
+        assertEquals("AAPL", globalQuoteApiMap.getSymbol());
+        assertEquals("0.5310%", globalQuoteApiMap.getChangePercent());
+        assertEquals(Double.parseDouble("0.9100"), globalQuoteApiMap.getChange());
+        assertEquals(new SimpleDateFormat("yyyy-MM-dd").parse("2024-03-22"), globalQuoteApiMap.getLatestTradingDay());
+        assertEquals(Double.parseDouble("173.0500"), globalQuoteApiMap.getHigh());
+        assertEquals(Double.parseDouble("170.0600"), globalQuoteApiMap.getLow());
+        assertEquals(Double.parseDouble("171.7600"), globalQuoteApiMap.getOpen());
+        assertEquals(Double.parseDouble("171.3700"), globalQuoteApiMap.getPreviousClose());
+        assertEquals(Double.parseDouble("172.2800"), globalQuoteApiMap.getPrice());
+        assertEquals(Long.parseLong("71160138"), globalQuoteApiMap.getVolume());
+
+        assertEquals(Long.parseLong("15441900000"), globalQuoteApiMap.getSharesOutstanding());
+
+    }
+
     @Test
     public void testGenerateOptionBlackScholes(){
 
@@ -384,6 +512,42 @@ public class OpcijaServisIntegationTest {
                 .assertThat()
                 .body(not(isEmpty()))
                 .body("results", notNullValue());//samo na prvoj dubini polja objekta
+    }
+
+    @Test//https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=AAPL&apikey=A9OROHDG6WFRDS62
+    public void testIntegrationAlphaVantage1(){
+
+        RestAssured.baseURI = "https://www.alphavantage.co";
+
+        given()
+                .queryParam("function", "GLOBAL_QUOTE")
+                .queryParam("symbol", "AAPL")
+                .queryParam("apikey", "A9OROHDG6WFRDS62")
+                .when()
+                .get("/query")
+                .then()
+                .statusCode(200)
+                .body(not(isEmpty()))
+                .body("Global Quote", notNullValue());
+    }
+    @Test//https://www.alphavantage.co/query?function=OVERVIEW&symbol=AAPL&apikey=A9OROHDG6WFRDS62
+    public void testIntegrationAlphaVantage2(){
+
+        RestAssured.baseURI = "https://www.alphavantage.co";
+
+        // Slanje GET zahteva na odgovarajući endpoint sa query parametrima
+        given()
+                .queryParam("function", "OVERVIEW")
+                .queryParam("symbol", "AAPL")
+                .queryParam("apikey", "A9OROHDG6WFRDS62")
+                .when()
+                .get("/query")
+                .then()
+                .statusCode(200)
+                .body(not(isEmpty()))
+                .body("Name", notNullValue())
+                .body("Symbol", notNullValue())
+                .body("SharesOutstanding", notNullValue());
     }
 }
 
