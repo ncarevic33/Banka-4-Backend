@@ -5,12 +5,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import rs.edu.raf.opcija.dto.NovaOpcijaDto;
 import rs.edu.raf.opcija.dto.OpcijaDto;
-import rs.edu.raf.opcija.model.Akcija;
+import rs.edu.raf.opcija.model.GlobalQuote;
 import rs.edu.raf.opcija.model.Opcija;
 import rs.edu.raf.opcija.model.OpcijaStanje;
 import rs.edu.raf.opcija.model.OpcijaTip;
-import rs.edu.raf.opcija.repository.AkcijaRepository;
+import rs.edu.raf.opcija.repository.GlobalQuoteRepository;
 import rs.edu.raf.opcija.servis.IzvedeneVrednostiUtil;
+import rs.edu.raf.opcija.servis.util.GlobalQuoteApiMap;
 import rs.edu.raf.opcija.servis.util.OptionYahooApiMap;
 
 import java.time.Instant;
@@ -24,7 +25,7 @@ public class OpcijaMapper {
     private IzvedeneVrednostiUtil izvedeneVrednostiUtil;
 
     @Autowired
-    private AkcijaRepository akcijaRepository;
+    private GlobalQuoteRepository globalQuoteRepository;
 
     //OD FRONTA
     public Opcija novaOpcijaDtoToOpcija(NovaOpcijaDto novaOpcijaDto){
@@ -71,7 +72,7 @@ public class OpcijaMapper {
             return null;
 
         Opcija opcija = new Opcija();
-        Akcija akcija = akcijaRepository.findFirstByTicker(optionYahooApiMap.getTicker()).orElse(null);
+        GlobalQuote akcija = globalQuoteRepository.findFirstByTicker(optionYahooApiMap.getTicker()).orElse(null);
 
         opcija.setStrikePrice(optionYahooApiMap.getStrike());
         opcija.setLastPrice(optionYahooApiMap.getLastPrice());
@@ -88,10 +89,6 @@ public class OpcijaMapper {
         opcija.setContractSize(optionYahooApiMap.getContractSize().equals("REGULAR")?100:0);
         opcija.setExpiration(optionYahooApiMap.getExpiration());
 
-        //PREDEFINISANO JER NEMA NA API
-        //opcija.setTrenutnaCenaOsnovneAkcijeKompanije(60);
-        //opcija.setUkupanBrojIzdatihAkcijaKompanije(1000);
-        ////////////////
         //opcija.setDatumIstekaVazenja(LocalDateTime.ofInstant(Instant.ofEpochMilli(opcija.getExpiration()),ZoneId.systemDefault()));
         opcija.setDatumIstekaVazenja(LocalDateTime.ofInstant(Instant.ofEpochSecond(opcija.getExpiration()),ZoneOffset.systemDefault()));
 
@@ -104,14 +101,14 @@ public class OpcijaMapper {
         }else if(akcija != null){
             OpcijaStanje opcijaStanje = null;
 
-            if(opcija.getStrikePrice() > akcija.getAkcijaTickerTrenutnaCena() && opcija.getOptionType().equals(OpcijaTip.PUT))
+            if(opcija.getStrikePrice() > akcija.getPrice() && opcija.getOptionType().equals(OpcijaTip.PUT))
                 opcijaStanje = OpcijaStanje.IN_THE_MONEY;
-            else if(opcija.getStrikePrice() < akcija.getAkcijaTickerTrenutnaCena() && opcija.getOptionType().equals(OpcijaTip.PUT))
+            else if(opcija.getStrikePrice() < akcija.getPrice() && opcija.getOptionType().equals(OpcijaTip.PUT))
                 opcijaStanje = OpcijaStanje.OUT_OF_MONEY;
 
-            if(opcija.getStrikePrice() < akcija.getAkcijaTickerTrenutnaCena() && opcija.getOptionType().equals(OpcijaTip.CALL))
+            if(opcija.getStrikePrice() < akcija.getPrice() && opcija.getOptionType().equals(OpcijaTip.CALL))
                 opcijaStanje = OpcijaStanje.IN_THE_MONEY;
-            else if(opcija.getStrikePrice() > akcija.getAkcijaTickerTrenutnaCena() && opcija.getOptionType().equals(OpcijaTip.CALL))
+            else if(opcija.getStrikePrice() > akcija.getPrice() && opcija.getOptionType().equals(OpcijaTip.CALL))
                 opcijaStanje = OpcijaStanje.OUT_OF_MONEY;
 
             if(opcijaStanje == null)
@@ -121,15 +118,32 @@ public class OpcijaMapper {
         }
 
         //POTREBNI PARAMETRI ZA IZVEDENE VREDNOSTI
-        //trenutnaCenaOsnovneAkcijeKompanije//nema na api
+        //trenutnaCenaOsnovneAkcijeKompanije//na alphavantage
         //strikePrice
         //impliedVolatility
         //expiration
-        //ukupanBrojIzdatihAkcijaKompanije//nema na api
-                                                                //promeniti u akcija
-        opcija.izracunajIzvedeneVrednosti(izvedeneVrednostiUtil,new Akcija());
+        //ukupanBrojIzdatihAkcijaKompanije//na alphavantage
+
+        opcija.izracunajIzvedeneVrednosti(izvedeneVrednostiUtil,akcija);
 
         return opcija;
+    }
+
+    public GlobalQuote globalQuoteApiToGlobalQuote(GlobalQuoteApiMap globalQuoteApiMap){
+
+        GlobalQuote globalQuote = new GlobalQuote();
+
+        globalQuote.setTicker(globalQuoteApiMap.getSymbol());
+        globalQuote.setChange(globalQuoteApiMap.getChange());
+        globalQuote.setHigh(globalQuoteApiMap.getHigh());
+        globalQuote.setChangePercent(globalQuoteApiMap.getChangePercent());
+        globalQuote.setOpen(globalQuoteApiMap.getOpen());
+        globalQuote.setPreviousClose(globalQuoteApiMap.getPreviousClose());
+        globalQuote.setPrice(globalQuoteApiMap.getPrice());
+        globalQuote.setVolume(globalQuoteApiMap.getVolume());
+        globalQuote.setSharesOutstanding(globalQuoteApiMap.getSharesOutstanding());
+
+        return globalQuote;
     }
 
 }

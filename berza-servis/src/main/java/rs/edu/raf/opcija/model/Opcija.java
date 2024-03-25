@@ -101,18 +101,18 @@ public class Opcija{
     private long volume;
 
 
-    public void izracunajIzvedeneVrednosti(IzvedeneVrednostiUtil izvedeneVrednostiUtil, Akcija akcija){
+    public void izracunajIzvedeneVrednosti(IzvedeneVrednostiUtil izvedeneVrednostiUtil, GlobalQuote globalQuote){
 
         Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
         validateRequiredDataBeforeDeriving(this,validator);
 
-        vrednostOpcijeBlackScholes = izvedeneVrednostiUtil.calculateBlackScholesValue(akcija.getAkcijaTickerTrenutnaCena(),
+        vrednostOpcijeBlackScholes = izvedeneVrednostiUtil.calculateBlackScholesValue(globalQuote.getPrice(),
                                                                                             strikePrice,
                                                                                             impliedVolatility,
                                                                                             expiration);
 
-        marketCap = akcija.getAkcijaTickerTrenutnaCena()*akcija.getUkupanBrojIzdatihAkcijaKompanije();
-        theta =  (optionType.equals(OpcijaTip.CALL)?izvedeneVrednostiUtil.calculateThetaCall((double) akcija.getAkcijaTickerTrenutnaCena(), strikePrice, 0.05,impliedVolatility, (double) expiration):izvedeneVrednostiUtil.calculateThetaPut((double) akcija.getAkcijaTickerTrenutnaCena(), strikePrice, 0.05,impliedVolatility, (double) expiration));
+        marketCap = globalQuote.getPrice()*globalQuote.getSharesOutstanding();
+        theta =  (optionType.equals(OpcijaTip.CALL)?izvedeneVrednostiUtil.calculateThetaCall((double) globalQuote.getPrice(), strikePrice, 0.05,impliedVolatility, (double) expiration):izvedeneVrednostiUtil.calculateThetaPut((double) globalQuote.getPrice(), strikePrice, 0.05,impliedVolatility, (double) expiration));
         maintenanceMargin = izvedeneVrednostiUtil.calculateMaintenanceMargin(marketCap,0.2);
 
     }

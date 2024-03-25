@@ -134,4 +134,50 @@ public class JsonParserUtil {
         }
         return tickerNames;
     }
+    public GlobalQuoteApiMap parseBytesToGlobalQuoteObject(InputStream inputStream,InputStream inputStream2) throws IOException {
+
+
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+        StringBuilder jsonResponse = new StringBuilder();
+        String line;
+
+        while ((line = reader.readLine()) != null)
+            jsonResponse.append(line);
+
+        objectMapper = new ObjectMapper();
+
+        JsonNode mainNode = objectMapper.readTree(jsonResponse.toString());
+
+        log.info(jsonResponse.toString());
+        if (mainNode.has("Information"))//predjen limit requestova
+            return null;
+
+        reader = new BufferedReader(new InputStreamReader(inputStream2));
+        jsonResponse = new StringBuilder();
+        line = null;
+
+        while ((line = reader.readLine()) != null)
+            jsonResponse.append(line);
+
+        JsonNode mainNodeAlpha = objectMapper.readTree(jsonResponse.toString());
+
+        if(mainNode == null)
+            return null;
+
+        if(mainNodeAlpha == null)
+            return null;
+
+        JsonNode globalQuote = mainNode.get("Global Quote");
+        if (globalQuote != null) {
+            JsonNode sharesOutstanding = mainNodeAlpha.get("SharesOutstanding");
+
+
+            objectMapper.registerModule(new JavaTimeModule());
+            GlobalQuoteApiMap globalQuoteApiMap = objectMapper.readValue(objectMapper.writeValueAsString(globalQuote), GlobalQuoteApiMap.class);
+            globalQuoteApiMap.setSharesOutstanding(objectMapper.readValue(objectMapper.writeValueAsString(sharesOutstanding), Long.class));
+
+            return globalQuoteApiMap;
+        }
+        return null;
+    }
 }

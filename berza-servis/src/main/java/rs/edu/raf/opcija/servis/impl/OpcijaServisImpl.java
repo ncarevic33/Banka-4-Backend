@@ -12,11 +12,12 @@ import rs.edu.raf.opcija.dto.NovaOpcijaDto;
 import rs.edu.raf.opcija.dto.OpcijaDto;
 import rs.edu.raf.opcija.mapper.OpcijaMapper;
 import rs.edu.raf.opcija.model.*;
-import rs.edu.raf.opcija.repository.AkcijaRepository;
+import rs.edu.raf.opcija.repository.GlobalQuoteRepository;
 import rs.edu.raf.opcija.repository.KorisnikRepository;
 import rs.edu.raf.opcija.servis.IzvedeneVrednostiUtil;
 import rs.edu.raf.opcija.servis.OpcijaServis;
 import rs.edu.raf.opcija.servis.util.FinansijaApiUtil;
+import rs.edu.raf.opcija.servis.util.GlobalQuoteApiMap;
 import rs.edu.raf.opcija.servis.util.OptionYahooApiMap;
 import rs.edu.raf.opcija.repository.KorisnikoveKupljeneOpcijeRepository;
 import rs.edu.raf.opcija.repository.OpcijaRepository;
@@ -45,7 +46,7 @@ public class OpcijaServisImpl implements OpcijaServis {
     private KorisnikoveKupljeneOpcijeRepository korisnikKupljeneOpcijeRepository;
 
     @Autowired
-    private AkcijaRepository akcijaRepository;
+    private GlobalQuoteRepository akcijaRepository;
 
     @Autowired
     private KorisnikRepository korisnikRepository;
@@ -65,11 +66,26 @@ public class OpcijaServisImpl implements OpcijaServis {
             return new ArrayList<>();
                                                                                                                 //staviti na sve tickerNames
                                                                                                                 //Collections.singletonList(tickerNames.get(0))
-        List<OptionYahooApiMap> yahooOpcije = finansijaApiUtil.fetchOptionsFromYahooApi(tickerNames.subList(0, 4));
+                                                                                                                //tickerNames.subList(0, 4)
+        List<OptionYahooApiMap> yahooOpcije = finansijaApiUtil.fetchOptionsFromYahooApi(Collections.singletonList(tickerNames.get(0)));
 
         //log.info(String.valueOf(System.currentTimeMillis()));
         log.info("Gotovo fetchovanje sa yahoo api");
         return yahooOpcije.stream().map(yahooOpcija -> opcijaMapper.yahooOpcijaToOpcija(yahooOpcija)).collect(Collectors.toList());
+    }
+    private List<GlobalQuote> fetchAllGlobalQuote() throws IOException {
+
+        List<String> tickerNames = finansijaApiUtil.fetchTickerNames();
+
+        if(tickerNames.size() == 0)
+            return new ArrayList<>();
+                                                                                            //staviti na sve tickerNames
+                                                                                            //Collections.singletonList(tickerNames.get(0))
+        List<GlobalQuoteApiMap> globalQuotes = finansijaApiUtil.fetchGlobalQuote(tickerNames.subList(0, 4));
+
+        log.info("Gotovo fetchovanje sa alphavantage api");
+
+        return globalQuotes.stream().map(globalQuote -> opcijaMapper.globalQuoteApiToGlobalQuote(globalQuote)).collect(Collectors.toList());
     }
 
     //CITA IZ CACHE A AKO NE POSTOJI ONDA IZ BAZE
@@ -117,14 +133,14 @@ public class OpcijaServisImpl implements OpcijaServis {
             return null;
 
 
-        Akcija akcija = akcijaRepository.findFirstByTicker(opcija.getTicker()).orElse(null);
+        GlobalQuote globalQuote = akcijaRepository.findFirstByTicker(opcija.getTicker()).orElse(null);
 
-        if(akcija == null)
+        if(globalQuote == null)
             return null;
 
-        akcija.getAkcijaTickerTrenutnaCena();
+        globalQuote.getPrice();
 
-        korisnikKupljenaOpcija.setAkcijaTickerCenaPrilikomIskoriscenja(akcija.getAkcijaTickerTrenutnaCena());
+        korisnikKupljenaOpcija.setAkcijaTickerCenaPrilikomIskoriscenja(globalQuote.getPrice());
         korisnikKupljenaOpcija.setIskoriscena(true);
 
         return korisnikKupljeneOpcijeRepository.save(korisnikKupljenaOpcija);
@@ -142,21 +158,21 @@ public class OpcijaServisImpl implements OpcijaServis {
         if (opcija.getOpcijaStanje().equals(OpcijaStanje.EXPIRED))
             return OpcijaStanje.EXPIRED;
 
-        Akcija akcija = akcijaRepository.findFirstByTicker(opcija.getTicker()).orElse(null);
+        GlobalQuote akcija = akcijaRepository.findFirstByTicker(opcija.getTicker()).orElse(null);
 
         if(akcija == null)
             return null;
 
         OpcijaStanje opcijaStanje = null;
 
-        if(opcija.getStrikePrice() > akcija.getAkcijaTickerTrenutnaCena() && opcija.getOptionType().equals(OpcijaTip.PUT))
+        if(opcija.getStrikePrice() > akcija.getPrice() && opcija.getOptionType().equals(OpcijaTip.PUT))
             opcijaStanje = OpcijaStanje.IN_THE_MONEY;
-        else if(opcija.getStrikePrice() < akcija.getAkcijaTickerTrenutnaCena() && opcija.getOptionType().equals(OpcijaTip.PUT))
+        else if(opcija.getStrikePrice() < akcija.getPrice() && opcija.getOptionType().equals(OpcijaTip.PUT))
             opcijaStanje = OpcijaStanje.OUT_OF_MONEY;
 
-        if(opcija.getStrikePrice() < akcija.getAkcijaTickerTrenutnaCena() && opcija.getOptionType().equals(OpcijaTip.CALL))
+        if(opcija.getStrikePrice() < akcija.getPrice() && opcija.getOptionType().equals(OpcijaTip.CALL))
             opcijaStanje = OpcijaStanje.IN_THE_MONEY;
-        else if(opcija.getStrikePrice() > akcija.getAkcijaTickerTrenutnaCena() && opcija.getOptionType().equals(OpcijaTip.CALL))
+        else if(opcija.getStrikePrice() > akcija.getPrice() && opcija.getOptionType().equals(OpcijaTip.CALL))
             opcijaStanje = OpcijaStanje.OUT_OF_MONEY;
 
         if(opcijaStanje == null)
@@ -197,15 +213,22 @@ public class OpcijaServisImpl implements OpcijaServis {
     }
 
 
+    private boolean firstTimeFetch = false;
+
     //UBACUJE U CACHE KAD GOD SE AZURIRA
     @Override
-    @Scheduled(fixedRate = 10000)//poseban thread obradjuje
+    @Scheduled(fixedRate = 60000)//poseban thread obradjuje
     @Transactional//sve promene nad bazom se upisuju u bazu tek kada se metoda uspesno zavrsi,ako dodje do izuzetka radi se roll back
     public void azuirajPostojeceOpcije() throws IOException {
 
 
+        if(!firstTimeFetch) {
+            List<GlobalQuote> globalQuotes = akcijaRepository.saveAll(fetchAllGlobalQuote());
+            if(globalQuotes.size() == 0)
+                return;
+            firstTimeFetch = true;
+        }
         List<Opcija> noveAzuriraneOpcije = fetchAllOptionsForAllTickers();
-
         List<Opcija> postojeceOpcije = opcijaRepository.findAll();
 
 
@@ -241,18 +264,18 @@ public class OpcijaServisImpl implements OpcijaServis {
                     postojeca.setOpcijaStanje(OpcijaStanje.EXPIRED);
                     //postojeca.setIstaIstorijaGroupId();
                 }
-                Akcija akcija = akcijaRepository.findFirstByTicker(postojeca.getTicker()).orElse(null);
-                                                                            //promeniti u akcija
-                postojeca.izracunajIzvedeneVrednosti(izvedeneVrednostiUtil,new Akcija());
+                GlobalQuote akcija = akcijaRepository.findFirstByTicker(postojeca.getTicker()).orElse(null);
+
+                postojeca.izracunajIzvedeneVrednosti(izvedeneVrednostiUtil,akcija);
 
                 //azurirana opcija                                                      //id                            obj
                 cacheManager.getCache("opcijeCache").put(opcijaRepository.save(postojecaOpcija.get()).getId(),postojecaOpcija.get());
             });
             //nova opcija
             if(!postojecaOpcija.isPresent()) {
-                Akcija akcija = akcijaRepository.findFirstByTicker(o.getTicker()).orElse(null);
-                                                                    //promeniti u akcija
-                o.izracunajIzvedeneVrednosti(izvedeneVrednostiUtil,new Akcija());
+                GlobalQuote akcija = akcijaRepository.findFirstByTicker(o.getTicker()).orElse(null);
+
+                o.izracunajIzvedeneVrednosti(izvedeneVrednostiUtil,akcija);
 
                 cacheManager.getCache("opcijeCache").put(opcijaRepository.save(o).getId(),o);
             }

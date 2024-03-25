@@ -11,6 +11,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import rs.edu.raf.opcija.model.GlobalQuote;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -31,8 +32,10 @@ public class FinansijaApiUtil {
     //OBAVEZNO OVDE INSTANCIRANJA AKO POSTOJE ZBOG MOCKOVANJA
     //JER AKO SU U METODI ONDA CE BITI MOCK OVERIDOVAN PA NECE RADITI when(mock)..thenReturn..
     CloseableHttpResponse response;
+    CloseableHttpResponse responseAlpha;
     CloseableHttpClient  httpClient = HttpClients.createDefault();;
     HttpGet httpGet = null;
+    HttpGet httpGetAlpha = null;
 
     public List<OptionYahooApiMap> fetchOptionsFromYahooApi(List<String> tickers) throws IOException {
 
@@ -43,13 +46,13 @@ public class FinansijaApiUtil {
                 httpGet = new HttpGet("https://query1.finance.yahoo.com/v6/finance/options/" + ticker);
 
             response = httpClient.execute(httpGet);
+            httpGet = null;
             allYahooTickersOptions.addAll(jsonParserUtil.parseBytesToYahooOptionObject(response.getEntity().getContent(), ticker));
             //obavezno zatvoriti resurs
             response.close();
         }
 
         allYahooTickersOptions = validateOptions(allYahooTickersOptions);
-        httpGet = null;
 
         //System.out.println(allTickersOptions);
 
@@ -91,6 +94,34 @@ public class FinansijaApiUtil {
         httpGet = null;
 
         return allTickerNames;
+
+    }
+
+    public List<GlobalQuoteApiMap> fetchGlobalQuote(List<String> tickerNames) throws IOException {
+
+        List<GlobalQuoteApiMap> allGlobalQuoteApiMap = new ArrayList<>();
+
+        for(String ticker : tickerNames) {
+            if (httpGet == null) {                                                                                              //PYBCOV2EOC716Q0Q
+                httpGet = new HttpGet("https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=" + ticker + "&apikey=A9OROHDG6WFRDS62");
+                httpGetAlpha = new HttpGet("https://www.alphavantage.co/query?function=OVERVIEW&symbol=" + ticker + "&apikey=A9OROHDG6WFRDS62");
+            }
+            response = httpClient.execute(httpGet);
+            responseAlpha = httpClient.execute(httpGetAlpha);
+            httpGet = null;
+            httpGetAlpha = null;
+
+            GlobalQuoteApiMap globalQuoteApiMap = jsonParserUtil.parseBytesToGlobalQuoteObject(response.getEntity().getContent(),responseAlpha.getEntity().getContent());
+            if (globalQuoteApiMap != null)
+                allGlobalQuoteApiMap.add(globalQuoteApiMap);
+
+            //obavezno zatvoriti resurs
+            response.close();
+            responseAlpha.close();
+        }
+        //log.info(String.valueOf(allTickerNames));
+
+        return allGlobalQuoteApiMap;
 
     }
 
