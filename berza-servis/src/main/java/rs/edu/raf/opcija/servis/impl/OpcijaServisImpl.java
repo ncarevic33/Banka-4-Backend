@@ -66,8 +66,7 @@ public class OpcijaServisImpl implements OpcijaServis {
             return new ArrayList<>();
                                                                                                                 //staviti na sve tickerNames
                                                                                                                 //Collections.singletonList(tickerNames.get(0))
-                                                                                                                //tickerNames.subList(0, 4)
-        List<OptionYahooApiMap> yahooOpcije = finansijaApiUtil.fetchOptionsFromYahooApi(Collections.singletonList(tickerNames.get(0)));
+        List<OptionYahooApiMap> yahooOpcije = finansijaApiUtil.fetchOptionsFromYahooApi(tickerNames.subList(0, 4));
 
         //log.info(String.valueOf(System.currentTimeMillis()));
         log.info("Gotovo fetchovanje sa yahoo api");

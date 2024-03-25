@@ -101,10 +101,10 @@ public class FinansijaApiUtil {
 
         List<GlobalQuoteApiMap> allGlobalQuoteApiMap = new ArrayList<>();
 
-        for(String ticker : tickerNames) {
+        for(String ticker : tickerNames) {                                                                                      //A9OROHDG6WFRDS62
             if (httpGet == null) {                                                                                              //PYBCOV2EOC716Q0Q
-                httpGet = new HttpGet("https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=" + ticker + "&apikey=A9OROHDG6WFRDS62");
-                httpGetAlpha = new HttpGet("https://www.alphavantage.co/query?function=OVERVIEW&symbol=" + ticker + "&apikey=A9OROHDG6WFRDS62");
+                httpGet = new HttpGet("https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=" + ticker + "&apikey=4D528NVJMHJ6UR1X");
+                httpGetAlpha = new HttpGet("https://www.alphavantage.co/query?function=OVERVIEW&symbol=" + ticker + "&apikey=4D528NVJMHJ6UR1X");
             }
             response = httpClient.execute(httpGet);
             responseAlpha = httpClient.execute(httpGetAlpha);

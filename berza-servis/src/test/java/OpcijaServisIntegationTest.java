@@ -21,6 +21,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.List;
+import java.util.TimeZone;
 
 import static io.restassured.RestAssured.given;
 import static org.apache.logging.log4j.ThreadContext.isEmpty;
@@ -440,6 +441,9 @@ public class OpcijaServisIntegationTest {
         List<GlobalQuoteApiMap> result = finansijaApiUtil.fetchGlobalQuote(Arrays.asList("AAPL"));
         GlobalQuoteApiMap globalQuoteApiMap = result.get(0);
 
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+
         assertNotNull(globalQuoteApiMap.getChangePercent());
         assertNotNull(globalQuoteApiMap.getLatestTradingDay());
         assertNotNull(globalQuoteApiMap.getSharesOutstanding());
@@ -448,7 +452,7 @@ public class OpcijaServisIntegationTest {
         assertEquals("AAPL", globalQuoteApiMap.getSymbol());
         assertEquals("0.5310%", globalQuoteApiMap.getChangePercent());
         assertEquals(Double.parseDouble("0.9100"), globalQuoteApiMap.getChange());
-        assertEquals(new SimpleDateFormat("yyyy-MM-dd").parse("2024-03-22"), globalQuoteApiMap.getLatestTradingDay());
+        assertEquals(simpleDateFormat.parse("2024-03-22"), globalQuoteApiMap.getLatestTradingDay());
         assertEquals(Double.parseDouble("173.0500"), globalQuoteApiMap.getHigh());
         assertEquals(Double.parseDouble("170.0600"), globalQuoteApiMap.getLow());
         assertEquals(Double.parseDouble("171.7600"), globalQuoteApiMap.getOpen());
@@ -528,7 +532,7 @@ public class OpcijaServisIntegationTest {
                 .then()
                 .statusCode(200)
                 .body(not(isEmpty()))
-                .body("Global Quote", notNullValue());
+                .body("'Global Quote'", notNullValue());
     }
     @Test//https://www.alphavantage.co/query?function=OVERVIEW&symbol=AAPL&apikey=A9OROHDG6WFRDS62
     public void testIntegrationAlphaVantage2(){
