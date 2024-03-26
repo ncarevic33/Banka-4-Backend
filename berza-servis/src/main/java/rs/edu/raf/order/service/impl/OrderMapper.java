@@ -1,6 +1,7 @@
 package rs.edu.raf.order.service.impl;
 
 import rs.edu.raf.order.dto.OrderRequest;
+import rs.edu.raf.order.model.Enums.Status;
 import rs.edu.raf.order.model.Order;
 
 public class OrderMapper {
@@ -9,10 +10,10 @@ public class OrderMapper {
         return Order.builder()
                 .ticker(orderRequest.getTicker())
                 .quantity(orderRequest.getQuantity())
-                .orderAction(orderRequest.getAction())
-                .orderType(orderRequest.getType())
                 .limit(orderRequest.getLimit())
                 .stop(orderRequest.getStop())
+                .action(orderRequest.getAction())
+                .status(Status.PENDING)
                 .build();
     }
 }

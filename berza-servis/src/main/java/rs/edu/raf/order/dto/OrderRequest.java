@@ -1,9 +1,6 @@
 package rs.edu.raf.order.dto;
 
-import jakarta.persistence.Column;
 import lombok.Data;
-import rs.edu.raf.order.model.Enums.Action;
-import rs.edu.raf.order.model.Enums.Type;
 
 import java.math.BigDecimal;
 
@@ -23,5 +20,7 @@ public class OrderRequest {
     private boolean allOrNone;
 
     private boolean margin;
+
+    private String action;
 
 }

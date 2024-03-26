@@ -42,12 +42,12 @@ public class Order {
     private boolean margin;
 
     @Column(nullable = false)
-    private String orderAction;
+    private String action;
 
     @Column(nullable = false)
-    private String orderType;
+    private String type;
 
     @Column(nullable = false)
-    private String orderStatus;
+    private String status;
 
 }
