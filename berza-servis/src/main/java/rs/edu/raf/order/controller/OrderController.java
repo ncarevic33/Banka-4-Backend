@@ -21,10 +21,20 @@ public class OrderController {
 
     private final OrderService orderService;
 
-    @PostMapping("/placeOrder")
-    public ResponseEntity<Order> placeOrder(@RequestBody @Validated OrderRequest order) {
-        Order placedOrder = orderService.placeOrder(order);
-        if (placedOrder != null) return new ResponseEntity<>(placedOrder, HttpStatus.CREATED);
-        else return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    @GetMapping("/all")
+    public ResponseEntity<Order> getAllOrders() {
+        return new ResponseEntity<>(orderService.getAllOrders(), HttpStatus.OK);
     }
+
+    @GetMapping("/{userId}")
+    public ResponseEntity<Order> GetOrdersForUser(@PathVariable String userId) {
+        return new ResponseEntity<>(orderService.getOrdersForUser(userId), HttpStatus.OK);
+    }
+
+    @PostMapping("/place-order")
+    public ResponseEntity<Order> placeOrder(@RequestBody @Validated OrderRequest order) {
+        return new ResponseEntity<>(orderService.placeOrder(order), HttpStatus.OK);
+    }
+
+
 }

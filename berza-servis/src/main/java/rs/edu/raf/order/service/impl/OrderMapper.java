@@ -9,8 +9,8 @@ public class OrderMapper {
         return Order.builder()
                 .ticker(orderRequest.getTicker())
                 .quantity(orderRequest.getQuantity())
-                .orderAction(orderRequest.getOrderAction())
-                .orderType(orderRequest.getOrderType())
+                .orderAction(orderRequest.getAction())
+                .orderType(orderRequest.getType())
                 .limit(orderRequest.getLimit())
                 .stop(orderRequest.getStop())
                 .build();

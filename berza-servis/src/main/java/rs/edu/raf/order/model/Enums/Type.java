@@ -1,6 +1,6 @@
-package rs.edu.raf.order.model;
+package rs.edu.raf.order.model.Enums;
 
-public class OrderType {
+public class Type {
 
     public static final String MARKET_ORDER = "MARKET_ORDER";
     public static final String LIMIT_ORDER = "LIMIT_ORDER";

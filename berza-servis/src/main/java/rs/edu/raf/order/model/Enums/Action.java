@@ -1,6 +1,6 @@
-package rs.edu.raf.order.model;
+package rs.edu.raf.order.model.Enums;
 
-public class OrderAction {
+public class Action {
     public static final String BUY = "BUY";
     public static final String SELL = "SELL";
 }
