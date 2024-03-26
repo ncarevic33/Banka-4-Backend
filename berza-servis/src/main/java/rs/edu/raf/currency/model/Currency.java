@@ -21,7 +21,6 @@ public class Currency {
     @NotBlank
     private String currencyCode;
 
-    @Column(unique = true)
     @NotBlank
     private String currencyName;
 
