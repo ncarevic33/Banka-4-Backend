@@ -62,7 +62,7 @@ public class CurrencyServiceImpl implements CurrencyService {
 
     @PostConstruct
     @Scheduled(cron = "0 0 10 * * *")
-    public void updateCurrencies() {
+    private void updateCurrencies() {
         List<Currency> currencies = new ArrayList<>();
         HttpRequest request = HttpRequest.newBuilder().uri(URI.create("https://www.alphavantage.co/physical_currency_list/")).build();
         HttpResponse<String> response = null;         // FVHPQRIRKBYHSTJU
@@ -79,12 +79,11 @@ public class CurrencyServiceImpl implements CurrencyService {
             currency.setCurrencyCode(c[0]);
             currency.setCurrencyName(c[1]);
             try {
-                //System.out.println(java.util.Currency.getInstance(c[0]).getSymbol());
-                currency.setCurrencySymbol(java.util.Currency.getInstance(c[0]).getSymbol());
+                currency.setCurrencySymbol(java.util.Currency.getInstance(c[0]).getSymbol()); //with locale? needs country codes
             } catch (NullPointerException | IllegalArgumentException e) {
                 currency.setCurrencySymbol(c[0]);
             }
-            currency.setPolity("placeholder"); //TODO find api
+            currency.setPolity(c[0].substring(0,2)); //country code api?
             currencies.add(currency);
         }
         currencyRepository.saveAll(currencies);
