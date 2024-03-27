@@ -1,8 +1,8 @@
 package rs.edu.raf.order.service.impl;
 
 import lombok.Data;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import rs.edu.raf.order.dto.OrderDto;
 import rs.edu.raf.order.dto.OrderRequest;
 import rs.edu.raf.order.model.Order;
 import rs.edu.raf.order.repository.OrderRepository;
@@ -17,17 +17,19 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
 
     @Override
-    public Order placeOrder(OrderRequest orderRequest) {
+    public OrderDto placeOrder(OrderRequest orderRequest) {
         return null;
     }
 
     @Override
-    public List<Order> getAllOrders() {
-        return orderRepository.findAll();
+    public List<OrderDto> getAllOrders() {
+        return orderRepository.findAll().stream()
+                .map(OrderMapper::toDto)
+                .toList();
     }
 
     @Override
-    public List<Order> getOrdersForUser(Long userId) {
+    public List<OrderDto> getOrdersForUser(Long userId) {
         return orderRepository.findAllByUserId(userId);
     }
 

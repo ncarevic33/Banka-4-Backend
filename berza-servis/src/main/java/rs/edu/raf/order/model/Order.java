@@ -29,10 +29,8 @@ public class Order {
     @Column(nullable = false)
     private Integer quantity;
 
-    @Column(nullable = false)
     private BigDecimal limit;
 
-    @Column(nullable = false)
     private BigDecimal stop;
 
     @Column(nullable = false)

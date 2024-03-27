@@ -1,5 +1,6 @@
 package rs.edu.raf.order.service;
 
+import rs.edu.raf.order.dto.OrderDto;
 import rs.edu.raf.order.dto.OrderRequest;
 import rs.edu.raf.order.model.Order;
 
@@ -8,9 +9,9 @@ import java.util.List;
 
 public interface OrderService {
 
-    Order placeOrder(OrderRequest orderRequest);
+    OrderDto placeOrder(OrderRequest orderRequest);
 
-    List<Order> getAllOrders();
+    List<OrderDto> getAllOrders();
 
-    List<Order> getOrdersForUser(Long userId);
+    List<OrderDto> getOrdersForUser(Long userId);
 }
