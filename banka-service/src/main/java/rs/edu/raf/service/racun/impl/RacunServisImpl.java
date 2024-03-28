@@ -55,7 +55,7 @@ public class RacunServisImpl implements RacunServis {
         DevizniRacun drRepo = this.devizniRacunRepository.save(dr);
 
         Request request = new Request.Builder()
-                .url("http://api.stamenic.work:8080/api/korisnik/addAccount/" + drRepo.getVlasnik() + "/{accountNumber}" + drRepo.getBrojRacuna())
+                .url("http://api.stamenic.work:8080/api/korisnik/addAccount/" + drRepo.getVlasnik() + "/" + drRepo.getBrojRacuna())
                 .get()
                 .build();
 
@@ -87,7 +87,7 @@ public class RacunServisImpl implements RacunServis {
         TekuciRacun tr = racunMapper.noviTekuciRacunDTOToTekuciRacun(noviTekuciRacunDTO);
         TekuciRacun trRepo = this.tekuciRacunRepository.save(tr);
         Request request = new Request.Builder()
-                .url("http://api.stamenic.work:8080/api/korisnik/addAccount/" + trRepo.getVlasnik() + "/{accountNumber}" + trRepo.getBrojRacuna())
+                .url("http://api.stamenic.work:8080/api/korisnik/addAccount/" + trRepo.getVlasnik() + "/" + trRepo.getBrojRacuna())
                 .get()
                 .build();
 

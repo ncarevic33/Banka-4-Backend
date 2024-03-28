@@ -32,6 +32,10 @@ public class RacunSeeder implements CommandLineRunner {
     private final TekuciRacunRepository tekuciRacunRepository;
     //private final KorisnikRepository korisnikRepository;
     //private final RadnikRepository radnikRepository;
+    @Autowired
+    private UplataRepository uplataRepository;
+    @Autowired
+    private PrenosSredstavaRepository prenosSredstavaRepository;
 
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     private final TransakcijaServis transakcijaServis;

@@ -93,6 +93,28 @@ public class CardService {
         cardRepository.save(card);
     }
 
+    public void activateCard(String cardNumber){
+        Optional<Card> optionalCard = cardRepository.findCardByNumber(cardNumber);
+        if(!optionalCard.isPresent()){
+            return;
+        }
+
+        Card card = optionalCard.get();
+        card.setBlocked(false);
+        card.setStatus("aktivna");
+        cardRepository.save(card);
+    }
+
+    public void deactivateCard(String cardNumber){
+        Optional<Card> optionalCard = cardRepository.findCardByNumber(cardNumber);
+        if(!optionalCard.isPresent()){
+            return;
+        }
+
+        Card card = optionalCard.get();
+        card.setStatus("deaktivirana");
+        cardRepository.save(card);
+    }
     private String generateCardNumber(String type){
         String prefix;
         switch(type){
