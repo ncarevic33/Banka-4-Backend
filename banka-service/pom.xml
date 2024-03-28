@@ -220,6 +220,15 @@
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>0.8.7</version>
+                <configuration>
+                    <excludes>
+                        <exclude>rs/edu/raf/model/entities/**/*</exclude>
+                        <exclude>rs/edu/raf/model/dto/**/*</exclude>
+                        <exclude>rs/edu/raf/exceptions/**/*</exclude>
+                        <exclude>rs/edu/raf/repository/**/*</exclude>
+                        <exclude>rs/edu/raf/security/**/*</exclude>
+                    </excludes>
+                </configuration>
                 <executions>
                     <execution>
                         <goals>

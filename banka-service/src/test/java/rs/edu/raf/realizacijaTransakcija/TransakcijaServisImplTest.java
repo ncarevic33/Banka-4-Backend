@@ -11,6 +11,7 @@ import rs.edu.raf.model.entities.racun.DevizniRacun;
 import rs.edu.raf.model.entities.racun.PravniRacun;
 import rs.edu.raf.model.entities.racun.TekuciRacun;
 import rs.edu.raf.repository.transaction.*;
+import rs.edu.raf.service.ExchangeRateService;
 import rs.edu.raf.service.racun.RacunServis;
 import rs.edu.raf.model.entities.transaction.PrenosSredstava;
 import rs.edu.raf.model.entities.transaction.Status;
@@ -57,6 +58,7 @@ public class TransakcijaServisImplTest {
     private DevizniRacun devizniRacun;
 
     private PrenosSredstava prenosSredstava;
+    private ExchangeRateService exchangeRateService;
 
     private Uplata uplata;
 
@@ -71,6 +73,7 @@ public class TransakcijaServisImplTest {
                 pravniRacunRepository,
                 tekuciRacunRepository,
                 devizniRacunRepository,
+                exchangeRateService,
                 racunServis
         ));
     }
