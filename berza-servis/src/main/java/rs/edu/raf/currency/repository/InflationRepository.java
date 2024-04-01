@@ -7,7 +7,7 @@ import rs.edu.raf.currency.model.InflationId;
 import java.util.List;
 
 public interface InflationRepository extends JpaRepository<Inflation, InflationId> {
-    List<Inflation> findAllByCurrency(String currencyCode);
+    List<Inflation> findAllByCountry(String country);
 
-    List<Inflation> findAllByCurrencyAndInflYear(String currencyCode, String year);
+    List<Inflation> findAllByCountryAndInflYear(String country, String year);
 }

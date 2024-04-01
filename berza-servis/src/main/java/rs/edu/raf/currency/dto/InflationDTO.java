@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class InflationDTO {
 
-    private String currency; //CurrencyCode
+    private String country;
 
     private String year;
 

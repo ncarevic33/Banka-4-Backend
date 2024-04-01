@@ -9,7 +9,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class InflationId implements Serializable {
 
-    private String currency;
+    private String country;
 
     private String inflYear;
 

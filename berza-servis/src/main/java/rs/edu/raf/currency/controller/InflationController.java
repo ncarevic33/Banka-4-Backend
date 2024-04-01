@@ -21,15 +21,15 @@ public class InflationController {
 
     private InflationService inflationService;
 
-    @ApiOperation(value = "List the inflation rates of a currency")
-    @GetMapping("/get/{currencyCode}")
-    public ResponseEntity<List<InflationDTO>> getInflationByCurrencyCode(@PathVariable("currencyCode") String currencyCode) {
-        return new ResponseEntity<>(inflationService.getInflationByCurrencyCode(currencyCode), HttpStatus.OK);
+    @ApiOperation(value = "List the inflation rates of a country")
+    @GetMapping("/get/{country}")
+    public ResponseEntity<List<InflationDTO>> getInflationByCountry(@PathVariable("country") String country) {
+        return new ResponseEntity<>(inflationService.getInflationByCountry(country), HttpStatus.OK);
     }
 
-    @ApiOperation(value = "List the inflation rates of a currency in a year")
-    @GetMapping("/get/{currencyCode}/{year}")
-    public ResponseEntity<List<InflationDTO>> getInflationByCurrencyCodeAndYear(@PathVariable("currencyCode") String currencyCode, @PathVariable("year") String year) {
-        return new ResponseEntity<>(inflationService.getInflationByCurrencyCodeAndYear(currencyCode, year), HttpStatus.OK);
+    @ApiOperation(value = "List the inflation rates of a country in a year")
+    @GetMapping("/get/{country}/{year}")
+    public ResponseEntity<List<InflationDTO>> getInflationByCountryAndYear(@PathVariable("country") String country, @PathVariable("year") String year) {
+        return new ResponseEntity<>(inflationService.getInflationByCountryAndYear(country, year), HttpStatus.OK);
     }
 }

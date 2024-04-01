@@ -8,7 +8,7 @@ import rs.edu.raf.currency.model.Inflation;
 public class InflationMapper {
     public InflationDTO inflationToInflationDTO(Inflation i) {
         InflationDTO dto = new InflationDTO();
-        dto.setCurrency(i.getCurrency());
+        dto.setCountry(i.getCountry());
         dto.setYear(i.getInflYear());
         dto.setInflationRate(i.getInflationRate());
         return dto;

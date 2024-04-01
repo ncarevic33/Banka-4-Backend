@@ -19,7 +19,7 @@ public class Inflation {
 
     @Id
     @NotBlank
-    private String currency; //CurrencyCode
+    private String country;
 
     @Id
     @NotBlank
