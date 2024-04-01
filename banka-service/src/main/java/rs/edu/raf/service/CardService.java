@@ -138,8 +138,8 @@ public class CardService {
         return cardNumber;
     }
 
-    private int generateLuhnCheckDigit(String partialNumber){
-        int s1 = 0, s2 = 0;
+    private String generateLuhnCheckDigit(String partialNumber){
+        int s1 = 0;
         boolean alternate = false;
         for(int i = partialNumber.length() - 1; i >= 0; i--){
             int digit = Character.digit(partialNumber.charAt(i), 10);
@@ -153,10 +153,17 @@ public class CardService {
             s1 += digit;
         }
 
-        int sum = s1 + s2;
-        int mod = sum % 10;
+        int mod = s1 % 10;
+        int checkDigit = (mod == 0) ? 0 : (10 - mod);
 
-        return mod == 0 ? 0 : 10 - mod;
+        // Generisanje kontrolne sume od 10 cifara
+        StringBuilder luhnPart = new StringBuilder();
+        luhnPart.append(checkDigit); // Dodajemo prvu cifru koja je već izračunata
+        Random random = new Random();
+        for (int i = 1; i < 10; i++) {
+            luhnPart.append(random.nextInt(10)); // Generišemo slučajne cifre za preostalih 9 cifara
+        }
+        return luhnPart.toString();
     }
 
 
