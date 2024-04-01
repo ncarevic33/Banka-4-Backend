@@ -17,8 +17,8 @@ public class KodServisImpl implements KodServis {
 
     @Override
     public void dodajKod(String email, String kod, Long expirationDate, boolean reset) {
-        Optional<Kod> k = kodRepository.findByEmailAndReset(email, reset);
-        k.ifPresent(value -> kodRepository.delete(value));
+
+                                //postoji kod za reset i kod pre login, a razlikuju se po boolean reset
         kodRepository.save(new Kod(email,kod,expirationDate,reset));
     }
 
