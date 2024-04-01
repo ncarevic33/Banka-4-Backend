@@ -18,7 +18,7 @@ public class Seeder implements CommandLineRunner {
         Korisnik korisnik = new Korisnik();
         korisnik.setIme("Petar");
         korisnik.setPrezime("Stamenic");
-        korisnik.setJmbg(1705000793457L);
+        korisnik.setJmbg(String.valueOf(1705000793457L));
         korisnik.setDatumRodjenja(958514400000L);
         korisnik.setPol("M");
         korisnik.setEmail("pstamenic7721rn@raf.rs");
@@ -33,7 +33,7 @@ public class Seeder implements CommandLineRunner {
         Korisnik korisnik2 = new Korisnik();
         korisnik2.setIme("Petr");
         korisnik2.setPrezime("Stamenic");
-        korisnik2.setJmbg(1706999793421L);
+        korisnik2.setJmbg(String.valueOf(1706999793421L));
         korisnik2.setDatumRodjenja(929631358000L);
         korisnik2.setPol("M");
         korisnik2.setEmail("stamenic.petar@gmail.rs");
@@ -48,7 +48,7 @@ public class Seeder implements CommandLineRunner {
         Radnik radnik = new Radnik();
         radnik.setIme("Petr");
         radnik.setPrezime("Stamenic");
-        radnik.setJmbg(1706999793421L);
+        radnik.setJmbg(String.valueOf(1706999793421L));
         radnik.setDatumRodjenja(929631358000L);
         radnik.setPol("M");
         radnik.setEmail("pera@gmail.rs");

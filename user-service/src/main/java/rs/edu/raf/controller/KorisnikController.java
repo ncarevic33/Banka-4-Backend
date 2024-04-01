@@ -98,7 +98,7 @@ public class KorisnikController {
 
     @GetMapping("/jmbg/{jmbg}")
     @Operation(description = "Nadji korisnika koji ima odredjeni jmbg")
-    public ResponseEntity<KorisnikDTO> nadjiKorisnikaPoJmbg(@PathVariable("jmbg") @Parameter(description = "JMBG korisnika") Long jmbg) {
+    public ResponseEntity<KorisnikDTO> nadjiKorisnikaPoJmbg(@PathVariable("jmbg") @Parameter(description = "JMBG korisnika") String jmbg) {
         return new ResponseEntity<>(korisnikServis.nadjiAktivnogKorisnikaPoJMBG(jmbg),HttpStatus.OK);
     }
 

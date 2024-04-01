@@ -250,7 +250,7 @@ public class KorisnikServisImpl implements KorisnikServis {
     }
 
     @Override
-    public KorisnikDTO nadjiAktivnogKorisnikaPoJMBG(Long jmbg) {
+    public KorisnikDTO nadjiAktivnogKorisnikaPoJMBG(String jmbg) {
 
         Optional<Korisnik> korisnik = korisnikRepository.findByJmbgAndAktivanIsTrue(jmbg);
 

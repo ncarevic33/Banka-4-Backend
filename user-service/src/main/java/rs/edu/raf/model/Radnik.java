@@ -22,7 +22,7 @@ public class Radnik implements UserDetails {
 
     private String prezime;
     @Column(unique=true)
-    private Long jmbg;
+    private String jmbg;
 
     private Long datumRodjenja;
 
