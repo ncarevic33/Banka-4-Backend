@@ -1,5 +1,11 @@
 package rs.edu.raf.opcija.servis.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rs.edu.raf.opcija.dto.NovaOpcijaDto;
 import rs.edu.raf.opcija.dto.OpcijaDto;
+import rs.edu.raf.opcija.dto.OptionChainResponse;
 import rs.edu.raf.opcija.mapper.OpcijaMapper;
 import rs.edu.raf.opcija.model.*;
 import rs.edu.raf.opcija.repository.GlobalQuoteRepository;
@@ -24,6 +31,7 @@ import rs.edu.raf.opcija.repository.OpcijaRepository;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -284,6 +292,164 @@ public class OpcijaServisImpl implements OpcijaServis {
             }
         }
 
+    }
+
+    @Override
+    public Map<String, List<OpcijaDto>> findPutsAndCallsByStockTicker(String ticker) {
+        Map<String, List<OpcijaDto>> resultMap = new HashMap<>();
+        List<OpcijaDto> callsList = new ArrayList<>();
+        List<OpcijaDto> putsList = new ArrayList<>();
+
+        try {
+            // Korišćenje fetchOptionsForTicker metode za dobijanje OptionChainResponse objekta
+            OptionChainResponse optionChainResponse = fetchOptionsForTicker(ticker);
+
+            // Pretpostavka da OptionChainResponse i povezane klase već imaju strukturu koja odgovara JSON-u
+            optionChainResponse.getOptionChain().getResult().forEach(result -> {
+                result.getOptions().forEach(option -> {
+                    option.getCalls().forEach(call -> callsList.add(convertToOpcijaDto(call, result.getUnderlyingSymbol(), OpcijaTip.CALL)));
+                    option.getPuts().forEach(put -> putsList.add(convertToOpcijaDto(put, result.getUnderlyingSymbol(), OpcijaTip.PUT)));
+                });
+            });
+
+            resultMap.put("calls", callsList);
+            resultMap.put("puts", putsList);
+        } catch (Exception e) {
+            log.error("Error during fetching options for ticker {}: {}", ticker, e.getMessage());
+            // Možete logovati grešku ili obavestiti korisnika na odgovarajući način
+        }
+
+        return resultMap;
+    }
+
+
+
+    public OptionChainResponse fetchOptionsForTicker(String ticker) {
+        // Kreiranje HTTP klijenta
+        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+            HttpGet httpGet = new HttpGet("https://query1.finance.yahoo.com/v6/finance/options/" + ticker);
+
+            // Slanje HTTP GET zahteva
+            try (CloseableHttpResponse response = httpClient.execute(httpGet)) {
+                // Provera statusnog koda odgovora
+                if (response.getStatusLine().getStatusCode() == 200) {
+                    // Dobijanje JSON stringa iz odgovora
+                    String jsonResponse = EntityUtils.toString(response.getEntity(), "UTF-8");
+
+                    // Inicijalizacija ObjectMapper-a za deserijalizaciju JSON-a
+                    ObjectMapper objectMapper = new ObjectMapper();
+
+                    // Deserijalizacija JSON-a u OptionChainResponse objekat
+                    return objectMapper.readValue(jsonResponse, OptionChainResponse.class);
+                } else {
+                    // Obrada grešaka (npr. ako statusni kod nije 200)
+                    throw new RuntimeException("Failed to fetch options for ticker " + ticker + ". Status code: " + response.getStatusLine().getStatusCode());
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Error during HTTP request to Yahoo Finance API", e);
+        }
+    }
+
+
+    private OpcijaDto convertToOpcijaDto(OptionChainResponse.Contract contract, String ticker, OpcijaTip optionType) {
+        OpcijaDto dto = new OpcijaDto();
+        dto.setTicker(ticker); // Setovanje tickera
+        dto.setContractSymbol(contract.getContractSymbol()); // Simbol ugovora
+        dto.setStrikePrice(contract.getStrike()); // Cena izvršenja
+        dto.setCurrency(contract.getCurrency()); // Valuta
+        dto.setLastPrice(contract.getLastPrice()); // Poslednja cena
+        dto.setChange(contract.getChange()); // Promena
+        dto.setPercentChange(contract.getPercentChange()); // Procentualna promena
+        dto.setVolume(contract.getVolume()); // Volumen
+        dto.setOpenInterest(contract.getOpenInterest()); // Otvoreni interes
+        dto.setBid(contract.getBid()); // Ponuda
+        dto.setAsk(contract.getAsk()); // Potražnja
+//        dto.setContractSize(contract.getContractSize()); // Veličina ugovora, string tipa "REGULAR" , ovamo trazite tipa long ??
+        dto.setExpiration(contract.getExpiration()); // Datum isteka
+        dto.setLastTradeDate(contract.getLastTradeDate()); // Datum poslednje trgovine
+        dto.setImpliedVolatility(contract.getImpliedVolatility()); // Implicitna volatilnost
+        dto.setInTheMoney(contract.isInTheMoney()); // Da li je u novcu
+        dto.setOptionType(optionType); // Tip opcije (CALL ili PUT)
+
+        // Pretpostavka je da neki datumi poput `settlementDate` i `datumIstekaVazenja` trebaju biti konvertovani
+        // iz UNIX timestampa u `LocalDateTime`. Ako to nije potrebno, ove linije mogu biti izostavljene ili prilagođene.
+        if (contract.getExpiration() > 0) {
+            dto.setSettlementDate(LocalDateTime.ofEpochSecond(contract.getExpiration(), 0, ZoneOffset.UTC));
+            dto.setDatumIstekaVazenja(LocalDateTime.ofEpochSecond(contract.getExpiration(), 0, ZoneOffset.UTC));
+        }
+
+        return dto;
+    }
+
+
+    @Override
+    public Map<String, List<OpcijaDto>> findPutsAndCallsByStockTickerAndExpirationDate(String ticker, Date startOfDay, Date endOfDay) {
+        Map<String, List<OpcijaDto>> resultMap = new HashMap<>();
+        List<OpcijaDto> callsList = new ArrayList<>();
+        List<OpcijaDto> putsList = new ArrayList<>();
+
+        try {
+            Map<String, List<OpcijaDto>> response = findPutsAndCallsByStockTicker(ticker);
+            List<OpcijaDto> allCalls = response.get("calls");
+            List<OpcijaDto> allPuts = response.get("puts");
+
+            for (OpcijaDto call : allCalls) {
+                Date expirationDate = new Date(call.getExpiration());
+                log.info(startOfDay + " " + expirationDate + " " + endOfDay);
+                log.info(expirationDate.after(startOfDay) && expirationDate.before(endOfDay) ? "true" : "false");
+                if (expirationDate.after(startOfDay) && expirationDate.before(endOfDay)) {
+                    callsList.add(call);
+                }
+            }
+
+            for (OpcijaDto put : allPuts) {
+                Date expirationDate = new Date(put.getExpiration());
+                if (expirationDate.after(startOfDay) && expirationDate.before(endOfDay)) {
+                    putsList.add(put);
+                }
+            }
+
+            resultMap.put("calls", callsList);
+            resultMap.put("puts", putsList);
+        } catch (Exception e) {
+            log.error("Error during fetching options for ticker {}: {}", ticker, e.getMessage());
+        }
+
+        return resultMap;
+    }
+
+    @Override
+    public Map<String, List<OpcijaDto>> classifyOptions(String ticker) {
+        Map<String, List<OpcijaDto>> resultMap = new HashMap<>();
+        List<OpcijaDto> itmList = new ArrayList<>();
+        List<OpcijaDto> otmList = new ArrayList<>();
+
+        try {
+            // Dohvatamo sve opcije za zadati ticker
+            Map<String, List<OpcijaDto>> allOptions = findPutsAndCallsByStockTicker(ticker);
+
+            // Spajamo sve put i call opcije u jednu listu
+            List<OpcijaDto> allOptionsList = new ArrayList<>();
+            allOptionsList.addAll(allOptions.getOrDefault("calls", Collections.emptyList()));
+            allOptionsList.addAll(allOptions.getOrDefault("puts", Collections.emptyList()));
+
+            // Klasifikujemo svaku opciju kao ITM ili OTM
+            for (OpcijaDto opcija : allOptionsList) {
+                if (opcija.isInTheMoney()) {
+                    itmList.add(opcija);
+                } else {
+                    otmList.add(opcija);
+                }
+            }
+
+            resultMap.put("ITM", itmList);
+            resultMap.put("OTM", otmList);
+        } catch (Exception e) {
+            log.error("Error during classification of options for ticker {}: {}", ticker, e.getMessage());
+        }
+
+        return resultMap;
     }
 
 

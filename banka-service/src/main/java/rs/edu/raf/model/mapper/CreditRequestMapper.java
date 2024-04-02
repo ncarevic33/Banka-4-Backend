@@ -29,7 +29,7 @@ public class CreditRequestMapper {
     public CreditRequestDto creditRequestToCreditRequestDto(CreditRequest creditRequest){
         CreditRequestDto creditRequestDto = new CreditRequestDto();
 
-//        creditRequestDto.setId(creditRequest.getId());
+        creditRequestDto.setId(creditRequest.getId());
         creditRequestDto.setAmount(creditRequest.getAmount());
         creditRequestDto.setBranchOffice(creditRequest.getBranchOffice());
         creditRequestDto.setSalary(creditRequest.getSalary());

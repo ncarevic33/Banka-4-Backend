@@ -18,7 +18,7 @@ public interface KorisnikServis {
     public List<KorisnikDTO> izlistajSveAktivneKorisnike();
     public RadnikDTO nadjiAktivnogRadnikaPoEmail(String email);
     public KorisnikDTO nadjiAktivnogKorisnikaPoEmail(String email);
-    public KorisnikDTO nadjiAktivnogKorisnikaPoJMBG(Long jmbg);
+    public KorisnikDTO nadjiAktivnogKorisnikaPoJMBG(String jmbg);
     public KorisnikDTO nadjiAktivnogKorisnikaPoBrojuTelefona(String brojTelefona);
     public KorisnikDTO findUserById(Long id);
     public boolean addAccountToUser(Long userId, Long accountNumber);

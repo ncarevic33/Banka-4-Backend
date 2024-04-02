@@ -20,7 +20,7 @@ public class ExchangeRateService {
 
     private final ExchangeRateRepository exchangeRateRepository;
     private final ExchangeRateMapper exchangeRateMapper;
-    private final String apiUrl = "https://v6.exchangerate-api.com/v6/4bf14e8ddbdbfe05d9022143/latest/RSD";
+    private final String apiUrl = "https://v6.exchangerate-api.com/v6/4bf14e8ddbdbfe05d9022143/latest/EUR";
     private final List<String> allowedCurrencies = List.of("RSD","EUR", "CHF", "USD", "GBP", "JPY", "CAD", "AUD");
 
 

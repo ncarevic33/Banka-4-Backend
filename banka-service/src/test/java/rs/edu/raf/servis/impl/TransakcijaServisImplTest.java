@@ -226,12 +226,12 @@ public class TransakcijaServisImplTest {
         Long idUplate = 1L;
         String newStatus = "REALIZOVANO";
         Uplata expected = new Uplata();
-        expected.setId(idUplate);
+        expected.setId(String.valueOf(idUplate));
         expected.setStatus(newStatus);
-        when(uplataRepository.findById(idUplate)).thenReturn(Optional.of(new Uplata()));
+        when(uplataRepository.findById(String.valueOf(idUplate))).thenReturn(Optional.of(new Uplata()));
         when(uplataRepository.save(any(Uplata.class))).thenReturn(expected);
 
-        Uplata result = transakcijaServis.promeniStatusUplate(idUplate, newStatus, System.currentTimeMillis());
+        Uplata result = transakcijaServis.promeniStatusUplate(String.valueOf(idUplate), newStatus, System.currentTimeMillis());
 
         assertEquals(expected, result);
     }
@@ -241,12 +241,12 @@ public class TransakcijaServisImplTest {
         Long idPrenosaSredstava = 1L;
         String newStatus = "REALIZOVANO";
         PrenosSredstava expected = new PrenosSredstava();
-        expected.setId(idPrenosaSredstava);
+        expected.setId(String.valueOf(idPrenosaSredstava));
         expected.setStatus(newStatus);
-        when(prenosSredstavaRepository.findById(idPrenosaSredstava)).thenReturn(Optional.of(new PrenosSredstava()));
+        when(prenosSredstavaRepository.findById(String.valueOf(idPrenosaSredstava))).thenReturn(Optional.of(new PrenosSredstava()));
         when(prenosSredstavaRepository.save(any(PrenosSredstava.class))).thenReturn(expected);
 
-        PrenosSredstava result = transakcijaServis.promeniStatusPrenosaSredstava(idPrenosaSredstava, newStatus, System.currentTimeMillis());
+        PrenosSredstava result = transakcijaServis.promeniStatusPrenosaSredstava(String.valueOf(idPrenosaSredstava), newStatus, System.currentTimeMillis());
 
         assertEquals(expected, result);
     }
@@ -410,18 +410,18 @@ public class TransakcijaServisImplTest {
     public void givenInvalidId_whenPromeniStatusUplate_thenReturnEntityNotFoundException() {
         Long idUplate = -1L;
         String newStatus = "REALIZOVANO";
-        when(uplataRepository.findById(idUplate)).thenReturn(Optional.empty());
+        when(uplataRepository.findById(String.valueOf(idUplate))).thenReturn(Optional.empty());
 
-        assertThrows(EntityNotFoundException.class, () -> transakcijaServis.promeniStatusUplate(idUplate, newStatus, System.currentTimeMillis()));
+        assertThrows(EntityNotFoundException.class, () -> transakcijaServis.promeniStatusUplate(String.valueOf(idUplate), newStatus, System.currentTimeMillis()));
     }
 
     @Test
     public void givenInvalidId_whenPromeniStatusPrenosaSredstava_thenReturnEntityNotFoundException() {
         Long idPrenosaSredstava = -1L;
         String newStatus = "REALIZOVANO";
-        when(prenosSredstavaRepository.findById(idPrenosaSredstava)).thenReturn(Optional.empty());
+        when(prenosSredstavaRepository.findById(String.valueOf(idPrenosaSredstava))).thenReturn(Optional.empty());
 
-        assertThrows(EntityNotFoundException.class, () -> transakcijaServis.promeniStatusPrenosaSredstava(idPrenosaSredstava, newStatus, System.currentTimeMillis()));
+        assertThrows(EntityNotFoundException.class, () -> transakcijaServis.promeniStatusPrenosaSredstava(String.valueOf(idPrenosaSredstava), newStatus, System.currentTimeMillis()));
     }
 
     /*
