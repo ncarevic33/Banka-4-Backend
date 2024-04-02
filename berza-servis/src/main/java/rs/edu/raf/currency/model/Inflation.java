@@ -27,4 +27,9 @@ public class Inflation {
 
     @NotBlank
     private String inflationRate;
+
+    @Override
+    public String toString() {
+        return country + " : " + inflYear + " : " + inflationRate;
+    }
 }

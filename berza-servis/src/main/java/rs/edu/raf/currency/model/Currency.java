@@ -29,4 +29,9 @@ public class Currency {
 
     @NotBlank
     private String polity;
+
+    @Override
+    public String toString() {
+        return currencyCode + " : " + currencySymbol + " : " + polity; //no name because the console likes to overflow
+    }
 }
