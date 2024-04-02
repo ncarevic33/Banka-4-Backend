@@ -12,9 +12,10 @@ public interface OrderService {
 
     OrderDto placeOrder(OrderRequest orderRequest);
 
+    BigDecimal approximateOrderValue(OrderRequest order);
+
     List<OrderDto> getAllOrders();
 
     List<OrderDto> getOrdersForUser(Long userId);
 
-    BigDecimal approximateOrderValue(OrderRequest order);
 }
