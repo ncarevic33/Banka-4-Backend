@@ -9,9 +9,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import rs.edu.raf.currency.dto.InflationDTO;
 import rs.edu.raf.currency.mapper.InflationMapper;
-import rs.edu.raf.currency.model.Currency;
 import rs.edu.raf.currency.model.Inflation;
-import rs.edu.raf.currency.repository.CurrencyRepository;
 import rs.edu.raf.currency.repository.InflationRepository;
 import rs.edu.raf.currency.servis.InflationService;
 
@@ -26,14 +24,12 @@ import java.util.*;
 public class InflationServiceImpl implements InflationService {
 
     InflationRepository inflationRepository;
-    CurrencyRepository currencyRepository;
     InflationMapper inflationMapper;
 
     @Autowired
-    public InflationServiceImpl(InflationRepository inflationRepository, CurrencyRepository currencyRepository, InflationMapper inflationMapper) {
+    public InflationServiceImpl(InflationRepository inflationRepository, InflationMapper inflationMapper) {
         this.inflationRepository = inflationRepository;
         this.inflationMapper = inflationMapper;
-        this.currencyRepository = currencyRepository;
     }
 
     @Override
@@ -93,16 +89,13 @@ public class InflationServiceImpl implements InflationService {
         Iterator<Map.Entry<String, JsonNode>> countries = c.fields();
         while (countries.hasNext()) {
             Map.Entry<String, JsonNode> country = countries.next();
-            Inflation i = new Inflation();
-            i.setCountry(country.getKey());
-            for (JsonNode y : c) {
-                Iterator<Map.Entry<String, JsonNode>> years = y.fields();
-                while (years.hasNext()) {
-                    Map.Entry<String, JsonNode> year = years.next();
-                    i.setInflYear(year.getKey());
-                    i.setInflationRate(String.valueOf(year.getValue()));
-                    infl.add(i);
-                }
+            for (Iterator<Map.Entry<String, JsonNode>> it = country.getValue().fields(); it.hasNext(); ) {
+                Map.Entry<String, JsonNode> y = it.next();
+                Inflation i = new Inflation();
+                i.setCountry(country.getKey());
+                i.setInflYear(y.getKey());
+                i.setInflationRate(String.valueOf(y.getValue()));
+                infl.add(i);
             }
         }
         inflationRepository.saveAll(infl);
