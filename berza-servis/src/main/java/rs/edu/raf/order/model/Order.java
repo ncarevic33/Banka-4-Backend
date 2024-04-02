@@ -14,6 +14,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Table(name = "orders")
 public class Order {
 
     @Id
@@ -47,5 +48,7 @@ public class Order {
 
     @Column(nullable = false)
     private String status;
+
+    private Long lastModified;
 
 }

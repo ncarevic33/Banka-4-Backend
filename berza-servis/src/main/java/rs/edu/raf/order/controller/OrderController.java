@@ -13,6 +13,7 @@ import rs.edu.raf.order.dto.OrderRequest;
 import rs.edu.raf.order.model.Order;
 import rs.edu.raf.order.service.OrderService;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -43,5 +44,10 @@ public class OrderController {
         return new ResponseEntity<>(orderService.placeOrder(order), HttpStatus.OK);
     }
 
+    @ApiOperation(value = "Approximates order value.")
+    @PostMapping("/approximate-order-value")
+    public ResponseEntity<BigDecimal> approximateOrderValue(@RequestBody @Validated OrderRequest order) {
+        return new ResponseEntity<>(orderService.approximateOrderValue(order), HttpStatus.OK);
+    }
 
 }

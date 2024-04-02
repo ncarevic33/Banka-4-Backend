@@ -24,6 +24,7 @@ public class OrderMapper {
                 .action(orderRequest.getAction())
                 .type(type)
                 .status(Status.PENDING)
+                .lastModified(System.currentTimeMillis())
                 .build();
     }
 
