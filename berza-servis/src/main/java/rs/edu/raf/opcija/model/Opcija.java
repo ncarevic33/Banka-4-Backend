@@ -56,7 +56,7 @@ public class Opcija{
     private double strikePrice;//cena izvrsenja opcije odnosno cena akcija opcije koja je dogovorena i nezavisna je od trenutnaCenaOsnovneAkcije
 
     private double impliedVolatility;
-    private double openInterest;//koliko ih je zainteresovano za ovu opciju
+    private Double openInterest;//koliko ih je zainteresovano za ovu opciju
     private LocalDateTime settlementDate;
 
     @Column(nullable = false)
