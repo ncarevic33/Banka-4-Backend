@@ -255,7 +255,7 @@ public class KorisnikServisImpl implements KorisnikServis {
     }
 
     @Override
-    public KorisnikDTO nadjiAktivnogKorisnikaPoJMBG(Long jmbg) {
+    public KorisnikDTO nadjiAktivnogKorisnikaPoJMBG(String jmbg) {
 
         Optional<Korisnik> korisnik = korisnikRepository.findByJmbgAndAktivanIsTrue(jmbg);
 
@@ -292,6 +292,7 @@ public class KorisnikServisImpl implements KorisnikServis {
             }
 
             korisnik.setPovezaniRacuni(korisnik.getPovezaniRacuni() + "," + accountNumber.toString());
+            korisnikRepository.save(korisnik);
             return true;
         }
         return false;

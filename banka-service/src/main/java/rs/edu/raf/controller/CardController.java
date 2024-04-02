@@ -1,6 +1,7 @@
 package rs.edu.raf.controller;
 
 import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,6 +22,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/cards")
 @Tag(name = "Kartice", description = "Operacije nad karticama")
+@SecurityRequirement(name = "jwt")
+@CrossOrigin(origins = "*")
 public class CardController {
 
     private final CardService cardService;
@@ -31,8 +34,14 @@ public class CardController {
     }
 
     @ApiOperation(value = "blokiranje kartice po broju kartice")
-    @GetMapping("/block/{cardNumber}")
-    public ResponseEntity<Void> blockCard(@PathVariable("cardNumber") String cardNumber){
+    @GetMapping("/{status}/{cardNumber}")
+    public ResponseEntity<Void> blockCard(@PathVariable("status") String status,@PathVariable("cardNumber") String cardNumber){
+        switch (status){
+            case "aktivna" -> cardService.activateCard(cardNumber);
+            case "deaktivirana" -> cardService.deactivateCard(cardNumber);
+            case "blokirana" -> cardService.blockCard(cardNumber);
+            default -> ResponseEntity.notFound().build();
+        }
         cardService.blockCard(cardNumber);
         return ResponseEntity.ok().build();
     }

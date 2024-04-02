@@ -11,6 +11,7 @@ import rs.edu.raf.model.entities.racun.DevizniRacun;
 import rs.edu.raf.model.entities.racun.PravniRacun;
 import rs.edu.raf.model.entities.racun.TekuciRacun;
 import rs.edu.raf.repository.transaction.*;
+import rs.edu.raf.service.ExchangeRateService;
 import rs.edu.raf.service.racun.RacunServis;
 import rs.edu.raf.model.entities.transaction.PrenosSredstava;
 import rs.edu.raf.model.entities.transaction.Status;
@@ -47,8 +48,6 @@ public class TransakcijaServisImplTest {
     @Mock
     private DevizniRacunRepository devizniRacunRepository;
 
-    @Mock
-    private DtoOriginalMapper dtoOriginalMapper;
 
     private TransakcijaServisImpl transakcijaServis;
 
@@ -59,6 +58,7 @@ public class TransakcijaServisImplTest {
     private DevizniRacun devizniRacun;
 
     private PrenosSredstava prenosSredstava;
+    private ExchangeRateService exchangeRateService;
 
     private Uplata uplata;
 
@@ -73,7 +73,7 @@ public class TransakcijaServisImplTest {
                 pravniRacunRepository,
                 tekuciRacunRepository,
                 devizniRacunRepository,
-                dtoOriginalMapper,
+                exchangeRateService,
                 racunServis
         ));
     }
@@ -123,7 +123,7 @@ public class TransakcijaServisImplTest {
         );
 
         prenosSredstava = new PrenosSredstava(
-                1L,                 // ID
+                "1",                 // ID
                 123456L,            // RacunPosiljaoca
                 789012L,            // RacunPrimaoca
                 new BigDecimal("50.00"),  // Iznos
@@ -133,7 +133,7 @@ public class TransakcijaServisImplTest {
         );
 
         uplata = new Uplata(
-                1L, // ID
+                "1", // ID
                 123456L, // Broj računa pošiljaoca
                 "Ime Primaoca", // Naziv primaoca
                 789012L, // Broj računa primaoca
@@ -187,7 +187,7 @@ public class TransakcijaServisImplTest {
         long vremeIzvrsavanja = System.currentTimeMillis();
 
         PrenosSredstava promenjenPrenosSredstava = new PrenosSredstava(
-                1L,                 // ID
+                "1",                 // ID
                 123456L,            // RacunPosiljaoca
                 789012L,            // RacunPrimaoca
                 new BigDecimal("50.00"),  // Iznos
@@ -197,7 +197,7 @@ public class TransakcijaServisImplTest {
 
         Mockito.doReturn(tekuciRacun).when(racunServis).nadjiAktivanTekuciRacunPoBrojuRacuna(Mockito.anyLong());  // vrati racun
 
-        Mockito.doReturn(promenjenPrenosSredstava).when(transakcijaServis).promeniStatusPrenosaSredstava(Mockito.anyLong(), Mockito.anyString(), Mockito.anyLong());
+        Mockito.doReturn(promenjenPrenosSredstava).when(transakcijaServis).promeniStatusPrenosaSredstava(Mockito.anyString(), Mockito.anyString(), Mockito.anyLong());
 
         transakcijaServis.neuspeoPrenos("TekuciRacun", prenosSredstava);
 
@@ -214,7 +214,7 @@ public class TransakcijaServisImplTest {
     @Test
     public void shouldHandleFailedTransferForTekuciRacunWithNullRacunPosiljaoca() {
         prenosSredstava = new PrenosSredstava(
-                1L,                 // ID
+                "1",                 // ID
                 null,            // RacunPosiljaoca
                 789012L,            // RacunPrimaoca
                 new BigDecimal("50.00"),  // Iznos
@@ -235,7 +235,7 @@ public class TransakcijaServisImplTest {
         long vremeIzvrsavanja = System.currentTimeMillis();
 
         PrenosSredstava promenjenPrenosSredstava = new PrenosSredstava(
-                1L,                 // ID
+                "1",                 // ID
                 123456L,            // RacunPosiljaoca
                 789012L,            // RacunPrimaoca
                 new BigDecimal("50.00"),  // Iznos
@@ -243,7 +243,7 @@ public class TransakcijaServisImplTest {
                 Status.NEUSPELO,           // Status
                 vremeIzvrsavanja);
 
-        Mockito.doReturn(promenjenPrenosSredstava).when(transakcijaServis).promeniStatusPrenosaSredstava(Mockito.anyLong(), Mockito.anyString(), Mockito.anyLong());
+        Mockito.doReturn(promenjenPrenosSredstava).when(transakcijaServis).promeniStatusPrenosaSredstava(Mockito.anyString(), Mockito.anyString(), Mockito.anyLong());
 
         Mockito.doReturn(pravniRacun).when(racunServis).nadjiAktivanPravniRacunPoBrojuRacuna(Mockito.anyLong());
 
@@ -262,7 +262,7 @@ public class TransakcijaServisImplTest {
     @Test
     public void shouldHandleFailedTransferForPravniRacunWithNullRacunPosiljaoca(){
         prenosSredstava = new PrenosSredstava(
-                1L,                 // ID
+                "1",                 // ID
                 null,            // RacunPosiljaoca
                 789012L,            // RacunPrimaoca
                 new BigDecimal("50.00"),  // Iznos
@@ -283,7 +283,7 @@ public class TransakcijaServisImplTest {
         long vremeIzvrsavanja = System.currentTimeMillis();
 
         PrenosSredstava promenjenPrenosSredstava = new PrenosSredstava(
-                1L,                 // ID
+                "1",                 // ID
                 123456L,            // RacunPosiljaoca
                 789012L,            // RacunPrimaoca
                 new BigDecimal("50.00"),  // Iznos
@@ -291,7 +291,7 @@ public class TransakcijaServisImplTest {
                 Status.NEUSPELO,           // Status
                 vremeIzvrsavanja);
 
-        Mockito.doReturn(promenjenPrenosSredstava).when(transakcijaServis).promeniStatusPrenosaSredstava(Mockito.anyLong(), Mockito.anyString(), Mockito.anyLong());
+        Mockito.doReturn(promenjenPrenosSredstava).when(transakcijaServis).promeniStatusPrenosaSredstava(Mockito.anyString(), Mockito.anyString(), Mockito.anyLong());
 
         Mockito.doReturn(devizniRacun).when(racunServis).nadjiAktivanDevizniRacunPoBrojuRacuna(Mockito.anyLong());
 
@@ -311,7 +311,7 @@ public class TransakcijaServisImplTest {
     @Test
     public void shouldHandleFailedTransferForDevizniRacunWithNullRacunPosiljaoca(){
         prenosSredstava = new PrenosSredstava(
-                1L,                 // ID
+                "1",                 // ID
                 null,            // RacunPosiljaoca
                 789012L,            // RacunPrimaoca
                 new BigDecimal("50.00"),  // Iznos
@@ -334,7 +334,7 @@ public class TransakcijaServisImplTest {
         long vremeIzvrsavanja = System.currentTimeMillis() + 1000;
 
         Uplata promenjenaUplata = new Uplata(
-                1L, // ID
+                "1", // ID
                 123456L, // Broj računa pošiljaoca
                 "Ime Primaoca", // Naziv primaoca
                 789012L, // Broj računa primaoca
@@ -349,7 +349,7 @@ public class TransakcijaServisImplTest {
 
         Mockito.doReturn(tekuciRacun).when(racunServis).nadjiAktivanTekuciRacunPoBrojuRacuna(Mockito.anyLong());  // vrati racun
 
-        Mockito.doReturn(promenjenaUplata).when(transakcijaServis).promeniStatusUplate(Mockito.anyLong(), Mockito.anyString(), Mockito.anyLong());
+        Mockito.doReturn(promenjenaUplata).when(transakcijaServis).promeniStatusUplate(Mockito.anyString(), Mockito.anyString(), Mockito.anyLong());
 
         transakcijaServis.neuspelaUplata("TekuciRacun", uplata);
 
@@ -366,7 +366,7 @@ public class TransakcijaServisImplTest {
     @Test
     public void shouldHandleFailedPaymentForTekuciRacunWithNullRacunPosiljaoca() {
         uplata = new Uplata(
-                1L, // ID
+                "1", // ID
                 null, // Broj računa pošiljaoca
                 "Ime Primaoca", // Naziv primaoca
                 789012L, // Broj računa primaoca
@@ -391,7 +391,7 @@ public class TransakcijaServisImplTest {
         long vremeIzvrsavanja = System.currentTimeMillis() + 1000;
 
         Uplata promenjenaUplata = new Uplata(
-                1L, // ID
+                "1", // ID
                 123456L, // Broj računa pošiljaoca
                 "Ime Primaoca", // Naziv primaoca
                 789012L, // Broj računa primaoca
@@ -404,7 +404,7 @@ public class TransakcijaServisImplTest {
                 vremeIzvrsavanja // VremeIzvrsavanja (može biti null ako nije izvršen)
         );
 
-        Mockito.doReturn(promenjenaUplata).when(transakcijaServis).promeniStatusUplate(Mockito.anyLong(), Mockito.anyString(), Mockito.anyLong());
+        Mockito.doReturn(promenjenaUplata).when(transakcijaServis).promeniStatusUplate(Mockito.anyString(), Mockito.anyString(), Mockito.anyLong());
 
         Mockito.doReturn(pravniRacun).when(racunServis).nadjiAktivanPravniRacunPoBrojuRacuna(Mockito.anyLong());
 
@@ -423,7 +423,7 @@ public class TransakcijaServisImplTest {
     @Test
     public void shouldHandleFailedPaymentForPravniRacunWithNullRacunPosiljaoca(){
         uplata = new Uplata(
-                1L, // ID
+                "1", // ID
                 null, // Broj računa pošiljaoca
                 "Ime Primaoca", // Naziv primaoca
                 789012L, // Broj računa primaoca
@@ -448,7 +448,7 @@ public class TransakcijaServisImplTest {
         long vremeIzvrsavanja = System.currentTimeMillis() + 1000;
 
         Uplata promenjenaUplata = new Uplata(
-                1L, // ID
+                "1", // ID
                 123456L, // Broj računa pošiljaoca
                 "Ime Primaoca", // Naziv primaoca
                 789012L, // Broj računa primaoca
@@ -461,7 +461,7 @@ public class TransakcijaServisImplTest {
                 vremeIzvrsavanja // VremeIzvrsavanja (može biti null ako nije izvršen)
         );
 
-        Mockito.doReturn(promenjenaUplata).when(transakcijaServis).promeniStatusUplate(Mockito.anyLong(), Mockito.anyString(), Mockito.anyLong());
+        Mockito.doReturn(promenjenaUplata).when(transakcijaServis).promeniStatusUplate(Mockito.anyString(), Mockito.anyString(), Mockito.anyLong());
 
         Mockito.doReturn(devizniRacun).when(racunServis).nadjiAktivanDevizniRacunPoBrojuRacuna(Mockito.anyLong());
 
@@ -480,7 +480,7 @@ public class TransakcijaServisImplTest {
     @Test
     public void shouldHandleFailedPaymentForDevizniRacunWithNullRacunPosiljaoca(){
         uplata = new Uplata(
-                1L, // ID
+                "1", // ID
                 null, // Broj računa pošiljaoca
                 "Ime Primaoca", // Naziv primaoca
                 789012L, // Broj računa primaoca
