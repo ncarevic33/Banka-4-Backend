@@ -32,7 +32,8 @@ public class OrderServiceImpl implements OrderService {
         List<Order> sellOrders = findAllSellOrdersForTicker(buyOrder.getTicker());
 
         orderRepository.save(buyOrder);
-        checkStopOrder();
+        checkStopOrderAndStopLimitOrder();
+
 
         // check if enough money
 
@@ -52,10 +53,6 @@ public class OrderServiceImpl implements OrderService {
                 }
             }
 
-            case Type.STOP_LIMIT_ORDER -> {
-
-            }
-
         }
 
         return null;
@@ -65,7 +62,7 @@ public class OrderServiceImpl implements OrderService {
         List<Order> buyOrders = findAllBuyOrdersForTicker(sellOrder.getTicker());
 
         orderRepository.save(sellOrder);
-        checkStopOrder();
+        checkStopOrderAndStopLimitOrder();
 
         switch(sellOrder.getType()) {
 
@@ -81,10 +78,6 @@ public class OrderServiceImpl implements OrderService {
                     if (sellOrder.getQuantity() == 0 || sellOrder.getLimit().compareTo(buyOrder.getLimit()) > 0) break;
                     executeSellOrder(sellOrder, buyOrder);
                 }
-            }
-
-            case Type.STOP_LIMIT_ORDER -> {
-
             }
 
         }
@@ -122,11 +115,7 @@ public class OrderServiceImpl implements OrderService {
                 approximateValue = approximateValue.add(buyOrder.getLimit().multiply(new BigDecimal(remainingQuantity)));
             }
 
-            case Type.STOP_ORDER -> approximateValue = approximateValue.add(buyOrder.getStop().multiply(new BigDecimal(remainingQuantity)).multiply(new BigDecimal("1.02")));
-
-            case Type.STOP_LIMIT_ORDER -> {
-                // Implement logic for STOP_LIMIT_ORDER
-            }
+            case Type.STOP_ORDER, Type.STOP_LIMIT_ORDER -> approximateValue = approximateValue.add(buyOrder.getStop().multiply(new BigDecimal(remainingQuantity)).multiply(new BigDecimal("1.02")));
 
         }
 
@@ -193,7 +182,7 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
-    private void checkStopOrder() {
+    private void checkStopOrderAndStopLimitOrder() {
         List<Order> allOrders = orderRepository.findAll();
         for (Order order : allOrders) {
             if (order.getType().equals(Type.STOP_ORDER)) {
@@ -210,10 +199,23 @@ public class OrderServiceImpl implements OrderService {
                         placeSellOrder(order);
                     }
                 }
+            } else if (order.getType().equals(Type.STOP_LIMIT_ORDER)) {
+                if (order.getAction().equals(Action.BUY)) {
+                    List<Order> sellOrders = findAllSellOrdersForTicker(order.getTicker());
+                    if (!sellOrders.isEmpty() && sellOrders.get(0).getLimit().compareTo(order.getStop()) >= 0) {
+                        order.setType(Type.LIMIT_ORDER);
+                        placeBuyOrder(order);
+                    }
+                } else if (order.getAction().equals(Action.SELL)) {
+                    List<Order> buyOrders = findAllBuyOrdersForTicker(order.getTicker());
+                    if (!buyOrders.isEmpty() && buyOrders.get(0).getLimit().compareTo(order.getStop()) <= 0) {
+                        order.setType(Type.LIMIT_ORDER);
+                        placeSellOrder(order);
+                    }
+                }
             }
         }
     }
-
 
     private List<Order> findAllBuyOrdersForTicker(String ticker) {
         return orderRepository.findAllByActionAndTicker(Action.BUY, ticker)
