@@ -35,6 +35,8 @@ public class OrderServiceImpl implements OrderService {
 
             // check user balance
 
+            // if available then reserve balance
+
             List<Order> sellOrders = findAllSellOrdersForTicker(buyOrder.getTicker());
             BigDecimal totalValueChange = BigDecimal.ZERO;
             Map<Order, Integer> matchedSellOrders = new HashMap<>();
@@ -55,7 +57,13 @@ public class OrderServiceImpl implements OrderService {
                 }
             }
 
-            if (buyOrder.isAllOrNone() && buyOrder.getQuantity() > 0) return null;
+            if (buyOrder.isAllOrNone() && buyOrder.getQuantity() > 0) {
+                if (buyOrder.getStop() == null) return null;
+                if (buyOrder.getType().equals(Type.LIMIT_ORDER)) buyOrder.setType(Type.STOP_LIMIT_ORDER);
+                else buyOrder.setType(Type.STOP_ORDER);
+            }
+
+            // future margin order check
 
             modifyUserBalance(buyOrder.getUserId(), totalValueChange.negate());
             for (Map.Entry<Order, Integer> entry : matchedSellOrders.entrySet()) {
@@ -81,11 +89,6 @@ public class OrderServiceImpl implements OrderService {
         checkStopOrderAndStopLimitOrder();
 
         if (sellOrder.getType().equals(Type.MARKET_ORDER) || sellOrder.getType().equals(Type.LIMIT_ORDER)) {
-
-            // check user balance
-
-            // if available then reserve balance
-
             List<Order> buyOrders = findAllBuyOrdersForTicker(sellOrder.getTicker());
             BigDecimal totalValueChange = BigDecimal.ZERO;
             Map<Order, Integer> matchedBuyOrders = new HashMap<>();
@@ -106,7 +109,13 @@ public class OrderServiceImpl implements OrderService {
                 }
             }
 
-            if (sellOrder.isAllOrNone() && sellOrder.getQuantity() > 0) return null;
+            if (sellOrder.isAllOrNone() && sellOrder.getQuantity() > 0) {
+                if (sellOrder.getStop() == null) return null;
+                if (sellOrder.getType().equals(Type.LIMIT_ORDER)) sellOrder.setType(Type.STOP_LIMIT_ORDER);
+                else sellOrder.setType(Type.STOP_ORDER);
+            }
+
+            // future margin order check
 
             modifyUserBalance(sellOrder.getUserId(), totalValueChange);
             for (Map.Entry<Order, Integer> entry : matchedBuyOrders.entrySet()) {
