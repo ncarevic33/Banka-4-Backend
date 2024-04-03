@@ -13,8 +13,7 @@ import rs.edu.raf.order.repository.OrderRepository;
 import rs.edu.raf.order.service.OrderService;
 
 import java.math.BigDecimal;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 @Service
 @Data
@@ -29,57 +28,100 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private OrderDto placeBuyOrder(Order buyOrder) {
-        List<Order> sellOrders = findAllSellOrdersForTicker(buyOrder.getTicker());
-
         orderRepository.save(buyOrder);
         checkStopOrderAndStopLimitOrder();
 
+        if (buyOrder.getType().equals(Type.MARKET_ORDER) || buyOrder.getType().equals(Type.LIMIT_ORDER)) {
 
-        // check if enough money
+            // check user balance
 
-        switch(buyOrder.getType()) {
+            List<Order> sellOrders = findAllSellOrdersForTicker(buyOrder.getTicker());
+            BigDecimal totalValueChange = BigDecimal.ZERO;
+            Map<Order, Integer> matchedSellOrders = new HashMap<>();
 
-            case Type.MARKET_ORDER -> {
-                for (Order sellOrder : sellOrders) {
-                    if (buyOrder.getQuantity() == 0) break;
-                    executeBuyOrder(buyOrder, sellOrder);
+            for (Order sellOrder : sellOrders) {
+                if (buyOrder.getQuantity() == 0 || (buyOrder.getType().equals(Type.LIMIT_ORDER) && buyOrder.getLimit().compareTo(sellOrder.getLimit()) <= 0)) break;
+
+                if (sellOrder.getQuantity() > buyOrder.getQuantity()) {
+                    sellOrder.setQuantity(sellOrder.getQuantity() - buyOrder.getQuantity());
+                    totalValueChange = totalValueChange.add(sellOrder.getLimit().multiply(new BigDecimal(buyOrder.getQuantity())));
+                    matchedSellOrders.put(sellOrder, buyOrder.getQuantity());
+                    buyOrder.setQuantity(0);
+                } else {
+                    buyOrder.setQuantity(buyOrder.getQuantity() - sellOrder.getQuantity());
+                    totalValueChange = totalValueChange.add(sellOrder.getLimit().multiply(new BigDecimal(sellOrder.getQuantity())));
+                    matchedSellOrders.put(sellOrder, sellOrder.getQuantity());
+                    sellOrder.setQuantity(0);
                 }
             }
 
-            case Type.LIMIT_ORDER -> {
-                for (Order sellOrder : sellOrders) {
-                    if (buyOrder.getQuantity() == 0 || buyOrder.getLimit().compareTo(sellOrder.getLimit()) < 0) break;
-                    executeBuyOrder(buyOrder, sellOrder);
-                }
+            if (buyOrder.isAllOrNone() && buyOrder.getQuantity() > 0) return null;
+
+            modifyUserBalance(buyOrder.getUserId(), totalValueChange.negate());
+            for (Map.Entry<Order, Integer> entry : matchedSellOrders.entrySet()) {
+                Order sellOrder = entry.getKey();
+                Integer quantitySold = entry.getValue();
+                modifyUserBalance(sellOrder.getUserId(), sellOrder.getLimit().multiply(new BigDecimal(quantitySold)));
             }
 
+
+            for (Order sellOrder : matchedSellOrders.keySet()) {
+                if (sellOrder.getQuantity() == 0) orderRepository.delete(sellOrder);
+                else orderRepository.save(sellOrder);
+            }
+            if (buyOrder.getQuantity() == 0) orderRepository.delete(buyOrder);
+            else orderRepository.save(buyOrder);
         }
 
         return null;
     }
 
     private OrderDto placeSellOrder(Order sellOrder) {
-        List<Order> buyOrders = findAllBuyOrdersForTicker(sellOrder.getTicker());
-
         orderRepository.save(sellOrder);
         checkStopOrderAndStopLimitOrder();
 
-        switch(sellOrder.getType()) {
+        if (sellOrder.getType().equals(Type.MARKET_ORDER) || sellOrder.getType().equals(Type.LIMIT_ORDER)) {
 
-            case Type.MARKET_ORDER -> {
-                for (Order buyOrder : buyOrders) {
-                    if (sellOrder.getQuantity() == 0) break;
-                    executeSellOrder(sellOrder, buyOrder);
+            // check user balance
+
+            // if available then reserve balance
+
+            List<Order> buyOrders = findAllBuyOrdersForTicker(sellOrder.getTicker());
+            BigDecimal totalValueChange = BigDecimal.ZERO;
+            Map<Order, Integer> matchedBuyOrders = new HashMap<>();
+
+            for (Order buyOrder : buyOrders) {
+                if (sellOrder.getQuantity() == 0 || (sellOrder.getType().equals(Type.LIMIT_ORDER) && sellOrder.getLimit().compareTo(buyOrder.getLimit()) >= 0)) break;
+
+                if (buyOrder.getQuantity() > sellOrder.getQuantity()) {
+                    buyOrder.setQuantity(buyOrder.getQuantity() - sellOrder.getQuantity());
+                    totalValueChange = totalValueChange.add(buyOrder.getLimit().multiply(new BigDecimal(sellOrder.getQuantity())));
+                    matchedBuyOrders.put(buyOrder, sellOrder.getQuantity());
+                    sellOrder.setQuantity(0);
+                } else {
+                    sellOrder.setQuantity(sellOrder.getQuantity() - buyOrder.getQuantity());
+                    totalValueChange = totalValueChange.add(buyOrder.getLimit().multiply(new BigDecimal(buyOrder.getQuantity())));
+                    matchedBuyOrders.put(buyOrder, buyOrder.getQuantity());
+                    buyOrder.setQuantity(0);
                 }
             }
 
-            case Type.LIMIT_ORDER -> {
-                for (Order buyOrder : buyOrders) {
-                    if (sellOrder.getQuantity() == 0 || sellOrder.getLimit().compareTo(buyOrder.getLimit()) > 0) break;
-                    executeSellOrder(sellOrder, buyOrder);
-                }
+            if (sellOrder.isAllOrNone() && sellOrder.getQuantity() > 0) return null;
+
+            modifyUserBalance(sellOrder.getUserId(), totalValueChange);
+            for (Map.Entry<Order, Integer> entry : matchedBuyOrders.entrySet()) {
+                Order buyOrder = entry.getKey();
+                Integer quantitySold = entry.getValue();
+                modifyUserBalance(buyOrder.getUserId(), buyOrder.getLimit().multiply(new BigDecimal(quantitySold)).negate());
             }
 
+
+            for (Order buyOrder : matchedBuyOrders.keySet()) {
+                if (buyOrder.getQuantity() == 0) orderRepository.delete(buyOrder);
+                else orderRepository.save(buyOrder);
+            }
+            if (sellOrder.getQuantity() == 0) orderRepository.delete(sellOrder);
+            else orderRepository.save(sellOrder);
         }
 
         return null;
@@ -132,54 +174,6 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<OrderDto> getOrdersForUser(Long userId) {
         return orderRepository.findAllByUserId(userId);
-    }
-
-    private void executeBuyOrder(Order buyOrder, Order sellOrder) {
-        if (sellOrder.getQuantity() > buyOrder.getQuantity()) {
-            sellOrder.setQuantity(sellOrder.getQuantity() - buyOrder.getQuantity());
-
-            orderRepository.save(sellOrder);
-            orderRepository.delete(buyOrder);
-
-            BigDecimal valueChange = sellOrder.getLimit().multiply(new BigDecimal(buyOrder.getQuantity()));
-            modifyUserBalance(buyOrder.getUserId(), valueChange.negate());
-            modifyUserBalance(sellOrder.getUserId(), valueChange);
-
-        } else {
-            buyOrder.setQuantity(buyOrder.getQuantity() - sellOrder.getQuantity());
-
-            BigDecimal valueChange = sellOrder.getLimit().multiply(new BigDecimal(sellOrder.getQuantity()));
-            modifyUserBalance(buyOrder.getUserId(), valueChange.negate());
-            modifyUserBalance(sellOrder.getUserId(), valueChange);
-
-            orderRepository.delete(sellOrder);
-            if (buyOrder.getQuantity() == 0) orderRepository.delete(buyOrder);
-            else orderRepository.save(buyOrder);
-        }
-    }
-
-    private void executeSellOrder(Order sellOrder, Order buyOrder) {
-        if (buyOrder.getQuantity() > sellOrder.getQuantity()) {
-            buyOrder.setQuantity(buyOrder.getQuantity() - sellOrder.getQuantity());
-
-            orderRepository.save(buyOrder);
-            orderRepository.delete(sellOrder);
-
-            BigDecimal valueChange = buyOrder.getLimit().multiply(new BigDecimal(sellOrder.getQuantity()));
-            modifyUserBalance(buyOrder.getUserId(), valueChange.negate());
-            modifyUserBalance(sellOrder.getUserId(), valueChange);
-
-        } else {
-            sellOrder.setQuantity(sellOrder.getQuantity() - buyOrder.getQuantity());
-
-            BigDecimal valueChange = buyOrder.getLimit().multiply(new BigDecimal(buyOrder.getQuantity()));
-            modifyUserBalance(buyOrder.getUserId(), valueChange.negate());
-            modifyUserBalance(sellOrder.getUserId(), valueChange);
-
-            orderRepository.delete(buyOrder);
-            if (sellOrder.getQuantity() == 0) orderRepository.delete(sellOrder);
-            else orderRepository.save(sellOrder);
-        }
     }
 
     private void checkStopOrderAndStopLimitOrder() {
