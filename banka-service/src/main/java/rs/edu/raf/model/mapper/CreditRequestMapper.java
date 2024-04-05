@@ -21,7 +21,7 @@ public class CreditRequestMapper {
         creditRequest.setBankAccountNumber(creditRequestDto.getBankAccountNumber());
         creditRequest.setLoanTerm(creditRequestDto.getLoanTerm());
         creditRequest.setPermanentEmployee(creditRequestDto.getPermanentEmployee());
-        creditRequest.setCurrentEmploymentPeriod(creditRequest.getCurrentEmploymentPeriod());
+        creditRequest.setCurrentEmploymentPeriod(creditRequestDto.getCurrentEmploymentPeriod());
 
         return creditRequest;
     }
