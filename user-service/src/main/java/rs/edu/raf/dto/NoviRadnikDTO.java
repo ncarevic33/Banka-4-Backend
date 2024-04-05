@@ -14,7 +14,7 @@ public class NoviRadnikDTO {
     @Pattern(regexp = "^[a-zA-Z]+$", message = "Samo jedno ili više slova su dozvoljena!")
     private String prezime;
 
-    @Pattern(regexp = "^(0[1-9]|[12][0-9]|3[01])(0[1-9]|1[0-2])(\\d{2})(\\d{3})$", message = "Nepravilan JMBG!")
+
     private String jmbg;
 
     private Long datumRodjenja;

@@ -27,8 +27,8 @@ class OmiljeniKorisnikServisImplTest {
                 .broj(120L)
                 .sifraPlacanja("123")
                 .nazivPrimaoca("Nikola")
-                .idRacunaPrimaoca(18L)
-                .idRacunaPosaljioca(19L)
+                .brojRacunaPrimaoca(String.valueOf(18L))
+                .brojRacunaPosiljaoca(String.valueOf(19L))
                 .build();
         OmiljeniKorisnik addedOmiljeniKorisnik = omiljeniKorisnikRepository.save(OmiljeniKorisnikMapper.toEntity(omiljeniKorisnikDTO));
         assertThat(addedOmiljeniKorisnik.getNazivPrimaoca()).isEqualTo("Nikola");
@@ -48,8 +48,8 @@ class OmiljeniKorisnikServisImplTest {
                 .broj(120L)
                 .sifraPlacanja("123")
                 .nazivPrimaoca("Nikola")
-                .idRacunaPrimaoca(18L)
-                .idRacunaPosaljioca(19L)
+                .brojRacunaPrimaoca(String.valueOf(18L))
+                .brojRacunaPosiljaoca(String.valueOf(19L))
                 .build();
         OmiljeniKorisnik addedOmiljeniKorisnik = omiljeniKorisnikRepository.save(OmiljeniKorisnikMapper.toEntity(omiljeniKorisnikDTO));
 
@@ -68,8 +68,8 @@ class OmiljeniKorisnikServisImplTest {
                 .broj(120L)
                 .sifraPlacanja("123")
                 .nazivPrimaoca("Nikola")
-                .idRacunaPrimaoca(18L)
-                .idRacunaPosaljioca(19L)
+                .brojRacunaPrimaoca(String.valueOf(18L))
+                .brojRacunaPosiljaoca(String.valueOf(19L))
                 .build();
         OmiljeniKorisnik addedOmiljeniKorisnik = omiljeniKorisnikRepository.save(OmiljeniKorisnikMapper.toEntity(omiljeniKorisnikDTO));
 
