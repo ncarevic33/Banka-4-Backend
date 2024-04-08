@@ -7,7 +7,9 @@ import rs.edu.raf.opcija.model.OpcijaStanje;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 public interface OpcijaServis {
 
@@ -24,5 +26,11 @@ public interface OpcijaServis {
         KorisnikoveKupljeneOpcije izvrsiOpciju(Long opcijaId, Long userId);
 
         OpcijaStanje proveriStanjeOpcije(Long opcijaId);
+
+        Map<String, List<OpcijaDto>> findPutsAndCallsByStockTicker(String ticker);
+
+        Map<String, List<OpcijaDto>> findPutsAndCallsByStockTickerAndExpirationDate(String ticker, Date startOfDay, Date endOfDay);
+
+        Map<String, List<OpcijaDto>> classifyOptions(String ticker);
 
 }

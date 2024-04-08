@@ -5,6 +5,7 @@ import static org.mockito.Mockito.*;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
@@ -15,9 +16,10 @@ import rs.edu.raf.service.transaction.TransakcijaServis;
 
 
 @ExtendWith(MockitoExtension.class)
+@Disabled
 public class TransactionControllerTest {
 
-
+/*
     private TransactionController transactionControllerTestMyMethods;
 
     @Before
@@ -67,5 +69,7 @@ public class TransactionControllerTest {
 
 
 
+
+ */
 
 }

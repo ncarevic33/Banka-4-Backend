@@ -8,6 +8,7 @@ import rs.edu.raf.model.dto.transaction.RealizacijaTransakcije;
 import rs.edu.raf.model.entities.racun.DevizniRacun;
 import rs.edu.raf.model.entities.racun.PravniRacun;
 import rs.edu.raf.model.entities.racun.TekuciRacun;
+import rs.edu.raf.service.ExchangeRateService;
 import rs.edu.raf.service.racun.RacunServis;
 import rs.edu.raf.model.dto.transaction.PrenosSredstavaDTO;
 import rs.edu.raf.model.dto.transaction.UplataDTO;
@@ -39,6 +40,7 @@ public class TransakcijaServisImpl implements TransakcijaServis {
     private final PravniRacunRepository pravniRacunRepository;
     private final TekuciRacunRepository tekuciRacunRepository;
     private final DevizniRacunRepository devizniRacunRepository;
+    private final ExchangeRateService exchangeRateService;
 
     private final RacunServis racunServis;
 
@@ -272,6 +274,7 @@ public class TransakcijaServisImpl implements TransakcijaServis {
 
             RealizacijaTransakcije realizacijaTransakcijePosiljaoca = null;
             RealizacijaTransakcije realizacijaTransakcijePrimaoca = null;
+            BigDecimal transferAmount;
 
             switch (racunServis.nadjiVrstuRacuna(prenosSredstava.getRacunPosiljaoca())) {
                 case "PravniRacun" -> {
@@ -280,7 +283,7 @@ public class TransakcijaServisImpl implements TransakcijaServis {
                 }
                 case "DevizniRacun" -> {
                     DevizniRacun devizniRacun = racunServis.nadjiAktivanDevizniRacunPoBrojuRacuna(prenosSredstava.getRacunPosiljaoca());
-                    realizacijaTransakcijePosiljaoca = new RealizacijaTransakcije(devizniRacun.getId(), devizniRacun.getAktivan(), izracunajRezervisanaSredstva(devizniRacun.getBrojRacuna()), devizniRacun.getCurrency(), "DevizniRacun", devizniRacun.getStanje(), devizniRacun.getVlasnik());
+                    realizacijaTransakcijePosiljaoca = new RealizacijaTransakcije(devizniRacun.getId(), devizniRacun.getAktivan(), izracunajRezervisanaSredstva(devizniRacun.getBrojRacuna()), devizniRacun.getDefaultCurrency(), "DevizniRacun", devizniRacun.getStanje(), devizniRacun.getVlasnik());
                 }
                 case "TekuciRacun" -> {
                     TekuciRacun tekuciRacun = racunServis.nadjiAktivanTekuciRacunPoBrojuRacuna(prenosSredstava.getRacunPosiljaoca());
@@ -295,7 +298,7 @@ public class TransakcijaServisImpl implements TransakcijaServis {
                 }
                 case "DevizniRacun" -> {
                     DevizniRacun devizniRacun = racunServis.nadjiAktivanDevizniRacunPoBrojuRacuna(prenosSredstava.getRacunPrimaoca());
-                    realizacijaTransakcijePrimaoca = new RealizacijaTransakcije(devizniRacun.getId(), devizniRacun.getAktivan(), izracunajRezervisanaSredstva(devizniRacun.getBrojRacuna()), devizniRacun.getCurrency(), "DevizniRacun", devizniRacun.getStanje(), devizniRacun.getVlasnik());
+                    realizacijaTransakcijePrimaoca = new RealizacijaTransakcije(devizniRacun.getId(), devizniRacun.getAktivan(), izracunajRezervisanaSredstva(devizniRacun.getBrojRacuna()), devizniRacun.getDefaultCurrency(), "DevizniRacun", devizniRacun.getStanje(), devizniRacun.getVlasnik());
                 }
                 case "TekuciRacun" -> {
                     TekuciRacun tekuciRacun = racunServis.nadjiAktivanTekuciRacunPoBrojuRacuna(prenosSredstava.getRacunPrimaoca());
@@ -318,11 +321,7 @@ public class TransakcijaServisImpl implements TransakcijaServis {
                 neuspeoPrenos(realizacijaTransakcijePosiljaoca.getTipRacuna(), prenosSredstava);
                 continue;
             }
-
-            if(!proveriZajednickiElement(realizacijaTransakcijePosiljaoca.getValute().split(","), realizacijaTransakcijePrimaoca.getValute().split(","))){
-                neuspeoPrenos(realizacijaTransakcijePosiljaoca.getTipRacuna(), prenosSredstava);
-                continue;
-            }
+            transferAmount = exchangeRateService.convert(realizacijaTransakcijePosiljaoca.getValute(), realizacijaTransakcijePrimaoca.getValute(), prenosSredstava.getIznos());
 
             if (realizacijaTransakcijePosiljaoca.getRezervisanaSredstva().compareTo(prenosSredstava.getIznos()) < 0) {
                 promeniStatusPrenosaSredstava(prenosSredstava.getId(), Status.NEUSPELO, System.currentTimeMillis());
@@ -361,29 +360,29 @@ public class TransakcijaServisImpl implements TransakcijaServis {
             switch (realizacijaTransakcijePrimaoca.getTipRacuna()){
                 case "PravniRacun" -> {
                     PravniRacun pravniRacun = racunServis.nadjiAktivanPravniRacunPoBrojuRacuna(prenosSredstava.getRacunPrimaoca());
-                    pravniRacun.setStanje(pravniRacun.getStanje().add(prenosSredstava.getIznos()));
-                    pravniRacun.setRaspolozivoStanje(pravniRacun.getRaspolozivoStanje().add(prenosSredstava.getIznos()));
+                    pravniRacun.setStanje(pravniRacun.getStanje().add(transferAmount));
+                    pravniRacun.setRaspolozivoStanje(pravniRacun.getRaspolozivoStanje().add(transferAmount));
                     PravniRacun racun = pravniRacunRepository.save(pravniRacun);
-                    if(racun.getStanje().compareTo(realizacijaTransakcijePosiljaoca.getPrethodnoStanje().add(prenosSredstava.getIznos())) == 0){
+                    if(racun.getStanje().compareTo(realizacijaTransakcijePosiljaoca.getPrethodnoStanje().add(transferAmount)) == 0){
                         prosaoDrugi = true;
                     }
                 }
                 case  "DevizniRacun" -> {
                     DevizniRacun devizniRacun = racunServis.nadjiAktivanDevizniRacunPoBrojuRacuna(prenosSredstava.getRacunPrimaoca());
-                    devizniRacun.setStanje(devizniRacun.getStanje().add(prenosSredstava.getIznos()));
-                    devizniRacun.setRaspolozivoStanje(devizniRacun.getRaspolozivoStanje().add(prenosSredstava.getIznos()));
+                    devizniRacun.setStanje(devizniRacun.getStanje().add(transferAmount));
+                    devizniRacun.setRaspolozivoStanje(devizniRacun.getRaspolozivoStanje().add(transferAmount));
                     DevizniRacun racun = devizniRacunRepository.save(devizniRacun);
-                    if(racun.getStanje().compareTo(realizacijaTransakcijePosiljaoca.getPrethodnoStanje().add(prenosSredstava.getIznos())) == 0){
+                    if(racun.getStanje().compareTo(realizacijaTransakcijePosiljaoca.getPrethodnoStanje().add(transferAmount)) == 0){
                         prosaoDrugi = true;
                     }
 
                 }
                 case "TekuciRacun" -> {
                     TekuciRacun tekuciRacun = racunServis.nadjiAktivanTekuciRacunPoBrojuRacuna(prenosSredstava.getRacunPrimaoca());
-                    tekuciRacun.setStanje(tekuciRacun.getStanje().add(prenosSredstava.getIznos()));
-                    tekuciRacun.setRaspolozivoStanje(tekuciRacun.getRaspolozivoStanje().add(prenosSredstava.getIznos()));
+                    tekuciRacun.setStanje(tekuciRacun.getStanje().add(transferAmount));
+                    tekuciRacun.setRaspolozivoStanje(tekuciRacun.getRaspolozivoStanje().add(transferAmount));
                     TekuciRacun racun = tekuciRacunRepository.save(tekuciRacun);
-                    if(racun.getStanje().compareTo(realizacijaTransakcijePosiljaoca.getPrethodnoStanje().add(prenosSredstava.getIznos())) == 0){
+                    if(racun.getStanje().compareTo(realizacijaTransakcijePosiljaoca.getPrethodnoStanje().add(transferAmount)) == 0){
                         prosaoDrugi = true;
                     }
                 }
@@ -450,6 +449,7 @@ public class TransakcijaServisImpl implements TransakcijaServis {
         for (Uplata uplata : uplate) {
             RealizacijaTransakcije realizacijaTransakcijePosiljaoca = null;
             RealizacijaTransakcije realizacijaTransakcijePrimaoca = null;
+            BigDecimal transferAmoun;
 
             switch (racunServis.nadjiVrstuRacuna(uplata.getRacunPosiljaoca())) {
                 case "PravniRacun" -> {
@@ -462,7 +462,7 @@ public class TransakcijaServisImpl implements TransakcijaServis {
                     realizacijaTransakcijePosiljaoca.setBrojRacuna(devizniRacun.getBrojRacuna());
                     realizacijaTransakcijePosiljaoca.setAktivan(devizniRacun.getAktivan());
                     realizacijaTransakcijePosiljaoca.setRezervisanaSredstva(izracunajRezervisanaSredstva(devizniRacun.getBrojRacuna()));
-                    realizacijaTransakcijePosiljaoca.setValute(devizniRacun.getCurrency());
+                    realizacijaTransakcijePosiljaoca.setValute(devizniRacun.getDefaultCurrency());
                     realizacijaTransakcijePosiljaoca.setTipRacuna("DevizniRacun");
                     realizacijaTransakcijePosiljaoca.setPrethodnoStanje(devizniRacun.getStanje());
                     realizacijaTransakcijePosiljaoca.setIdKorisnika(devizniRacun.getVlasnik());
@@ -487,7 +487,7 @@ public class TransakcijaServisImpl implements TransakcijaServis {
                 }
                 case "DevizniRacun" -> {
                     DevizniRacun devizniRacun = racunServis.nadjiAktivanDevizniRacunPoBrojuRacuna(uplata.getRacunPrimaoca());
-                    realizacijaTransakcijePrimaoca = new RealizacijaTransakcije(devizniRacun.getBrojRacuna(), devizniRacun.getAktivan(), izracunajRezervisanaSredstva(devizniRacun.getBrojRacuna()), devizniRacun.getCurrency(), "DevizniRacun", devizniRacun.getStanje(), devizniRacun.getVlasnik());
+                    realizacijaTransakcijePrimaoca = new RealizacijaTransakcije(devizniRacun.getBrojRacuna(), devizniRacun.getAktivan(), izracunajRezervisanaSredstva(devizniRacun.getBrojRacuna()), devizniRacun.getDefaultCurrency(), "DevizniRacun", devizniRacun.getStanje(), devizniRacun.getVlasnik());
                 }
                 case "TekuciRacun" -> {
                     TekuciRacun tekuciRacun = racunServis.nadjiAktivanTekuciRacunPoBrojuRacuna(uplata.getRacunPrimaoca());
@@ -511,10 +511,7 @@ public class TransakcijaServisImpl implements TransakcijaServis {
                 continue;
             }
 
-            if(!proveriZajednickiElement(realizacijaTransakcijePosiljaoca.getValute().split(","), realizacijaTransakcijePrimaoca.getValute().split(","))){
-                neuspelaUplata(realizacijaTransakcijePosiljaoca.getTipRacuna(), uplata);
-                continue;
-            }
+            transferAmoun = exchangeRateService.convert(realizacijaTransakcijePosiljaoca.getValute(), realizacijaTransakcijePrimaoca.getValute(), uplata.getIznos());
 
             if (realizacijaTransakcijePosiljaoca.getRezervisanaSredstva().compareTo(uplata.getIznos()) < 0) {
                 promeniStatusUplate(uplata.getId(), Status.NEUSPELO, System.currentTimeMillis());
@@ -553,29 +550,29 @@ public class TransakcijaServisImpl implements TransakcijaServis {
             switch (realizacijaTransakcijePrimaoca.getTipRacuna()){
                 case "PravniRacun" -> {
                     PravniRacun pravniRacun = racunServis.nadjiAktivanPravniRacunPoBrojuRacuna(realizacijaTransakcijePrimaoca.getBrojRacuna());
-                    pravniRacun.setStanje(pravniRacun.getStanje().add(uplata.getIznos()));
-                    pravniRacun.setRaspolozivoStanje(pravniRacun.getRaspolozivoStanje().add(uplata.getIznos()));
+                    pravniRacun.setStanje(pravniRacun.getStanje().add(transferAmoun));
+                    pravniRacun.setRaspolozivoStanje(pravniRacun.getRaspolozivoStanje().add(transferAmoun));
                     PravniRacun racun = pravniRacunRepository.save(pravniRacun);
-                    if(racun.getStanje().compareTo(realizacijaTransakcijePosiljaoca.getPrethodnoStanje().add(uplata.getIznos())) == 0){
+                    if(racun.getStanje().compareTo(realizacijaTransakcijePosiljaoca.getPrethodnoStanje().add(transferAmoun)) == 0){
                         prosaoDrugi = true;
                     }
                 }
                 case  "DevizniRacun" -> {
                     DevizniRacun devizniRacun = racunServis.nadjiAktivanDevizniRacunPoBrojuRacuna(realizacijaTransakcijePrimaoca.getBrojRacuna());
-                    devizniRacun.setStanje(devizniRacun.getStanje().add(uplata.getIznos()));
-                    devizniRacun.setRaspolozivoStanje(devizniRacun.getRaspolozivoStanje().add(uplata.getIznos()));
+                    devizniRacun.setStanje(devizniRacun.getStanje().add(transferAmoun));
+                    devizniRacun.setRaspolozivoStanje(devizniRacun.getRaspolozivoStanje().add(transferAmoun));
                     DevizniRacun racun = devizniRacunRepository.save(devizniRacun);
-                    if(racun.getStanje().compareTo(realizacijaTransakcijePosiljaoca.getPrethodnoStanje().add(uplata.getIznos())) == 0){
+                    if(racun.getStanje().compareTo(realizacijaTransakcijePosiljaoca.getPrethodnoStanje().add(transferAmoun)) == 0){
                         prosaoDrugi = true;
                     }
 
                 }
                 case "TekuciRacun" -> {
                     TekuciRacun tekuciRacun = racunServis.nadjiAktivanTekuciRacunPoBrojuRacuna(realizacijaTransakcijePrimaoca.getBrojRacuna());
-                    tekuciRacun.setStanje(tekuciRacun.getStanje().add(uplata.getIznos()));
-                    tekuciRacun.setRaspolozivoStanje(tekuciRacun.getRaspolozivoStanje().add(uplata.getIznos()));
+                    tekuciRacun.setStanje(tekuciRacun.getStanje().add(transferAmoun));
+                    tekuciRacun.setRaspolozivoStanje(tekuciRacun.getRaspolozivoStanje().add(transferAmoun));
                     TekuciRacun racun = tekuciRacunRepository.save(tekuciRacun);
-                    if(racun.getStanje().compareTo(realizacijaTransakcijePrimaoca.getPrethodnoStanje().add(uplata.getIznos())) == 0){
+                    if(racun.getStanje().compareTo(realizacijaTransakcijePrimaoca.getPrethodnoStanje().add(transferAmoun)) == 0){
                         prosaoDrugi = true;
                     }
                 }

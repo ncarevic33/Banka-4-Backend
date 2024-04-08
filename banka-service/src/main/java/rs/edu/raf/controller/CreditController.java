@@ -2,6 +2,7 @@ package rs.edu.raf.controller;
 
 
 import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,6 +21,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/credit")
 @Tag(name = "Kartice", description = "Operacije nad kreditima")
+@SecurityRequirement(name = "jwt")
+@CrossOrigin(origins = "*")
 public class CreditController {
 
     private final CreditService creditService;

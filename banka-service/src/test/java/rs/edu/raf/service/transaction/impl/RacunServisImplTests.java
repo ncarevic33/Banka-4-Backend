@@ -1,15 +1,36 @@
 package rs.edu.raf.service.transaction.impl;
 
-import org.junit.jupiter.api.Disabled;
+import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import rs.edu.raf.model.dto.racun.*;
+import rs.edu.raf.model.entities.racun.DevizniRacun;
+import rs.edu.raf.model.entities.racun.Firma;
+import rs.edu.raf.model.entities.racun.PravniRacun;
+import rs.edu.raf.model.entities.racun.TekuciRacun;
+import rs.edu.raf.model.mapper.racun.FirmaMapper;
+import rs.edu.raf.model.mapper.racun.RacunMapper;
+import rs.edu.raf.repository.racun.FirmaRepository;
+import rs.edu.raf.repository.transaction.DevizniRacunRepository;
+import rs.edu.raf.repository.transaction.PravniRacunRepository;
+import rs.edu.raf.repository.transaction.TekuciRacunRepository;
+import rs.edu.raf.service.racun.impl.RacunServisImpl;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
-@Disabled
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.BDDMockito.given;
+
+
 @RunWith(MockitoJUnitRunner.class)
 public class RacunServisImplTests {
-/*
+
     @InjectMocks
     static RacunServisImpl rs;
 
@@ -27,7 +48,7 @@ public class RacunServisImplTests {
     static RacunMapper racunMapper;
     @Mock
     static FirmaMapper firmaMapper;
-
+/*
     @Test
     public void kreirajDevizniRacunTest() {
         NoviDevizniRacunDTO dto = kreirajNoviDevizniRacunDTO();
@@ -36,8 +57,6 @@ public class RacunServisImplTests {
         given(racunMapper.noviDevizniRacunDTOToDevizniRacun(dto)).willReturn(dr);
         given(devizniRacunRepository.save(dr)).willReturn(dr);
 
-        DevizniRacun drRS = rs.kreirajDevizniRacun(dto);
-        assertEquals(dr, drRS);
     }
 
     @Test
@@ -48,8 +67,8 @@ public class RacunServisImplTests {
         given(racunMapper.noviPravniRacunDTOToPravniRacun(dto)).willReturn(pr);
         given(pravniRacunRepository.save(pr)).willReturn(pr);
 
-        PravniRacun prRS = rs.kreirajPravniRacun(dto);
-        assertEquals(pr, prRS);
+        //PravniRacun prRS = rs.kreirajPravniRacun(dto);
+        //assertEquals(pr, prRS);
     }
 
     @Test
@@ -60,25 +79,25 @@ public class RacunServisImplTests {
         given(racunMapper.noviTekuciRacunDTOToTekuciRacun(dto)).willReturn(tr);
         given(tekuciRacunRepository.save(tr)).willReturn(tr);
 
-        TekuciRacun trRS = rs.kreirajTekuciRacun(dto);
-        assertEquals(tr, trRS);
+        //TekuciRacun trRS = rs.kreirajTekuciRacun(dto);
+        //assertEquals(tr, trRS);
     }
 
     @Test
     public void izlistavanjeRacunaJednogKorisnikaTest() {
-        Korisnik k = kreirajKorisnika();
+        //Korisnik k = kreirajKorisnika();
         DevizniRacun dr = kreirajNoviDevizniRacun();
         TekuciRacun tr = kreirajTekuciRacun();
         List<RacunDTO> dtos = kreirajRacunDTOs();
 
-        given(korisnikRepository.findById(k.getId())).willReturn(Optional.of(k));
+        //given(korisnikRepository.findById(k.getId())).willReturn(Optional.of(k));
         given(devizniRacunRepository.findByBrojRacunaAndAktivanIsTrue(dr.getBrojRacuna())).willReturn(Optional.of(dr));
         given(racunMapper.devizniRacunToRacunDTO(dr)).willReturn(dtos.get(0));
         given(tekuciRacunRepository.findByBrojRacunaAndAktivanIsTrue(tr.getBrojRacuna())).willReturn(Optional.of(tr));
         given(racunMapper.tekuciRacunToRacunDTO(tr)).willReturn(dtos.get(1));
 
-        List<RacunDTO> dtosRS = rs.izlistavanjeRacunaJednogKorisnika(k.getId());
-        assertEquals(dtos, dtosRS);
+        //List<RacunDTO> dtosRS = rs.izlistavanjeRacunaJednogKorisnika(k.getId());
+        //assertEquals(dtos, dtosRS);
     }
 
     @Test
@@ -87,15 +106,15 @@ public class RacunServisImplTests {
         PravniRacun pr = kreirajPravniRacun();
         List<RacunDTO> dtos = kreirajPRacunDTOs();
 
-        given(korisnikRepository.findById(f.getId())).willReturn(Optional.empty());
+        //given(korisnikRepository.findById(f.getId())).willReturn(Optional.empty());
         given(firmaRepository.findById(f.getId())).willReturn(Optional.of(f));
         given(pravniRacunRepository.findByBrojRacunaAndAktivanIsTrue(pr.getBrojRacuna())).willReturn(Optional.of(pr));
         given(racunMapper.pravniRacunToRacunDTO(pr)).willReturn(dtos.get(0));
 
-        List<RacunDTO> dtosRS = rs.izlistavanjeRacunaJednogKorisnika(f.getId());
-        assertEquals(dtos, dtosRS);
+        //List<RacunDTO> dtosRS = rs.izlistavanjeRacunaJednogKorisnika(f.getId());
+        ///assertEquals(dtos, dtosRS);
     }
-
+*/
     @Test
     public void nadjiAktivanRacunPoIDTest() {
         DevizniRacun dr = kreirajNoviDevizniRacun();
@@ -197,7 +216,7 @@ public class RacunServisImplTests {
         TekuciRacun trRS = rs.nadjiAktivanTekuciRacunPoBrojuRacuna(tr.getBrojRacuna());
         assertEquals(tr, trRS);
     }
-
+/*
     @Test
     public void dodajDevizniRacunKorisnikuTest() {
         DevizniRacun dr = kreirajNoviDevizniRacun();
@@ -228,6 +247,8 @@ public class RacunServisImplTests {
         assertTrue(rs.dodajTekuciRacunKorisniku(tr, k));
     }
 
+
+ */
     @Test
     public void generisiBrojRacunaTest() {
         given(devizniRacunRepository.findTop1ByOrderByIdDesc()).willReturn(111L);
@@ -335,6 +356,7 @@ public class RacunServisImplTests {
         tr.setOdrzavanjeRacuna(new BigDecimal("0"));
         return tr;
     }
+    /*
 
     private Korisnik kreirajKorisnika() { //pozajmljeno :)
         Korisnik k = new Korisnik();
@@ -353,6 +375,8 @@ public class RacunServisImplTests {
 
         return k;
     }
+
+     */
 
     private List<RacunDTO> kreirajRacunDTOs() {
         DevizniRacun dr = kreirajNoviDevizniRacun();
@@ -437,5 +461,5 @@ public class RacunServisImplTests {
         return dto;
     }
 
- */
+
 }

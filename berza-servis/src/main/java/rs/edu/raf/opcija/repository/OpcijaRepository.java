@@ -23,4 +23,6 @@ public interface OpcijaRepository extends JpaRepository<Opcija,Long> {
                                              //@Param("pageOffset") int pageOffset);
 
 
+
+
 }

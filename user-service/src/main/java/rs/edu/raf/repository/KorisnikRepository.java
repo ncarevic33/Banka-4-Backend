@@ -14,7 +14,7 @@ public interface KorisnikRepository extends JpaRepository<Korisnik, Long> {
 
     Optional<Korisnik> findByBrojTelefonaAndAktivanIsTrue(String brojTelefona);
 
-    Optional<Korisnik> findByJmbgAndAktivanIsTrue(Long jmbg);
+    Optional<Korisnik> findByJmbgAndAktivanIsTrue(String jmbg);
 
     List<Korisnik> findAllByAktivanIsTrue();
 
