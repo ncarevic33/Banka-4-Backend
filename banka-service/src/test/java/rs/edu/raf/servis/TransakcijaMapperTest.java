@@ -8,8 +8,11 @@ import rs.edu.raf.model.dto.transaction.UplataDTO;
 import rs.edu.raf.model.entities.transaction.PrenosSredstava;
 import rs.edu.raf.model.entities.transaction.Status;
 import rs.edu.raf.model.entities.transaction.Uplata;
+import rs.edu.raf.model.mapper.transaction.TransakcijaMapper;
 
 import java.math.BigDecimal;
+
+import static org.junit.Assert.assertEquals;
 
 class TransakcijaMapperTest {
 

@@ -26,7 +26,6 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
-@Disabled
 public class RacunControllerTest {
     @Mock
     private RacunServis racunServis;
@@ -85,7 +84,7 @@ public class RacunControllerTest {
         Long idKorisnik = 123L;
         List<RacunDTO> racuni = new ArrayList<>();
 
-        when(racunServis.izlistavanjeRacunaJednogKorisnika(anyLong())).thenReturn(racuni);
+        ///when(racunServis.izlistavanjeRacunaJednogKorisnika(anyLong())).thenReturn(racuni);
 
 
         ResponseEntity<List<RacunDTO>> response = racunController.izlistajRacuneKorisnika(idKorisnik);

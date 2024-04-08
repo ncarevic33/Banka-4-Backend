@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 @Data
 public class CreditRequestDto {
 
-//    private Long id;
+    private Long id;
     private String type;
     private BigDecimal amount;
     private BigDecimal salary;
