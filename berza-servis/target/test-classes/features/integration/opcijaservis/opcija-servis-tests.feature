@@ -22,12 +22,12 @@ Feature: Opcija servis
     Then vraca se opcija sa strike price "115.0"
 
 
-  Scenario: Proveravamo stanje opcije sa id "2"
+  Scenario: Proveravamo stanje opcije sa id "1"
     Given api poziv za opcije je prethodno izvrsenn
-    When proveravamo stanje opcije sa id "2"
+    When proveravamo stanje opcije sa id "1"
     Then dobijamo stanje opcije
 
-  Scenario: Izvrsavamo opciju sa id "3" i userId "1"
+  Scenario: Izvrsavamo opciju sa id "1" i userId "1"
     Given api poziv za opcije je prethodno izvrsenn
-    When izvrsavamo opciju sa id "3" i userId "1"
+    When izvrsavamo opciju sa id "1" i userId "1"
     Then opcija je izvrsenaa
