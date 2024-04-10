@@ -1,5 +1,6 @@
 package rs.edu.raf.order.service.impl;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.stereotype.Service;
 import rs.edu.raf.order.dto.OrderDto;
@@ -9,12 +10,14 @@ import rs.edu.raf.order.model.Enums.Type;
 import rs.edu.raf.order.model.Order;
 import rs.edu.raf.order.repository.OrderRepository;
 import rs.edu.raf.order.service.OrderService;
+import rs.edu.raf.order.service.mapper.OrderMapper;
 
 import java.math.BigDecimal;
 import java.util.*;
 
-@Service
 @Data
+@AllArgsConstructor
+@Service
 public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
