@@ -44,7 +44,7 @@ public class KorisnikServisUnitTests {
         NoviKorisnikDTO noviKorisnikDTO = new NoviKorisnikDTO();
         noviKorisnikDTO.setIme("Pera");
         noviKorisnikDTO.setPrezime("Peric");
-        noviKorisnikDTO.setJmbg(1705000793457L);
+        noviKorisnikDTO.setJmbg(String.valueOf(1705000793457L));
         noviKorisnikDTO.setDatumRodjenja(958514400000L);
         noviKorisnikDTO.setPol("M");
         noviKorisnikDTO.setEmail("pera.petrovic@gmail.com");
@@ -74,7 +74,7 @@ public class KorisnikServisUnitTests {
         korisnik.setId(0L);
         korisnik.setIme("Pera");
         korisnik.setPrezime("Peric");
-        korisnik.setJmbg(1705000793457L);
+        korisnik.setJmbg(String.valueOf(1705000793457L));
         korisnik.setDatumRodjenja(958514400000L);
         korisnik.setPol("M");
         korisnik.setEmail("pera.petrovic@gmail.com");
@@ -98,7 +98,7 @@ public class KorisnikServisUnitTests {
         korisnik2.setId(1L);
         korisnik2.setIme("Milos");
         korisnik2.setPrezime("Grbić");
-        korisnik2.setJmbg(2311000793457L);
+        korisnik2.setJmbg(String.valueOf(2311000793457L));
         korisnik2.setDatumRodjenja(974934000000L);
         korisnik2.setPol("M");
         korisnik2.setEmail("milos.grbic@yahoo.com");
@@ -111,7 +111,7 @@ public class KorisnikServisUnitTests {
         korisnik3.setId(2L);
         korisnik3.setIme("Nikola");
         korisnik3.setPrezime("Zarić");
-        korisnik3.setJmbg(1408001793457L);
+        korisnik3.setJmbg(String.valueOf(1408001793457L));
         korisnik3.setDatumRodjenja(997740000000L);
         korisnik3.setPol("M");
         korisnik3.setEmail("nikola.zaric@gmail.com");
@@ -139,7 +139,7 @@ public class KorisnikServisUnitTests {
         korisnik1.setId(0L);
         korisnik1.setIme("Pera");
         korisnik1.setPrezime("Peric");
-        korisnik1.setJmbg(1705000793457L);
+        korisnik1.setJmbg(String.valueOf(1705000793457L));
         korisnik1.setDatumRodjenja(958514400000L);
         korisnik1.setPol("M");
         korisnik1.setEmail("pera.petrovic@gmail.com");
@@ -150,7 +150,7 @@ public class KorisnikServisUnitTests {
         korisnik2.setId(1L);
         korisnik2.setIme("Milos");
         korisnik2.setPrezime("Grbić");
-        korisnik2.setJmbg(2311000793457L);
+        korisnik2.setJmbg(String.valueOf(2311000793457L));
         korisnik2.setDatumRodjenja(974934000000L);
         korisnik2.setPol("M");
         korisnik2.setEmail("milos.grbic@yahoo.com");
@@ -161,7 +161,7 @@ public class KorisnikServisUnitTests {
         korisnik3.setId(2L);
         korisnik3.setIme("Nikola");
         korisnik3.setPrezime("Zarić");
-        korisnik3.setJmbg(1408001793457L);
+        korisnik3.setJmbg(String.valueOf(1408001793457L));
         korisnik3.setDatumRodjenja(997740000000L);
         korisnik3.setPol("M");
         korisnik3.setEmail("nikola.zaric@gmail.com");
@@ -180,7 +180,7 @@ public class KorisnikServisUnitTests {
         NoviRadnikDTO noviRadnikDTO = new NoviRadnikDTO();
         noviRadnikDTO.setIme("Pera");
         noviRadnikDTO.setPrezime("Peric");
-        noviRadnikDTO.setJmbg(1705000793457L);
+        noviRadnikDTO.setJmbg(String.valueOf(1705000793457L));
         noviRadnikDTO.setDatumRodjenja(958514400000L);
         noviRadnikDTO.setPol("M");
         noviRadnikDTO.setEmail("pera.petrovic@gmail.com");
@@ -216,7 +216,7 @@ public class KorisnikServisUnitTests {
         radnik.setId(0L);
         radnik.setIme("Pera");
         radnik.setPrezime("Peric");
-        radnik.setJmbg(1705000793457L);
+        radnik.setJmbg(String.valueOf(1705000793457L));
         radnik.setDatumRodjenja(958514400000L);
         radnik.setPol("M");
         radnik.setEmail("pera.petrovic@gmail.com");
@@ -244,7 +244,7 @@ public class KorisnikServisUnitTests {
         radnik2.setId(1L);
         radnik2.setIme("Lara");
         radnik2.setPrezime("Milić");
-        radnik2.setJmbg(1306995793457L);
+        radnik2.setJmbg(String.valueOf(1306995793457L));
         radnik2.setDatumRodjenja(802994400000L);
         radnik2.setPol("F");
         radnik2.setEmail("lara.milic@gmail.com");
@@ -260,7 +260,7 @@ public class KorisnikServisUnitTests {
         radnik3.setId(2L);
         radnik3.setIme("Stevan");
         radnik3.setPrezime("Krunić");
-        radnik3.setJmbg(2203989793457L);
+        radnik3.setJmbg(String.valueOf(2203989793457L));
         radnik3.setDatumRodjenja(606524400000L);
         radnik3.setPol("M");
         radnik3.setEmail("stevan.krunic@gmail.com");
@@ -291,7 +291,7 @@ public class KorisnikServisUnitTests {
         radnik1.setId(0L);
         radnik1.setIme("Pera");
         radnik1.setPrezime("Peric");
-        radnik1.setJmbg(1705000793457L);
+        radnik1.setJmbg(String.valueOf(1705000793457L));
         radnik1.setDatumRodjenja(958514400000L);
         radnik1.setPol("M");
         radnik1.setEmail("pera.petrovic@gmail.com");
@@ -305,7 +305,7 @@ public class KorisnikServisUnitTests {
         radnik2.setId(1L);
         radnik2.setIme("Lara");
         radnik2.setPrezime("Milić");
-        radnik2.setJmbg(1306995793457L);
+        radnik2.setJmbg(String.valueOf(1306995793457L));
         radnik2.setDatumRodjenja(802994400000L);
         radnik2.setPol("F");
         radnik2.setEmail("lara.milic@gmail.com");
@@ -319,7 +319,7 @@ public class KorisnikServisUnitTests {
         radnik3.setId(2L);
         radnik3.setIme("Stevan");
         radnik3.setPrezime("Krunić");
-        radnik3.setJmbg(2203989793457L);
+        radnik3.setJmbg(String.valueOf(2203989793457L));
         radnik3.setDatumRodjenja(606524400000L);
         radnik3.setPol("M");
         radnik3.setEmail("stevan.krunic@gmail.com");
@@ -362,8 +362,8 @@ public class KorisnikServisUnitTests {
 
         Korisnik korisnik = createMockKorisnik();
 
-        noviKorisnikDTO.setJmbg(1605000793457L);
-        korisnik.setJmbg(1605000793457L);
+        noviKorisnikDTO.setJmbg(String.valueOf(1605000793457L));
+        korisnik.setJmbg(String.valueOf(1605000793457L));
 
         given(korisnikMapper.noviKorisnikDtoToKorisnik(noviKorisnikDTO)).willReturn(korisnik);
 
@@ -440,8 +440,8 @@ public class KorisnikServisUnitTests {
 
         Radnik radnik = createMockRadnik();
 
-        noviRadnikDTO.setJmbg(1605000793457L);
-        radnik.setJmbg(1605000793457L);
+        noviRadnikDTO.setJmbg(String.valueOf(1605000793457L));
+        radnik.setJmbg(String.valueOf(1605000793457L));
 
         assertThrows(Exception.class, () -> {
             korisnikServis.kreirajNovogRadnika(noviRadnikDTO);

@@ -13,9 +13,9 @@ public class OmiljeniKorisnikDTO {
 
     private Long id;
     private Long idKorisnika;
-    private Long idRacunaPosaljioca;
+    private String  brojRacunaPosiljaoca;
     private String nazivPrimaoca;
-    private Long idRacunaPrimaoca;
+    private String brojRacunaPrimaoca;
     private Long broj;
     private String sifraPlacanja;
 }
