@@ -1,14 +1,21 @@
 package rs.edu.raf.order.controller;
 
 
+import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import rs.edu.raf.order.dto.UserStockDto;
+import rs.edu.raf.order.dto.UserStockRequest;
+import rs.edu.raf.order.model.Order;
 import rs.edu.raf.order.service.OrderService;
 import rs.edu.raf.order.service.UserStockService;
+
+import java.math.BigDecimal;
+import java.util.List;
 
 @RestController
 @RequestMapping("/user-stocks")
@@ -19,6 +26,53 @@ import rs.edu.raf.order.service.UserStockService;
 public class UserStockController {
 
     private final UserStockService userStockService;
-    private final OrderService orderService;    // for calculating current bid and ask prices
+    private final OrderService orderService;
+
+    @ApiOperation(value = "Returns user stock.")
+    @GetMapping("/{userId}/{ticker}")
+    public ResponseEntity<UserStockDto> getUserStock(@PathVariable Long userId, @PathVariable String ticker) {
+        UserStockDto userStockDto = userStockService.getUserStock(userId, ticker);
+        if (userStockDto == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        List<Order> buyOrders = orderService.findAllBuyOrdersForTicker(ticker);
+        List<Order> sellOrders = orderService.findAllSellOrdersForTicker(ticker);
+        if (!buyOrders.isEmpty()) {
+            userStockDto.setCurrentBid(buyOrders.get(0).getLimit());
+        }
+        if (!sellOrders.isEmpty()) {
+            userStockDto.setCurrentAsk(sellOrders.get(0).getLimit());
+        }
+        return new ResponseEntity<>(userStockDto, HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "Returns user stocks.")
+    @GetMapping("/{userId}")
+    public ResponseEntity<List<UserStockDto>> getUserStocks(@PathVariable Long userId) {
+        List<UserStockDto> userStockDtos = userStockService.getUserStocks(userId);
+        if (userStockDtos.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        for (UserStockDto userStockDto : userStockDtos) {
+            List<Order> buyOrders = orderService.findAllBuyOrdersForTicker(userStockDto.getTicker());
+            List<Order> sellOrders = orderService.findAllSellOrdersForTicker(userStockDto.getTicker());
+            if (!buyOrders.isEmpty()) {
+                userStockDto.setCurrentBid(buyOrders.get(0).getLimit());
+            }
+            if (!sellOrders.isEmpty()) {
+                userStockDto.setCurrentAsk(sellOrders.get(0).getLimit());
+            }
+        }
+        return new ResponseEntity<>(userStockDtos, HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "Changes user stock quantity.")
+    @PutMapping
+    public ResponseEntity<Boolean> changeUserStockQuantity(@RequestBody UserStockRequest userStockRequest) {
+        boolean success = userStockService.changeUserStockQuantity(userStockRequest);
+        if (!success) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+        return new ResponseEntity<>(true, HttpStatus.OK);
+    }
 
 }

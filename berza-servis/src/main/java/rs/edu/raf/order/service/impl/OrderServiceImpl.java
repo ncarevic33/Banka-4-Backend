@@ -221,14 +221,16 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
-    private List<Order> findAllBuyOrdersForTicker(String ticker) {
+    @Override
+    public List<Order> findAllBuyOrdersForTicker(String ticker) {
         return orderRepository.findAllByActionAndTicker(Action.BUY, ticker)
                 .stream()
                 .sorted(Comparator.comparing(Order::getLimit).reversed())
                 .toList();
     }
 
-    private List<Order> findAllSellOrdersForTicker(String ticker) {
+    @Override
+    public List<Order> findAllSellOrdersForTicker(String ticker) {
         return orderRepository.findAllByActionAndTicker(Action.SELL, ticker)
                 .stream()
                 .sorted(Comparator.comparing(Order::getLimit))

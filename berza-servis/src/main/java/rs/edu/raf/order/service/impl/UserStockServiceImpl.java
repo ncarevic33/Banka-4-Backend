@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.stereotype.Service;
 import rs.edu.raf.order.dto.UserStockDto;
+import rs.edu.raf.order.dto.UserStockRequest;
 import rs.edu.raf.order.model.UserStock;
 import rs.edu.raf.order.repository.UserStockRepository;
 import rs.edu.raf.order.service.UserStockService;
@@ -19,7 +20,11 @@ public class UserStockServiceImpl implements UserStockService {
     private final UserStockRepository userStockRepository;
 
     @Override
-    public boolean changeUserStockQuantity(Long userId, String ticker, Integer quantity) {
+    public boolean changeUserStockQuantity(UserStockRequest userStockRequest) {
+        Long userId = userStockRequest.getUserId();
+        String ticker = userStockRequest.getTicker();
+        Integer quantity = userStockRequest.getQuantity();
+
         UserStock userStock = userStockRepository.findByUserIdAndTicker(userId, ticker);
         if (userStock == null) {
             if (quantity >= 0) {

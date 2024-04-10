@@ -7,6 +7,6 @@ public class UserStockRequest {
 
         private Long userId;
         private String ticker;
-        private Long quantity;
+        private Integer quantity;
 
 }
