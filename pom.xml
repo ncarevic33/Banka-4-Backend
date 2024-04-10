@@ -30,6 +30,8 @@
         <module>
             user-service
         </module>
+        <module>banka-service</module>
+        <module>berza-servis</module>
     </modules>
 
     <build>

@@ -5,9 +5,9 @@ import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
-import rs.edu.raf.berza.opcija.servis.IzvedeneVrednostiUtil;
-import rs.edu.raf.berza.opcija.servis.util.FinansijaApiUtil;
-import rs.edu.raf.berza.opcija.servis.util.JsonParserUtil;
+import rs.edu.raf.opcija.servis.IzvedeneVrednostiUtil;
+import rs.edu.raf.opcija.servis.util.FinansijaApiUtil;
+import rs.edu.raf.opcija.servis.util.JsonParserUtil;
 
 @Configuration
 public class AppConfig {
