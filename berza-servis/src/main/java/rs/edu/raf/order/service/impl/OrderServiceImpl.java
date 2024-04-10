@@ -2,7 +2,6 @@ package rs.edu.raf.order.service.impl;
 
 import lombok.Data;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 import rs.edu.raf.order.dto.OrderDto;
 import rs.edu.raf.order.dto.OrderRequest;
 import rs.edu.raf.order.model.Enums.Action;

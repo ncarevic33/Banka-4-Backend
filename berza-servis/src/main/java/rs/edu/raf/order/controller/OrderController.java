@@ -10,7 +10,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import rs.edu.raf.order.dto.OrderDto;
 import rs.edu.raf.order.dto.OrderRequest;
-import rs.edu.raf.order.model.Order;
 import rs.edu.raf.order.service.OrderService;
 
 import java.math.BigDecimal;

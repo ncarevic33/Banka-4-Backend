@@ -2,10 +2,12 @@ package rs.edu.raf.order.dto;
 
 import jakarta.persistence.Column;
 import lombok.Builder;
+import lombok.Data;
 
 import java.math.BigDecimal;
 
 @Builder
+@Data
 public class OrderDto {
 
     private String ticker;
