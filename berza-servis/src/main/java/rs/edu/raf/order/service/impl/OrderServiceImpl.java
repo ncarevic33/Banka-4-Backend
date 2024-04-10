@@ -5,11 +5,13 @@ import lombok.Data;
 import org.springframework.stereotype.Service;
 import rs.edu.raf.order.dto.OrderDto;
 import rs.edu.raf.order.dto.OrderRequest;
+import rs.edu.raf.order.dto.UserStockRequest;
 import rs.edu.raf.order.model.Enums.Action;
 import rs.edu.raf.order.model.Enums.Type;
 import rs.edu.raf.order.model.Order;
 import rs.edu.raf.order.repository.OrderRepository;
 import rs.edu.raf.order.service.OrderService;
+import rs.edu.raf.order.service.UserStockService;
 import rs.edu.raf.order.service.mapper.OrderMapper;
 
 import java.math.BigDecimal;
@@ -21,6 +23,8 @@ import java.util.*;
 public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
+
+    private final UserStockService userStockService;
 
     @Override
     public OrderDto placeOrder(OrderRequest orderRequest) {
@@ -67,11 +71,22 @@ public class OrderServiceImpl implements OrderService {
             // future margin order check
 
             modifyUserBalance(buyOrder.getUserId(), totalValueChange.negate());
+            int totalQuantitySold = 0;
+
             for (Map.Entry<Order, Integer> entry : matchedSellOrders.entrySet()) {
                 Order sellOrder = entry.getKey();
                 Integer quantitySold = entry.getValue();
+
                 modifyUserBalance(sellOrder.getUserId(), sellOrder.getLimit().multiply(new BigDecimal(quantitySold)));
+
+                totalQuantitySold += quantitySold;
             }
+
+            UserStockRequest userStockRequest = new UserStockRequest();
+            userStockRequest.setUserId(buyOrder.getUserId());
+            userStockRequest.setTicker(buyOrder.getTicker());
+            userStockRequest.setQuantity(totalQuantitySold);
+            userStockService.changeUserStockQuantity(userStockRequest);
 
 
             for (Order sellOrder : matchedSellOrders.keySet()) {
@@ -88,6 +103,15 @@ public class OrderServiceImpl implements OrderService {
     private OrderDto placeSellOrder(Order sellOrder) {
         orderRepository.save(sellOrder);
         checkStopOrderAndStopLimitOrder();
+
+        UserStockRequest userStockRequest = new UserStockRequest();
+        userStockRequest.setUserId(sellOrder.getUserId());
+        userStockRequest.setTicker(sellOrder.getTicker());
+        userStockRequest.setQuantity(-sellOrder.getQuantity());
+        boolean success = userStockService.changeUserStockQuantity(userStockRequest);
+        if (!success) {
+            return null; // or throw an exception
+        }
 
         if (sellOrder.getType().equals(Type.MARKET_ORDER) || sellOrder.getType().equals(Type.LIMIT_ORDER)) {
             List<Order> buyOrders = findAllBuyOrdersForTicker(sellOrder.getTicker());
@@ -119,12 +143,21 @@ public class OrderServiceImpl implements OrderService {
             // future margin order check
 
             modifyUserBalance(sellOrder.getUserId(), totalValueChange);
+
             for (Map.Entry<Order, Integer> entry : matchedBuyOrders.entrySet()) {
                 Order buyOrder = entry.getKey();
-                Integer quantitySold = entry.getValue();
-                modifyUserBalance(buyOrder.getUserId(), buyOrder.getLimit().multiply(new BigDecimal(quantitySold)).negate());
-            }
+                Integer quantityBought = entry.getValue();
 
+                // Modify buyer's balance
+                modifyUserBalance(buyOrder.getUserId(), buyOrder.getLimit().multiply(new BigDecimal(quantityBought)).negate());
+
+                // Modify buyer's stock quantity
+                UserStockRequest userStockRequestBuyer = new UserStockRequest();
+                userStockRequestBuyer.setUserId(buyOrder.getUserId());
+                userStockRequestBuyer.setTicker(buyOrder.getTicker());
+                userStockRequestBuyer.setQuantity(quantityBought);
+                userStockService.changeUserStockQuantity(userStockRequestBuyer);
+            }
 
             for (Order buyOrder : matchedBuyOrders.keySet()) {
                 if (buyOrder.getQuantity() == 0) orderRepository.delete(buyOrder);
