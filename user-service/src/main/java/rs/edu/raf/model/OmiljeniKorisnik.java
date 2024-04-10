@@ -23,11 +23,11 @@ public class OmiljeniKorisnik implements Serializable {
     @Column(name = "ID_KORISNIKA")
     private Long idKorisnika;
     @Column(name = "ID_RACUNA_POSALJIOCA")
-    private Long idRacunaPosaljioca;
+    private String  brojRacunaPosiljaoca;
     @Column(name = "NAZIV_PRIMAOCA")
     private String nazivPrimaoca;
     @Column(name = "ID_RACUNA_PRIMAOCA")
-    private Long idRacunaPrimaoca;
+    private String  brojRacunaPrimaoca;
     private Long broj;
     @Column(name = "SIFRA_PLACANJA")
     private String sifraPlacanja;
