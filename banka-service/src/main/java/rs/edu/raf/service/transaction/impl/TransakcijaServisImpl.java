@@ -1,6 +1,7 @@
 package rs.edu.raf.service.transaction.impl;
 
 import lombok.Data;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -8,7 +9,7 @@ import rs.edu.raf.model.dto.transaction.RealizacijaTransakcije;
 import rs.edu.raf.model.entities.racun.DevizniRacun;
 import rs.edu.raf.model.entities.racun.PravniRacun;
 import rs.edu.raf.model.entities.racun.TekuciRacun;
-import rs.edu.raf.service.ExchangeRateService;
+import rs.edu.raf.service.ExchangeRateServiceImpl;
 import rs.edu.raf.service.racun.RacunServis;
 import rs.edu.raf.model.dto.transaction.PrenosSredstavaDTO;
 import rs.edu.raf.model.dto.transaction.UplataDTO;
@@ -40,9 +41,11 @@ public class TransakcijaServisImpl implements TransakcijaServis {
     private final PravniRacunRepository pravniRacunRepository;
     private final TekuciRacunRepository tekuciRacunRepository;
     private final DevizniRacunRepository devizniRacunRepository;
-    private final ExchangeRateService exchangeRateService;
+    private final ExchangeRateServiceImpl exchangeRateServiceImpl;
 
     private final RacunServis racunServis;
+
+    private SimpMessagingTemplate messagingTemplate;
 
 
     /////////////////////////////////////////////////////////////////////////
@@ -255,6 +258,7 @@ public class TransakcijaServisImpl implements TransakcijaServis {
                     Uplata u = uplataRepository.save(uplata);
                     UplataDTO uplataDTO = TransakcijaMapper.PlacanjeToDto(u);
                     //TODO ubaciti u queue i za primaoca i za posiljaoca
+                    messagingTemplate.convertAndSend("/topic/uplata/" + idUplate, uplataDTO);
                     return u;
                 })
                 .orElseThrow(() -> new EntityNotFoundException("Uplata sa ID-om " + idUplate + " nije pronađen."));
@@ -270,6 +274,7 @@ public class TransakcijaServisImpl implements TransakcijaServis {
                     PrenosSredstavaDTO prenosSredstavaDTO = TransakcijaMapper.PrenosSredstavaToDto(p);
                     //TODO treba ubaciti u queue i za posiljaoca i za primaoca
 
+                    messagingTemplate.convertAndSend("/topic/prenos-sredstava/" + idPrenosaSredstava, prenosSredstavaDTO);
                     return p;
                 })
                 .orElseThrow(() -> new EntityNotFoundException("Prenos sredstava sa ID-om " + idPrenosaSredstava + " nije pronađen."));
@@ -330,7 +335,7 @@ public class TransakcijaServisImpl implements TransakcijaServis {
                 neuspeoPrenos(realizacijaTransakcijePosiljaoca.getTipRacuna(), prenosSredstava);
                 continue;
             }
-            transferAmount = exchangeRateService.convert(realizacijaTransakcijePosiljaoca.getValute(), realizacijaTransakcijePrimaoca.getValute(), prenosSredstava.getIznos());
+            transferAmount = exchangeRateServiceImpl.convert(realizacijaTransakcijePosiljaoca.getValute(), realizacijaTransakcijePrimaoca.getValute(), prenosSredstava.getIznos());
 
             if (realizacijaTransakcijePosiljaoca.getRezervisanaSredstva().compareTo(prenosSredstava.getIznos()) < 0) {
                 promeniStatusPrenosaSredstava(prenosSredstava.getId(), Status.NEUSPELO, System.currentTimeMillis());
@@ -520,7 +525,7 @@ public class TransakcijaServisImpl implements TransakcijaServis {
                 continue;
             }
 
-            transferAmoun = exchangeRateService.convert(realizacijaTransakcijePosiljaoca.getValute(), realizacijaTransakcijePrimaoca.getValute(), uplata.getIznos());
+            transferAmoun = exchangeRateServiceImpl.convert(realizacijaTransakcijePosiljaoca.getValute(), realizacijaTransakcijePrimaoca.getValute(), uplata.getIznos());
 
             if (realizacijaTransakcijePosiljaoca.getRezervisanaSredstva().compareTo(uplata.getIznos()) < 0) {
                 promeniStatusUplate(uplata.getId(), Status.NEUSPELO, System.currentTimeMillis());
