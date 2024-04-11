@@ -1,4 +1,4 @@
-package rs.edu.raf.currency.service.impl;
+package rs.edu.raf.currency.service;
 
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.Assertions;
