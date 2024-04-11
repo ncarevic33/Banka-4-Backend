@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="Cucumber" time="15.658" tests="8" skipped="0" failures="0" errors="0">
+<testcase classname="Kontroler za opcija servis" name="Gadjamo endpoint za dohvatanje svih opcija" time="6.105">
+<system-out><![CDATA[
+Given api poziv za opcije je prethodno izvrsen..............................passed
+When gadjamo endpoint za dohvatanje svih opcija.............................passed
+Then dobijemo sve opcije....................................................passed
+]]></system-out>
+</testcase>
+<testcase classname="Kontroler za opcija servis" name="Gadjamo endpoint za kreiranje opcije" time="0">
+<system-out><![CDATA[
+When gadjamo endpoint za kreiranje opcije...................................passed
+Then dobijemo kreiranu opciju...............................................passed
+]]></system-out>
+</testcase>
+<testcase classname="Kontroler za opcija servis" name="Gadjamo endpoint da filtriramo opcije sa tickerom &quot;AA&quot;" time="0.163">
+<system-out><![CDATA[
+Given api poziv za opcije je prethodno izvrsen..............................passed
+When gadjamo endpoint za filtriranje opcija sa tickerom "AA"................passed
+Then dobijemo opcije sa tickerom "AA".......................................passed
+]]></system-out>
+</testcase>
+<testcase classname="Kontroler za opcija servis" name="Gadjamo endpoint da filtriramo opcije sa datumIsteka &quot;1713484800&quot;" time="0.124">
+<system-out><![CDATA[
+Given api poziv za opcije je prethodno izvrsen..............................passed
+When gadjamo endpoint za filtriranje opcija sa datumIsteka "1713484800".....passed
+Then dobijemo opcije sa datumIsteka "1713484800"............................passed
+]]></system-out>
+</testcase>
+<testcase classname="Kontroler za opcija servis" name="Gadjamo endpoint da filtriramo opcije sa strikePrice &quot;115.0&quot;" time="0.115">
+<system-out><![CDATA[
+Given api poziv za opcije je prethodno izvrsen..............................passed
+When gadjamo endpoint za filtriranje opcija sa strikePrice "115.0"..........passed
+Then dobijemo opcije sa strikePrice "115.0".................................passed
+]]></system-out>
+</testcase>
+<testcase classname="Kontroler za opcija servis" name="Gadjamo endpoint da filtriramo opcije sa tickerom &quot;A&quot; i sa datumIsteka &quot;1713484800&quot; i sa strikePrice &quot;90.0&quot;" time="0.125">
+<system-out><![CDATA[
+Given api poziv za opcije je prethodno izvrsen..............................passed
+When gadjamo endpoint za filtriranje opcija sa tickerom "A" i datumIsteka "1713484800" i strikePrice "90.0".passed
+Then dobijemo opcije sa tickerom "A" i datumIsteka "1713484800" i strikePrice "90.0".passed
+]]></system-out>
+</testcase>
+<testcase classname="Kontroler za opcija servis" name="Gadjamo endpoint da proverimo stanje opcije sa id &quot;2&quot;" time="0.139">
+<system-out><![CDATA[
+Given api poziv za opcije je prethodno izvrsen..............................passed
+When gadjamo endpoint da proverimo stanje opcije sa id "2"..................passed
+Then dobijemo stanje opcije.................................................passed
+]]></system-out>
+</testcase>
+<testcase classname="Kontroler za opcija servis" name="Gadjamo endpoint da izvrsimo opciju sa id &quot;3&quot; i userId &quot;1&quot;" time="0.166">
+<system-out><![CDATA[
+Given api poziv za opcije je prethodno izvrsen..............................passed
+And nadji useraa sa id "1" ili kreiraj usera................................passed
+And nadji kupljenuu upciju za usera sa id "1" ili kreiraj kupljenu upciju za usera sa id "1" i opciju sa id "3".passed
+When gadjamo endpoint da izvrsimo opciju sa id "3" i userId "1".............passed
+Then opcija je izvrsena.....................................................passed
+]]></system-out>
+</testcase>
+</testsuite>

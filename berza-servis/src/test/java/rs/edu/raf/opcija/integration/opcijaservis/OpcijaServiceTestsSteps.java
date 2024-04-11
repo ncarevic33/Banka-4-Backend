@@ -1,10 +1,9 @@
-package rs.edu.raf.integration.opcijaservis;
+package rs.edu.raf.opcija.integration.opcijaservis;
 
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import org.awaitility.Awaitility;
 import org.springframework.beans.factory.annotation.Autowired;
 import rs.edu.raf.opcija.dto.NovaOpcijaDto;
 import rs.edu.raf.opcija.dto.OpcijaDto;

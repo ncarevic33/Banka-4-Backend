@@ -1,4 +1,4 @@
-package rs.edu.raf.integration.opcijaservis;
+package rs.edu.raf.opcija.integration.opcijaservis;
 
 
 import io.cucumber.spring.CucumberContextConfiguration;

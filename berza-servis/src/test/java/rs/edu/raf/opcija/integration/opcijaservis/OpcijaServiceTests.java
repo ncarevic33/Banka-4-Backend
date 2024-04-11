@@ -1,4 +1,4 @@
-package rs.edu.raf.integration.opcijaservis;
+package rs.edu.raf.opcija.integration.opcijaservis;
 
 
 import org.junit.platform.suite.api.ConfigurationParameter;
@@ -10,7 +10,7 @@ import static io.cucumber.core.options.Constants.GLUE_PROPERTY_NAME;
 
 @Suite
 @IncludeEngines("cucumber")
-@SelectClasspathResource("features/integration/opcijaservis")
-@ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "rs.edu.raf.integration.opcijaservis")
+@SelectClasspathResource("features/opcija/integration/opcijaservis")
+@ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "rs.edu.raf.opcija.integration.opcijaservis")
 public class OpcijaServiceTests {
 }

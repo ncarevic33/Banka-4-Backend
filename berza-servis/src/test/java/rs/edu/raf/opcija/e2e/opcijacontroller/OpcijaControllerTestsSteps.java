@@ -1,4 +1,4 @@
-package rs.edu.raf.e2e.opcijacontroller;
+package rs.edu.raf.opcija.e2e.opcijacontroller;
 
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
