@@ -6,7 +6,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import rs.edu.raf.dto.*;
-import rs.edu.raf.korisnik.dto.*;
 import rs.edu.raf.mapper.KorisnikMapper;
 import rs.edu.raf.mapper.RadnikMapper;
 import rs.edu.raf.model.Korisnik;
