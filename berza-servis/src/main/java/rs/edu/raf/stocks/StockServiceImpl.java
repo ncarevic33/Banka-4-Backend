@@ -1,4 +1,4 @@
-package rs.edu.raf.stocks.service.impl;
+package rs.edu.raf.stocks;
 
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;

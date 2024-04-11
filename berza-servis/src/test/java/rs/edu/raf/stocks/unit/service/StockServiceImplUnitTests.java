@@ -1,15 +1,13 @@
-package rs.edu.raf.stocks.service.impl;
+package rs.edu.raf.stocks.unit.service;
 
 
-import com.google.gson.Gson;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+import rs.edu.raf.stocks.StockServiceImpl;
 import rs.edu.raf.stocks.dto.StockDTO;
-import rs.edu.raf.stocks.dto.TickerDTO;
 import rs.edu.raf.stocks.exceptions.BadDateInputException;
 import rs.edu.raf.stocks.mapper.StockMapper;
 import rs.edu.raf.stocks.model.Stock;
@@ -17,21 +15,12 @@ import rs.edu.raf.stocks.repository.StockRepository;
 import rs.edu.raf.stocks.response.CompanyOverviewResponse;
 import rs.edu.raf.stocks.response.GlobalQuoteResponse;
 import rs.edu.raf.stocks.response.Quote;
-import rs.edu.raf.stocks.service.StockService;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
-
-
-import java.io.IOException;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.util.List;
 
 @RunWith(MockitoJUnitRunner.class)
