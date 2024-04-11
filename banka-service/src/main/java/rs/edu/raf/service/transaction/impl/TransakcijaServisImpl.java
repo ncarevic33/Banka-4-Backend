@@ -44,6 +44,7 @@ public class TransakcijaServisImpl implements TransakcijaServis {
 
     private final RacunServis racunServis;
 
+
     /////////////////////////////////////////////////////////////////////////
 
     @Override
@@ -250,7 +251,11 @@ public class TransakcijaServisImpl implements TransakcijaServis {
                 .map(uplata -> {
                     uplata.setStatus(status);
                     uplata.setVremeIzvrsavanja(vremeIzvrsavanja);
-                    return uplataRepository.save(uplata);
+
+                    Uplata u = uplataRepository.save(uplata);
+                    UplataDTO uplataDTO = TransakcijaMapper.PlacanjeToDto(u);
+                    //TODO ubaciti u queue i za primaoca i za posiljaoca
+                    return u;
                 })
                 .orElseThrow(() -> new EntityNotFoundException("Uplata sa ID-om " + idUplate + " nije pronađen."));
     }
@@ -261,7 +266,11 @@ public class TransakcijaServisImpl implements TransakcijaServis {
                 .map(prenosSredstava -> {
                     prenosSredstava.setStatus(status);
                     prenosSredstava.setVremeIzvrsavanja(vremeIzvrsavanja);
-                    return prenosSredstavaRepository.save(prenosSredstava);
+                    PrenosSredstava p = prenosSredstavaRepository.save(prenosSredstava);
+                    PrenosSredstavaDTO prenosSredstavaDTO = TransakcijaMapper.PrenosSredstavaToDto(p);
+                    //TODO treba ubaciti u queue i za posiljaoca i za primaoca
+
+                    return p;
                 })
                 .orElseThrow(() -> new EntityNotFoundException("Prenos sredstava sa ID-om " + idPrenosaSredstava + " nije pronađen."));
     }
@@ -477,7 +486,7 @@ public class TransakcijaServisImpl implements TransakcijaServis {
                     realizacijaTransakcijePosiljaoca.setTipRacuna("TekuciRacun");
                     realizacijaTransakcijePosiljaoca.setPrethodnoStanje(tekuciRacun.getStanje());
                     realizacijaTransakcijePosiljaoca.setIdKorisnika(tekuciRacun.getVlasnik());
-                    }
+                }
             }
 
             switch (racunServis.nadjiVrstuRacuna(uplata.getRacunPrimaoca())) {
@@ -592,7 +601,7 @@ public class TransakcijaServisImpl implements TransakcijaServis {
                         DevizniRacun devizniRacun = racunServis.nadjiAktivanDevizniRacunPoBrojuRacuna(realizacijaTransakcijePosiljaoca.getBrojRacuna());
                         devizniRacun.setStanje(realizacijaTransakcijePosiljaoca.getPrethodnoStanje());
                         devizniRacunRepository.save(devizniRacun);
-                                    }
+                    }
                     case "TekuciRacun" -> {
                         TekuciRacun tekuciRacun = racunServis.nadjiAktivanTekuciRacunPoBrojuRacuna(realizacijaTransakcijePosiljaoca.getBrojRacuna());
                         tekuciRacun.setStanje(realizacijaTransakcijePosiljaoca.getPrethodnoStanje());
@@ -715,16 +724,16 @@ public class TransakcijaServisImpl implements TransakcijaServis {
     public boolean deleteTransactionalPattern(Long transactionPatternId) {
 
         if(transactionPatternId != null){
-                                        //NE VRACA GRESKU AKO NE POSTOJI ID
-         this.sablonTransakcijeRepository.deleteById(transactionPatternId);
-         return true;
+            //NE VRACA GRESKU AKO NE POSTOJI ID
+            this.sablonTransakcijeRepository.deleteById(transactionPatternId);
+            return true;
         }
         return false;
     }
 
     @Override
     public void deleteAllTransactionalPatterns() {
-                                        //NE VRACA GRESKU AKO NEMA STA DA SE BRISE
+        //NE VRACA GRESKU AKO NEMA STA DA SE BRISE
         this.sablonTransakcijeRepository.deleteAll();
     }
 
