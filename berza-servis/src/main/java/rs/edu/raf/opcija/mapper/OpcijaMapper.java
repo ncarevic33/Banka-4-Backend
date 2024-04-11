@@ -107,6 +107,7 @@ public class OpcijaMapper {
             //opcija.setIstaIstorijaGroupId();
         }
 
+        //defaultna
         if(akcija == null) {
             //neke defaultne vrednosti za akciju jer nije pronadjen globalquote odnosno akcija za tickera te opcije
             //opcija.izracunajIzvedeneVrednosti(izvedeneVrednostiUtil,akcija);
@@ -122,6 +123,8 @@ public class OpcijaMapper {
             akcija.setChangePercent("3%");
             akcija.setVolume(71160138);
             akcija.setChange(100);
+
+            globalQuoteRepository.save(akcija);
         }
 
             OpcijaStanje opcijaStanje = null;

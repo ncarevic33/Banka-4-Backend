@@ -46,7 +46,7 @@ public class OpcijaServisImpl implements OpcijaServis {
     private KorisnikoveKupljeneOpcijeRepository korisnikKupljeneOpcijeRepository;
 
     @Autowired
-    private GlobalQuoteRepository akcijaRepository;
+    private GlobalQuoteRepository globalQuoteRepository;
 
     @Autowired
     private KorisnikRepository korisnikRepository;
@@ -141,7 +141,7 @@ public class OpcijaServisImpl implements OpcijaServis {
             return null;
 
 
-        GlobalQuote globalQuote = akcijaRepository.findFirstByTicker(opcija.getTicker()).orElse(null);
+        GlobalQuote globalQuote = globalQuoteRepository.findFirstByTicker(opcija.getTicker()).orElse(null);
 
         if(globalQuote == null)
             return null;
@@ -164,7 +164,7 @@ public class OpcijaServisImpl implements OpcijaServis {
         if (opcija.getOpcijaStanje().equals(OpcijaStanje.EXPIRED))
             return OpcijaStanje.EXPIRED;
 
-        GlobalQuote akcija = akcijaRepository.findFirstByTicker(opcija.getTicker()).orElse(null);
+        GlobalQuote akcija = globalQuoteRepository.findFirstByTicker(opcija.getTicker()).orElse(null);
 
         if(akcija == null)
             return null;
@@ -224,7 +224,7 @@ public class OpcijaServisImpl implements OpcijaServis {
     }
 
 
-    private boolean firstTimeFetch = false;
+    private volatile boolean firstTimeFetch = false;
 
     //UBACUJE U CACHE KAD GOD SE AZURIRA
     @Override
@@ -234,7 +234,7 @@ public class OpcijaServisImpl implements OpcijaServis {
 
 
         if(!firstTimeFetch) {
-            List<GlobalQuote> globalQuotes = akcijaRepository.saveAll(fetchAllGlobalQuote());
+            List<GlobalQuote> globalQuotes = globalQuoteRepository.saveAll(fetchAllGlobalQuote());
             if(globalQuotes.size() == 0)
                 return;
             firstTimeFetch = true;
@@ -275,7 +275,26 @@ public class OpcijaServisImpl implements OpcijaServis {
                     postojeca.setOpcijaStanje(OpcijaStanje.EXPIRED);
                     //postojeca.setIstaIstorijaGroupId();
                 }
-                GlobalQuote akcija = akcijaRepository.findFirstByTicker(postojeca.getTicker()).orElse(null);
+                GlobalQuote akcija = globalQuoteRepository.findFirstByTicker(postojeca.getTicker()).orElse(null);
+
+                //defaultna
+                if(akcija == null){
+                    akcija = new GlobalQuote();
+                    akcija.setPrice(100.0);
+                    akcija.setVolume(100);
+                    akcija.setPreviousClose(100);
+                    akcija.setOpen(100);
+                    akcija.setHigh(100);
+                    akcija.setLow(100);
+                    akcija.setTicker(postojeca.getTicker());
+                    akcija.setSharesOutstanding(Long.valueOf(100000001));
+                    akcija.setChangePercent("3%");
+                    akcija.setVolume(71160138);
+                    akcija.setChange(100);
+
+                    globalQuoteRepository.save(akcija);
+                }
+
 
                 postojeca.izracunajIzvedeneVrednosti(izvedeneVrednostiUtil,akcija);
 
@@ -284,8 +303,25 @@ public class OpcijaServisImpl implements OpcijaServis {
             });
             //nova opcija
             if(!postojecaOpcija.isPresent()) {
-                GlobalQuote akcija = akcijaRepository.findFirstByTicker(o.getTicker()).orElse(null);
+                GlobalQuote akcija = globalQuoteRepository.findFirstByTicker(o.getTicker()).orElse(null);
 
+                //defaultna
+                if(akcija == null){
+                    akcija = new GlobalQuote();
+                    akcija.setPrice(100.0);
+                    akcija.setVolume(100);
+                    akcija.setPreviousClose(100);
+                    akcija.setOpen(100);
+                    akcija.setHigh(100);
+                    akcija.setLow(100);
+                    akcija.setTicker(o.getTicker());
+                    akcija.setSharesOutstanding(Long.valueOf(100000002));
+                    akcija.setChangePercent("3%");
+                    akcija.setVolume(71160138);
+                    akcija.setChange(100);
+
+                    globalQuoteRepository.save(akcija);
+                }
                 o.izracunajIzvedeneVrednosti(izvedeneVrednostiUtil,akcija);
 
                 cacheManager.getCache("opcijeCache").put(opcijaRepository.save(o).getId(),o);

@@ -8,9 +8,11 @@ import org.awaitility.Awaitility;
 import org.springframework.beans.factory.annotation.Autowired;
 import rs.edu.raf.opcija.dto.NovaOpcijaDto;
 import rs.edu.raf.opcija.dto.OpcijaDto;
+import rs.edu.raf.opcija.model.Korisnik;
 import rs.edu.raf.opcija.model.KorisnikoveKupljeneOpcije;
 import rs.edu.raf.opcija.model.OpcijaStanje;
 import rs.edu.raf.opcija.model.OpcijaTip;
+import rs.edu.raf.opcija.repository.KorisnikRepository;
 import rs.edu.raf.opcija.repository.OpcijaRepository;
 import rs.edu.raf.opcija.servis.OpcijaServis;
 
@@ -20,6 +22,7 @@ import java.time.ZoneOffset;
 import java.util.List;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class OpcijaServiceTestsSteps extends OpcijaServiceTestsConfig{
@@ -36,18 +39,27 @@ public class OpcijaServiceTestsSteps extends OpcijaServiceTestsConfig{
     KorisnikoveKupljeneOpcije korisnikoveKupljeneOpcije;
     OpcijaDto sacuvanaOpcija;
 
+    KorisnikRepository korisnikRepository;
+    Korisnik korisnikState;
     @Autowired
     OpcijaRepository opcijaRepository;
 
     @Given("api poziv za opcije je prethodno izvrsenn")
     public void apiPozivZaOpcijeJePrethodnoIzvrsenn() {
 
+        await().atMost(20, SECONDS)
+                .untilAsserted(() -> {
+                    if (!opcijaRepository.findAll().iterator().hasNext()) {
+                        fail("Nije pronađen nijedan rezultat u opcijaRepository.findAll() metodi");
+                    }
+                });
+        //await().atMost(10, SECONDS).until(() -> opcijaRepository.findAll().iterator().hasNext());
         //ceka najvise zadatih sekudni dok se ne pojave podaci u opcijaRepository inace failuje
-        Awaitility.await().atMost(10, SECONDS).until(this::checkIfOpcijeAreLoaded);
+        //Awaitility.await().atMost(10, SECONDS).until(this::checkIfOpcijeAreLoaded);
     }
-    private boolean checkIfOpcijeAreLoaded() {
+    /*private boolean checkIfOpcijeAreLoaded() {
         return !opcijaRepository.findAll().isEmpty();
-    }
+    }*/
 
 
     @When("zahtevamo sve opcije")
@@ -91,7 +103,7 @@ public class OpcijaServiceTestsSteps extends OpcijaServiceTestsConfig{
 
     @Then("vraca se opcija sa strike price {string}")
     public void vracaSeOpcijaSaStrikePrice(String arg0) {
-        if(opcijePoDatumIsteka.size() == 0)
+        if(opcijePoStrikePrice.size() == 0)
             fail("Ne postoje opcije po strike price");
     }
 
@@ -138,4 +150,13 @@ public class OpcijaServiceTestsSteps extends OpcijaServiceTestsConfig{
             fail("Opcija nije izvrsena");
     }
 
+
+    @And("nadji ili kreiraj usera")
+    public void nadjiIliKreirajUsera() {
+        korisnikState = korisnikRepository.findById(1L).orElse(null);
+        if(korisnikState == null){
+            korisnikState = new Korisnik();
+            korisnikState = korisnikRepository.save(korisnikState);
+        }
+    }
 }

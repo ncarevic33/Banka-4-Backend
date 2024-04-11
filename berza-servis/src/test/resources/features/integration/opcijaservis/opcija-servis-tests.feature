@@ -8,8 +8,8 @@ Feature: Opcija servis
 
   Scenario: Pretraga odredjene opcije po tickeru
     Given api poziv za opcije je prethodno izvrsenn
-    When zahtevamo opciju sa tickerom "AAPL"
-    Then vraca se opcija sa tickerom "AAPL"
+    When zahtevamo opciju sa tickerom "AA"
+    Then vraca se opcija sa tickerom "AA"
 
   Scenario: Pretraga odredjene opcije po datumu isteka
     Given api poziv za opcije je prethodno izvrsenn
@@ -27,7 +27,8 @@ Feature: Opcija servis
     When proveravamo stanje opcije sa id "1"
     Then dobijamo stanje opcije
 
-  Scenario: Izvrsavamo opciju sa id "1" i userId "1"
+  Scenario: Izvrsavamo opciju sa id "1" za usera sa id "1"
     Given api poziv za opcije je prethodno izvrsenn
+    And nadji ili kreiraj usera
     When izvrsavamo opciju sa id "1" i userId "1"
     Then opcija je izvrsenaa

@@ -21,6 +21,7 @@ import java.time.ZoneOffset;
 import java.util.List;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -64,12 +65,19 @@ public class OpcijaControllerTestsSteps extends OpcijaControllerTestsConfig{
     @Given("api poziv za opcije je prethodno izvrsen")
     public void apiPozivZaOpcijeJePrethodnoIzvrsen() {
 
+        await().atMost(20, SECONDS)
+                .untilAsserted(() -> {
+                    if (!opcijaRepository.findAll().iterator().hasNext()) {
+                        fail("Nije pronađen nijedan rezultat u opcijaRepository.findAll() metodi");
+                    }
+                });
+        //await().atMost(10, SECONDS).until(() -> opcijaRepository.findAll().iterator().hasNext());
                                     //ceka najvise zadatih sekudni dok se ne pojave podaci u opcijaRepository inace failuje
-        Awaitility.await().atMost(10, SECONDS).until(this::checkIfOpcijeAreLoaded);
+        //Awaitility.await().atMost(10, SECONDS).until(this::checkIfOpcijeAreLoaded);
     }
-    private boolean checkIfOpcijeAreLoaded() {
+    /*private boolean checkIfOpcijeAreLoaded() {
         return !opcijaRepository.findAll().isEmpty();
-    }
+    }*/
 
     @When("gadjamo endpoint za dohvatanje svih opcija")
     public void gadjamoEndpointZaDohvatanjeSvihOpcija() {
@@ -137,8 +145,14 @@ public class OpcijaControllerTestsSteps extends OpcijaControllerTestsConfig{
 
     @Given("api poziv za opcije je prethodno izvrsen i korisnik sa id {string} postoji u bazi")
     public void apiPozivZaOpcijeJePrethodnoIzvrsenIKorisnikSaIdPostojiUBazi(String arg0) {
-            Awaitility.await().atMost(10, SECONDS).until(this::checkIfOpcijeAreLoaded);
-
+           // Awaitility.await().atMost(10, SECONDS).until(this::checkIfOpcijeAreLoaded);
+        //await().atMost(10, SECONDS).until(() -> opcijaRepository.findAll().iterator().hasNext());
+        await().atMost(20, SECONDS)
+                .untilAsserted(() -> {
+                    if (!opcijaRepository.findAll().iterator().hasNext()) {
+                        fail("Nije pronađen nijedan rezultat u opcijaRepository.findAll() metodi");
+                    }
+                });
             if(!korisnikRepository.findById(Long.valueOf(arg0)).isPresent())
                 fail("Ne postoji korisnik sa zadatim id");
     }
