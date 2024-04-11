@@ -10,9 +10,9 @@ public class OmiljeniKorisnikMapper {
         return OmiljeniKorisnikDTO.builder()
                 .id(source.getId())
                 .idKorisnika(source.getIdKorisnika())
-                .idRacunaPosaljioca(source.getIdRacunaPosaljioca())
+                .brojRacunaPosiljaoca(source.getBrojRacunaPosiljaoca())
                 .nazivPrimaoca(source.getNazivPrimaoca())
-                .idRacunaPrimaoca(source.getIdRacunaPrimaoca())
+                .brojRacunaPrimaoca(source.getBrojRacunaPrimaoca())
                 .broj(source.getBroj())
                 .sifraPlacanja(source.getSifraPlacanja())
                 .build();
@@ -22,9 +22,9 @@ public class OmiljeniKorisnikMapper {
         OmiljeniKorisnik omiljeniKorisnik = new OmiljeniKorisnik();
         omiljeniKorisnik.setId(source.getId());
         omiljeniKorisnik.setIdKorisnika(source.getIdKorisnika());
-        omiljeniKorisnik.setIdRacunaPosaljioca(source.getIdRacunaPosaljioca());
+        omiljeniKorisnik.setBrojRacunaPosiljaoca(source.getBrojRacunaPosiljaoca());
         omiljeniKorisnik.setNazivPrimaoca(source.getNazivPrimaoca());
-        omiljeniKorisnik.setIdRacunaPrimaoca(source.getIdRacunaPrimaoca());
+        omiljeniKorisnik.setBrojRacunaPrimaoca(source.getBrojRacunaPrimaoca());
         omiljeniKorisnik.setBroj(source.getBroj());
         omiljeniKorisnik.setSifraPlacanja(source.getSifraPlacanja());
 

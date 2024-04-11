@@ -15,7 +15,7 @@
     <artifactId>banka-servis</artifactId>
     <groupId>rs.edu.raf.banka-4</groupId>
     <version>0.1</version>
-    <name>user-service</name>
+    <name>banka-service</name>
     <packaging>jar</packaging>
 
     <properties>
@@ -173,6 +173,18 @@
             <version>2.22.2</version>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-websocket</artifactId>
+        </dependency>
+
 
     </dependencies>
 
