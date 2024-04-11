@@ -6,6 +6,5 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 @CucumberContextConfiguration
 @SpringBootTest
-@AutoConfigureMockMvc
 public class OpcijaControllerTestsConfig {
 }

@@ -1,18 +1,20 @@
 package rs.edu.raf.e2e.opcijacontroller;
 
+import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import org.awaitility.Awaitility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import rs.edu.raf.opcija.controller.OpcijaController;
 import rs.edu.raf.opcija.dto.NovaOpcijaDto;
 import rs.edu.raf.opcija.dto.OpcijaDto;
+import rs.edu.raf.opcija.model.Korisnik;
 import rs.edu.raf.opcija.model.KorisnikoveKupljeneOpcije;
 import rs.edu.raf.opcija.model.OpcijaStanje;
 import rs.edu.raf.opcija.model.OpcijaTip;
 import rs.edu.raf.opcija.repository.KorisnikRepository;
+import rs.edu.raf.opcija.repository.KorisnikoveKupljeneOpcijeRepository;
 import rs.edu.raf.opcija.repository.OpcijaRepository;
 
 import java.time.Instant;
@@ -25,12 +27,7 @@ import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
-
-
-
-
 public class OpcijaControllerTestsSteps extends OpcijaControllerTestsConfig{
-
 
     //mora se zaobici autentifikacija i autorizacija ili se ulogovati u @Given koji svi scenariji imaju
     //@Autowired
@@ -60,6 +57,11 @@ public class OpcijaControllerTestsSteps extends OpcijaControllerTestsConfig{
     private ResponseEntity<KorisnikoveKupljeneOpcije> korisnikoveKupljeneOpcijeResponseEntity;
 
     @Autowired
+    KorisnikoveKupljeneOpcijeRepository korisnikoveKupljeneOpcijeRepository;
+    KorisnikoveKupljeneOpcije korisnikoveKupljeneOpcijeState;
+    Korisnik korisnikState;
+
+    @Autowired
     private OpcijaController opcijaController;
 
     @Given("api poziv za opcije je prethodno izvrsen")
@@ -72,7 +74,7 @@ public class OpcijaControllerTestsSteps extends OpcijaControllerTestsConfig{
                     }
                 });
         //await().atMost(10, SECONDS).until(() -> opcijaRepository.findAll().iterator().hasNext());
-                                    //ceka najvise zadatih sekudni dok se ne pojave podaci u opcijaRepository inace failuje
+        //ceka najvise zadatih sekudni dok se ne pojave podaci u opcijaRepository inace failuje
         //Awaitility.await().atMost(10, SECONDS).until(this::checkIfOpcijeAreLoaded);
     }
     /*private boolean checkIfOpcijeAreLoaded() {
@@ -143,23 +145,8 @@ public class OpcijaControllerTestsSteps extends OpcijaControllerTestsConfig{
 
     }
 
-    @Given("api poziv za opcije je prethodno izvrsen i korisnik sa id {string} postoji u bazi")
-    public void apiPozivZaOpcijeJePrethodnoIzvrsenIKorisnikSaIdPostojiUBazi(String arg0) {
-           // Awaitility.await().atMost(10, SECONDS).until(this::checkIfOpcijeAreLoaded);
-        //await().atMost(10, SECONDS).until(() -> opcijaRepository.findAll().iterator().hasNext());
-        await().atMost(20, SECONDS)
-                .untilAsserted(() -> {
-                    if (!opcijaRepository.findAll().iterator().hasNext()) {
-                        fail("Nije pronađen nijedan rezultat u opcijaRepository.findAll() metodi");
-                    }
-                });
-            if(!korisnikRepository.findById(Long.valueOf(arg0)).isPresent())
-                fail("Ne postoji korisnik sa zadatim id");
-    }
-
     @When("gadjamo endpoint da izvrsimo opciju sa id {string} i userId {string}")
     public void gadjamoEndpointDaIzvrsimoOpcijuSaIdIUserId(String arg0, String arg1) {
-
 
         korisnikoveKupljeneOpcijeResponseEntity = opcijaController.izvrsiKorisnikovuOpciju(Long.valueOf(arg0),Long.valueOf(arg1));
 
@@ -180,6 +167,7 @@ public class OpcijaControllerTestsSteps extends OpcijaControllerTestsConfig{
         if(dobijeneSveOpcije.getBody().size() == 0)
             fail("Nema opcija");
 
+        System.out.println(dobijeneSveOpcije.getBody());
     }
 
     @Then("dobijemo opcije sa tickerom {string}")
@@ -189,10 +177,10 @@ public class OpcijaControllerTestsSteps extends OpcijaControllerTestsConfig{
         if(dobijeneOpcijePoTickeru.getBody().size() == 0)
             fail("Nema opcija");
 
-        for(OpcijaDto o:dobijeneOpcijePoTickeru.getBody()){
+        for(OpcijaDto o:dobijeneOpcijePoTickeru.getBody())
             if(!o.getTicker().equals(arg0))
                 fail("Pogresan ticker");
-        }
+
 
     }
 
@@ -204,8 +192,11 @@ public class OpcijaControllerTestsSteps extends OpcijaControllerTestsConfig{
             fail("Nema opcija");
 
         for(OpcijaDto o:dobijeneOpcijePoDatumIsteka.getBody()){
-            if(o.getExpiration()!=Long.valueOf(arg0))
+            if(o.getExpiration()!=Long.valueOf(arg0)) {
+                System.out.println(o.getExpiration());
+                System.out.println(Long.valueOf(arg0));
                 fail("Pogresan datum isteka");
+            }
         }
     }
 
@@ -257,5 +248,26 @@ public class OpcijaControllerTestsSteps extends OpcijaControllerTestsConfig{
         if(kreiranaOpcija.getBody() == null)
             fail("Nema opcije");
 
+    }
+
+    @And("nadji useraa sa id {string} ili kreiraj usera")
+    public void nadjiUseraaSaIdIliKreirajUsera(String arg0) {
+        korisnikState = korisnikRepository.findById(Long.valueOf(arg0)).orElse(null);
+        if(korisnikState == null){
+            korisnikState = new Korisnik();
+            korisnikState = korisnikRepository.save(korisnikState);
+        }
+    }
+
+    @And("nadji kupljenuu upciju za usera sa id {string} ili kreiraj kupljenu upciju za usera sa id {string} i opciju sa id {string}")
+    public void nadjiKupljenuuUpcijuZaUseraSaIdIliKreirajKupljenuUpcijuZaUseraSaIdIOpcijuSaId(String arg0, String arg1, String arg2) {
+        korisnikoveKupljeneOpcijeState = korisnikoveKupljeneOpcijeRepository.findFirstByKorisnikId(Long.valueOf(arg0)).orElse(null);
+        if(korisnikoveKupljeneOpcijeState == null){
+            korisnikoveKupljeneOpcijeState = new KorisnikoveKupljeneOpcije();
+            korisnikoveKupljeneOpcijeState.setKorisnikId(Long.valueOf(arg0));
+            korisnikoveKupljeneOpcijeState.setOpcijaId(Long.valueOf(arg2));
+            korisnikoveKupljeneOpcijeState.setIskoriscena(false);
+            korisnikoveKupljeneOpcijeState = korisnikoveKupljeneOpcijeRepository.save(korisnikoveKupljeneOpcijeState);
+        }
     }
 }

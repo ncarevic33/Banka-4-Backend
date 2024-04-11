@@ -1,15 +1,17 @@
 Feature: Kontroler za opcija servis
 
 
-  Scenario: Gadjamo endpoint za kreiranje opcije
-    When gadjamo endpoint za kreiranje opcije
-    Then dobijemo kreiranu opciju
-
 
   Scenario: Gadjamo endpoint za dohvatanje svih opcija
     Given api poziv za opcije je prethodno izvrsen
     When gadjamo endpoint za dohvatanje svih opcija
     Then dobijemo sve opcije
+
+
+  Scenario: Gadjamo endpoint za kreiranje opcije
+    When gadjamo endpoint za kreiranje opcije
+    Then dobijemo kreiranu opciju
+
 
   Scenario: Gadjamo endpoint da filtriramo opcije sa tickerom "AA"
     Given api poziv za opcije je prethodno izvrsen
@@ -37,6 +39,8 @@ Feature: Kontroler za opcija servis
     Then dobijemo stanje opcije
 
   Scenario: Gadjamo endpoint da izvrsimo opciju sa id "3" i userId "1"
-    Given api poziv za opcije je prethodno izvrsen i korisnik sa id "1" postoji u bazi
+    Given api poziv za opcije je prethodno izvrsen
+    And nadji useraa sa id "1" ili kreiraj usera
+    And nadji kupljenuu upciju za usera sa id "1" ili kreiraj kupljenu upciju za usera sa id "1" i opciju sa id "3"
     When gadjamo endpoint da izvrsimo opciju sa id "3" i userId "1"
     Then opcija je izvrsena

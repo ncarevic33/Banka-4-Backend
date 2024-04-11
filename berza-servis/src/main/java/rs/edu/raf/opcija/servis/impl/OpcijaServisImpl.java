@@ -64,8 +64,8 @@ public class OpcijaServisImpl implements OpcijaServis {
 
         if(tickerNames.size() == 0)
             return new ArrayList<>();
-                                                                                                                //staviti na sve tickerNames
-                                                                                                                //Collections.singletonList(tickerNames.get(0))
+        //staviti na sve tickerNames
+        //Collections.singletonList(tickerNames.get(0))
         List<OptionYahooApiMap> yahooOpcije = finansijaApiUtil.fetchOptionsFromYahooApi(tickerNames.subList(0, 4));
 
         //log.info(String.valueOf(System.currentTimeMillis()));
@@ -78,8 +78,8 @@ public class OpcijaServisImpl implements OpcijaServis {
 
         if(tickerNames.size() == 0)
             return new ArrayList<>();
-                                                                                            //staviti na sve tickerNames
-                                                                                            //Collections.singletonList(tickerNames.get(0))
+        //staviti na sve tickerNames
+        //Collections.singletonList(tickerNames.get(0))
         List<GlobalQuoteApiMap> globalQuotes = finansijaApiUtil.fetchGlobalQuote(tickerNames.subList(0, 4));
 
         if(globalQuotes.size() == 0) {
@@ -113,7 +113,7 @@ public class OpcijaServisImpl implements OpcijaServis {
             log.info("findAll iz cache");
             return opcije.stream().map(opcija -> opcijaMapper.opcijaToOpcijaDto(opcija)).collect(Collectors.toList());
         }
-            opcije = opcijaRepository.findAll();
+        opcije = opcijaRepository.findAll();
         return opcije.stream().map(opcija -> opcijaMapper.opcijaToOpcijaDto(opcija)).collect(Collectors.toList());
     }
 
@@ -132,7 +132,9 @@ public class OpcijaServisImpl implements OpcijaServis {
     @Override
     @Transactional//izdvajamo opciju i akciju jer su nezavisne promene
     public KorisnikoveKupljeneOpcije izvrsiOpciju(Long opcijaId, Long userId) {
-                                                                                                        //moze ih biti vise pa uzimamo prvu neiskoriscenu
+
+        //da bi izvrsio opciju, prethodno mora da je kupi
+        //moze ih biti vise pa uzimamo prvu neiskoriscenu
         KorisnikoveKupljeneOpcije korisnikKupljenaOpcija = korisnikKupljeneOpcijeRepository.findFirstByOpcijaIdAndKorisnikIdAndIskoriscenaFalse(opcijaId, userId).orElse(null);
         Opcija opcija = opcijaRepository.findById(opcijaId).orElse(null);
         Korisnik korisnik = korisnikRepository.findById(userId).orElse(null);

@@ -32,7 +32,7 @@ public class OpcijaController {
     @PostMapping("kreiraj-opciju")
     @Operation(description = "Kreiraj opciju")      //moze @Valid u kontroleru ili u servisu ekplicitno validator
     public ResponseEntity<OpcijaDto> kreirajOpciju(@Valid @RequestBody NovaOpcijaDto novaOpcijaDto) {
-       return new ResponseEntity<>(opcijaServis.save(novaOpcijaDto),HttpStatus.OK);
+        return new ResponseEntity<>(opcijaServis.save(novaOpcijaDto),HttpStatus.OK);
 
     }
 
@@ -82,15 +82,15 @@ public class OpcijaController {
     //query parametri
     @Operation(description = "Filtriraj opcije\nDostupni parametri:datumIsteka(u milisec),ticker,strikePrice\nParametri mogu biti prosledjeni u bilo kom redosledu i bilo koji se moze izostaviti")
     @GetMapping(value = "/filtriraj-opcije", produces = MediaType.APPLICATION_JSON_VALUE)
-                                                        //parametri se moraju zvati ovako ako su prosledjeni ali ne moraju biti svi prosledjeni onda ce biti null
+    //parametri se moraju zvati ovako ako su prosledjeni ali ne moraju biti svi prosledjeni onda ce biti null
     public ResponseEntity<List<OpcijaDto>> filtrirajOpcije(@RequestParam(name = "ticker",required = false) String ticker,
                                                            @RequestParam(name = "datumIsteka",required = false) Long datumIsteka,//u milisec
                                                            @RequestParam(name = "strikePrice",required = false) Double strikePrice
-                                                        ){
+    ){
         LocalDateTime localDate = null;
         if(datumIsteka != null) {
             //localDate = LocalDateTime.ofInstant(Instant.ofEpochMilli(datumIsteka),ZoneId.systemDefault()); // Konvertovanje u LocalDate
-            LocalDateTime.ofInstant(Instant.ofEpochSecond(datumIsteka), ZoneOffset.systemDefault());
+            localDate = LocalDateTime.ofInstant(Instant.ofEpochSecond(datumIsteka), ZoneOffset.systemDefault());
         }
         return new ResponseEntity<>(this.opcijaServis.findByStockAndDateAndStrike(ticker,localDate,strikePrice), HttpStatus.OK);
     }

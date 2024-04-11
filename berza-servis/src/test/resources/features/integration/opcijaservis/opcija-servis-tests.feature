@@ -29,6 +29,7 @@ Feature: Opcija servis
 
   Scenario: Izvrsavamo opciju sa id "1" za usera sa id "1"
     Given api poziv za opcije je prethodno izvrsenn
-    And nadji ili kreiraj usera
+    And nadji usera sa id "1" ili kreiraj usera
+    And nadji kupljenu upciju za usera sa id "1" ili kreiraj kupljenu upciju za usera sa id "1" i opciju sa id "1"
     When izvrsavamo opciju sa id "1" i userId "1"
     Then opcija je izvrsenaa

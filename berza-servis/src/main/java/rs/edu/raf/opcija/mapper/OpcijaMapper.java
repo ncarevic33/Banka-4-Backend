@@ -127,25 +127,25 @@ public class OpcijaMapper {
             globalQuoteRepository.save(akcija);
         }
 
-            OpcijaStanje opcijaStanje = null;
+        OpcijaStanje opcijaStanje = null;
 
-            if(opcija.getStrikePrice() > akcija.getPrice() && opcija.getOptionType().equals(OpcijaTip.PUT))
-                opcijaStanje = OpcijaStanje.IN_THE_MONEY;
-            else if(opcija.getStrikePrice() < akcija.getPrice() && opcija.getOptionType().equals(OpcijaTip.PUT))
-                opcijaStanje = OpcijaStanje.OUT_OF_MONEY;
+        if(opcija.getStrikePrice() > akcija.getPrice() && opcija.getOptionType().equals(OpcijaTip.PUT))
+            opcijaStanje = OpcijaStanje.IN_THE_MONEY;
+        else if(opcija.getStrikePrice() < akcija.getPrice() && opcija.getOptionType().equals(OpcijaTip.PUT))
+            opcijaStanje = OpcijaStanje.OUT_OF_MONEY;
 
-            if(opcija.getStrikePrice() < akcija.getPrice() && opcija.getOptionType().equals(OpcijaTip.CALL))
-                opcijaStanje = OpcijaStanje.IN_THE_MONEY;
-            else if(opcija.getStrikePrice() > akcija.getPrice() && opcija.getOptionType().equals(OpcijaTip.CALL))
-                opcijaStanje = OpcijaStanje.OUT_OF_MONEY;
+        if(opcija.getStrikePrice() < akcija.getPrice() && opcija.getOptionType().equals(OpcijaTip.CALL))
+            opcijaStanje = OpcijaStanje.IN_THE_MONEY;
+        else if(opcija.getStrikePrice() > akcija.getPrice() && opcija.getOptionType().equals(OpcijaTip.CALL))
+            opcijaStanje = OpcijaStanje.OUT_OF_MONEY;
 
-            if(opcijaStanje == null)
-                opcijaStanje = OpcijaStanje.AT_THE_MONEY;
+        if(opcijaStanje == null)
+            opcijaStanje = OpcijaStanje.AT_THE_MONEY;
 
-            opcija.setOpcijaStanje(opcijaStanje);
+        opcija.setOpcijaStanje(opcijaStanje);
 
 
-            opcija.izracunajIzvedeneVrednosti(izvedeneVrednostiUtil,akcija);
+        opcija.izracunajIzvedeneVrednosti(izvedeneVrednostiUtil,akcija);
 
 
         //POTREBNI PARAMETRI ZA IZVEDENE VREDNOSTI

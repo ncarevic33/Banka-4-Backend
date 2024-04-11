@@ -13,6 +13,7 @@ import rs.edu.raf.opcija.model.KorisnikoveKupljeneOpcije;
 import rs.edu.raf.opcija.model.OpcijaStanje;
 import rs.edu.raf.opcija.model.OpcijaTip;
 import rs.edu.raf.opcija.repository.KorisnikRepository;
+import rs.edu.raf.opcija.repository.KorisnikoveKupljeneOpcijeRepository;
 import rs.edu.raf.opcija.repository.OpcijaRepository;
 import rs.edu.raf.opcija.servis.OpcijaServis;
 
@@ -39,8 +40,15 @@ public class OpcijaServiceTestsSteps extends OpcijaServiceTestsConfig{
     KorisnikoveKupljeneOpcije korisnikoveKupljeneOpcije;
     OpcijaDto sacuvanaOpcija;
 
+    @Autowired
     KorisnikRepository korisnikRepository;
+
+    @Autowired
+    KorisnikoveKupljeneOpcijeRepository korisnikoveKupljeneOpcijeRepository;
+
+    KorisnikoveKupljeneOpcije korisnikoveKupljeneOpcijeState;
     Korisnik korisnikState;
+
     @Autowired
     OpcijaRepository opcijaRepository;
 
@@ -82,6 +90,10 @@ public class OpcijaServiceTestsSteps extends OpcijaServiceTestsConfig{
 
         if(opcijePoTicker.size() == 0)
             fail("Ne postoje opcije po tickeru");
+
+        for(OpcijaDto o:opcijePoTicker)
+            if(!o.getTicker().equals(arg0))
+                fail("Pogresan ticker");
     }
 
     @When("zahtevamo opciju sa datumom isteka {string}")
@@ -93,6 +105,10 @@ public class OpcijaServiceTestsSteps extends OpcijaServiceTestsConfig{
     public void vracaSeOpcijaSaDatumomIsteka(String arg0) {
         if(opcijePoDatumIsteka.size() == 0)
             fail("Ne postoje opcije po datumu isteka");
+
+        for(OpcijaDto o:opcijePoDatumIsteka)
+            if(o.getExpiration()!=Long.valueOf(arg0))
+                fail("Pogresan datum isteka");
     }
 
 
@@ -105,6 +121,11 @@ public class OpcijaServiceTestsSteps extends OpcijaServiceTestsConfig{
     public void vracaSeOpcijaSaStrikePrice(String arg0) {
         if(opcijePoStrikePrice.size() == 0)
             fail("Ne postoje opcije po strike price");
+
+
+        for(OpcijaDto o:opcijePoStrikePrice)
+            if(o.getStrikePrice()!=Double.valueOf(arg0))
+                fail("Pogresan strike price");
     }
 
     @When("proveravamo stanje opcije sa id {string}")
@@ -150,13 +171,27 @@ public class OpcijaServiceTestsSteps extends OpcijaServiceTestsConfig{
             fail("Opcija nije izvrsena");
     }
 
-
-    @And("nadji ili kreiraj usera")
-    public void nadjiIliKreirajUsera() {
-        korisnikState = korisnikRepository.findById(1L).orElse(null);
+    @And("nadji usera sa id {string} ili kreiraj usera")
+    public void nadjiUseraSaIdIliKreirajUsera(String arg0) {
+        korisnikState = korisnikRepository.findById(Long.valueOf(arg0)).orElse(null);
         if(korisnikState == null){
             korisnikState = new Korisnik();
             korisnikState = korisnikRepository.save(korisnikState);
         }
+    }
+    //opcijaid
+    //korisnikid
+    //iskoriscenafalse
+    @And("nadji kupljenu upciju za usera sa id {string} ili kreiraj kupljenu upciju za usera sa id {string} i opciju sa id {string}")
+    public void nadjiKupljenuUpcijuZaUseraSaIdIliKreirajKupljenuUpcijuZaUseraSaIdIOpcijuSaId(String arg0, String arg1, String arg2) {
+        korisnikoveKupljeneOpcijeState = korisnikoveKupljeneOpcijeRepository.findFirstByKorisnikId(Long.valueOf(arg0)).orElse(null);
+        if(korisnikoveKupljeneOpcijeState == null){
+            korisnikoveKupljeneOpcijeState = new KorisnikoveKupljeneOpcije();
+            korisnikoveKupljeneOpcijeState.setKorisnikId(Long.valueOf(arg0));
+            korisnikoveKupljeneOpcijeState.setOpcijaId(Long.valueOf(arg2));
+            korisnikoveKupljeneOpcijeState.setIskoriscena(false);
+            korisnikoveKupljeneOpcijeState = korisnikoveKupljeneOpcijeRepository.save(korisnikoveKupljeneOpcijeState);
+        }
+
     }
 }
