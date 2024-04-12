@@ -18,7 +18,7 @@ import java.util.List;
 @SecurityRequirement(name = "jwt")
 @CrossOrigin(origins = "*")
 public class InflationController {
-
+    @Autowired
     private InflationService inflationService;
 
     @ApiOperation(value = "List the inflation rates of a country")
