@@ -11,6 +11,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import rs.edu.raf.stocks.dto.StockDTO;
+import rs.edu.raf.stocks.exceptions.StockAlreadyExistsException;
 import rs.edu.raf.stocks.response.StockHistoryInfo;
 
 import java.util.List;
@@ -31,10 +32,15 @@ public class StocksControllerTestsSteps extends StocksControllerConfig {
 
     private MvcResult mvcResult;
 
+    private String lastRefresh;
+
+    private String jwtToken = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJwZXJhQGdtYWlsLnJzIiwicGVybWlzc2lvbiI6NDE5NDMwMywiaWQiOjEsImV4cCI6MTcxMjk1MzcwNSwiaWF0IjoxNzEyOTI0OTA1fQ.EB-o56knj4v3fUppD15oIexEwE1ZvAUJpwxANvauXuiuUfirQ7zzHvBgnH_S1RUzSxM-Q-CUWzsNSP67s0fIfw";
+
     @When("pozovem daily history endpoint sa {string}")
     public void pozovemDailyHistoryEndpointSa(String ticker) {
         try {
-            ResultActions resultActions = mockMvc.perform(get("/stock/dailyHistory/" + ticker))
+            ResultActions resultActions = mockMvc.perform(get("/stock/dailyHistory/" + ticker)
+                            .header("Authorization", "Bearer " + jwtToken))
                     .andExpect(status().isOk());
 
             mvcResult = resultActions.andReturn();
@@ -61,7 +67,8 @@ public class StocksControllerTestsSteps extends StocksControllerConfig {
     @When("pozovem weekly history endpoint sa {string}")
     public void pozovemWeeklyHistoryEndpointSa(String ticker) {
         try {
-            ResultActions resultActions = mockMvc.perform(get("/stock/weeklyHistory/" + ticker))
+            ResultActions resultActions = mockMvc.perform(get("/stock/weeklyHistory/" + ticker)
+                            .header("Authorization", "Bearer " + jwtToken))
                     .andExpect(status().isOk());
 
             mvcResult = resultActions.andReturn();
@@ -88,7 +95,8 @@ public class StocksControllerTestsSteps extends StocksControllerConfig {
     @When("pozovem monthly history endpoint sa {string}")
     public void pozovemMonthlyHistoryEndpointSa(String ticker) {
         try {
-            ResultActions resultActions = mockMvc.perform(get("/stock/monthlyHistory/" + ticker))
+            ResultActions resultActions = mockMvc.perform(get("/stock/monthlyHistory/" + ticker)
+                        .header("Authorization", "Bearer " + jwtToken))
                     .andExpect(status().isOk());
 
             mvcResult = resultActions.andReturn();
@@ -116,9 +124,10 @@ public class StocksControllerTestsSteps extends StocksControllerConfig {
     public void pozovemEndpointZaDodavanjeStockaSaTickerom(String ticker) {
         try {
             ResultActions resultActions = mockMvc.perform(post("/stock")
-                    .contentType(MediaType.APPLICATION_JSON_VALUE)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .accept(MediaType.APPLICATION_JSON_VALUE)
-                            .content("{\"ticker\":\"" + ticker + "\"}"))
+                            .content("{\"ticker\":\"" + ticker + "\"}")
+                            .header("Authorization", "Bearer " + jwtToken))
                     .andExpect(status().isOk());
         } catch (Exception e) {
             fail("Exception thrown: " + e.getMessage());
@@ -128,7 +137,8 @@ public class StocksControllerTestsSteps extends StocksControllerConfig {
     @Then("stock {string} je dodat u bazu")
     public void stockJeDodatUBazu(String ticker) {
         try{
-            ResultActions resultActions = mockMvc.perform(get("/stock/" + ticker))
+            ResultActions resultActions = mockMvc.perform(get("/stock/" + ticker)
+                        .header("Authorization", "Bearer " + jwtToken))
                     .andExpect(status().isOk());
 
             String json = resultActions.andReturn().getResponse().getContentAsString();
@@ -146,7 +156,8 @@ public class StocksControllerTestsSteps extends StocksControllerConfig {
     @When("pozovem endpoint za listanje svih stockova")
     public void pozovemEndpointZaListanjeSvihStockova() {
         try {
-            ResultActions resultActions = mockMvc.perform(get("/stock/all"))
+            ResultActions resultActions = mockMvc.perform(get("/stock/all")
+                        .header("Authorization", "Bearer " + jwtToken))
                     .andExpect(status().isOk());
 
             mvcResult = resultActions.andReturn();
@@ -186,7 +197,8 @@ public class StocksControllerTestsSteps extends StocksControllerConfig {
     @When("pozovem endpoint za dohvat stocka sa tickerom {string}")
     public void pozovemEndpointZaDohvatStockaSaTickerom(String ticker) {
         try{
-            ResultActions resultActions = mockMvc.perform(get("/stock/" + ticker))
+            ResultActions resultActions = mockMvc.perform(get("/stock/" + ticker)
+                        .header("Authorization", "Bearer " + jwtToken))
                     .andExpect(status().isOk());
 
             mvcResult = resultActions.andReturn();
@@ -209,10 +221,19 @@ public class StocksControllerTestsSteps extends StocksControllerConfig {
         }
     }
 
-    @When("pozovem endpoint za listanje stockova sa last refreshom {string}")
-    public void pozovemEndpointZaListanjeStockovaSaLastRefreshom(String date) {
+    @When("pozovem endpoint za listanje stockova sa last refreshom")
+    public void pozovemEndpointZaListanjeStockovaSaLastRefreshom() {
         try{
-            ResultActions resultActions = mockMvc.perform(get("/stock/all/date/" + date))
+            ResultActions resultActions1 = mockMvc.perform(get("/stock/" + "SONY")
+                            .header("Authorization", "Bearer " + jwtToken))
+                    .andExpect(status().isOk());
+
+            mvcResult = resultActions1.andReturn();
+
+            lastRefresh = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), StockDTO.class).getLastRefresh();
+
+            ResultActions resultActions = mockMvc.perform(get("/stock/all/date/" + lastRefresh)
+                        .header("Authorization", "Bearer " + jwtToken))
                     .andExpect(status().isOk());
 
             mvcResult = resultActions.andReturn();
@@ -221,8 +242,8 @@ public class StocksControllerTestsSteps extends StocksControllerConfig {
         }
     }
 
-    @Then("dobijem listu stockova sa last refreshom {string}")
-    public void dobijemListuStockovaSaLastRefreshom(String date) {
+    @Then("dobijem listu stockova sa last refreshom")
+    public void dobijemListuStockovaSaLastRefreshom() {
         try{
             boolean found = false;
 
@@ -234,7 +255,7 @@ public class StocksControllerTestsSteps extends StocksControllerConfig {
             }
 
             for (StockDTO stockDTO : stock) {
-                if (stockDTO.getLastRefresh().equals(date)) {
+                if (stockDTO.getLastRefresh().equals(lastRefresh)) {
                     found = true;
                 }
             }
@@ -251,7 +272,8 @@ public class StocksControllerTestsSteps extends StocksControllerConfig {
     @When("pozovem endpoint za listanje stockova sa exchangeom {string}")
     public void pozovemEndpointZaListanjeStockovaSaExchangeom(String exchange) {
         try{
-            ResultActions resultActions = mockMvc.perform(get("/stock/all/exchange/" + exchange))
+            ResultActions resultActions = mockMvc.perform(get("/stock/all/exchange/" + exchange)
+                        .header("Authorization", "Bearer " + jwtToken))
                     .andExpect(status().isOk());
 
             mvcResult = resultActions.andReturn();
@@ -290,7 +312,8 @@ public class StocksControllerTestsSteps extends StocksControllerConfig {
     @When("pozovem endpoint za brisanje stocka sa tickerom {string}")
     public void pozovemEndpointZaBrisanjeStockaSaTickerom(String ticker) {
         try{
-            ResultActions resultActions = mockMvc.perform(delete("/stock/" + ticker))
+            ResultActions resultActions = mockMvc.perform(delete("/stock/" + ticker)
+                        .header("Authorization", "Bearer " + jwtToken))
                     .andExpect(status().isOk());
 
             mvcResult = resultActions.andReturn();
@@ -304,7 +327,8 @@ public class StocksControllerTestsSteps extends StocksControllerConfig {
         try {
             boolean found = false;
 
-            ResultActions resultActions = mockMvc.perform(get("/stock/all"))
+            ResultActions resultActions = mockMvc.perform(get("/stock/all")
+                        .header("Authorization", "Bearer " + jwtToken))
                     .andExpect(status().isOk());
 
             String json = resultActions.andReturn().getResponse().getContentAsString();

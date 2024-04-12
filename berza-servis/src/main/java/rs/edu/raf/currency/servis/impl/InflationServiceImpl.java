@@ -43,6 +43,11 @@ public class InflationServiceImpl implements InflationService {
         return dtos;
     }
 
+    @Scheduled(initialDelay = 30000L)
+    private void load(){
+        inflAPICall(URI.create("https://www.imf.org/external/datamapper/api/v1/PCPIPCH"));
+    }
+
     @Override
     public List<InflationDTO> getInflationByCountryAndYear(String country, String year) {
         List<Inflation> infl = inflationRepository.findAllByCountryAndInflYear(country, year);
@@ -53,12 +58,12 @@ public class InflationServiceImpl implements InflationService {
         }
         return dtos;
     }
-
+/*
     @PostConstruct //COMMENT ME OUT AFTER THE FIRST RUN!
     private void loadInflationData() { //SVI podaci
         inflAPICall(URI.create("https://www.imf.org/external/datamapper/api/v1/PCPIPCH"));
     }
-
+*/
     @Scheduled(cron = "0 5 10 1 * *")
     private void updateInflationData() { //trazi jedino podatke za trenutnu godinu
         String yr = String.valueOf(new GregorianCalendar().get(Calendar.YEAR));
@@ -66,29 +71,41 @@ public class InflationServiceImpl implements InflationService {
     }
 
     private void inflAPICall(URI uri) {
+        System.out.println("1");
         List<Inflation> infl = new ArrayList<>();
 
+        System.out.println("2");
         HttpRequest request = HttpRequest.newBuilder().uri(uri).build();
         HttpResponse<String> response = null;
         try {
+            System.out.println("3");
             response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
         } catch (IOException | InterruptedException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
+            System.out.println("4");
+            //throw new RuntimeException(e);
         }
+            System.out.println("5");
         String body = response.body();
 
+            System.out.println("6");
         ObjectMapper mapper = new ObjectMapper();
         JsonNode root;
         try {
+            System.out.println("7");
             root = mapper.readTree(body);
         } catch (JsonProcessingException e) {
+            System.out.println("8");
             throw new RuntimeException(e);
         }
 
+            System.out.println("9");
         JsonNode c = root.get("values").get("PCPIPCH");
         Iterator<Map.Entry<String, JsonNode>> countries = c.fields();
+            System.out.println("10");
         while (countries.hasNext()) {
             Map.Entry<String, JsonNode> country = countries.next();
+            System.out.println("11");
             for (Iterator<Map.Entry<String, JsonNode>> it = country.getValue().fields(); it.hasNext(); ) {
                 Map.Entry<String, JsonNode> y = it.next();
                 Inflation i = new Inflation();

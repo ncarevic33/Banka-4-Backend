@@ -6,6 +6,7 @@ import io.cucumber.java.en.When;
 import org.springframework.beans.factory.annotation.Autowired;
 import rs.edu.raf.stocks.dto.StockDTO;
 import rs.edu.raf.stocks.dto.TickerDTO;
+import rs.edu.raf.stocks.exceptions.StockAlreadyExistsException;
 import rs.edu.raf.stocks.response.StockHistoryInfo;
 import rs.edu.raf.stocks.service.StockService;
 
@@ -25,6 +26,8 @@ public class StocksServiceTestsSteps extends StocksServiceConfig {
     //Second scenario return
     StockDTO ibmStockDTO;
 
+    String lastRefresh;
+
     Map<String, StockHistoryInfo> dailyHistory;
 
     Map<String, StockHistoryInfo> weeklyHistory;
@@ -37,8 +40,15 @@ public class StocksServiceTestsSteps extends StocksServiceConfig {
         ibmTicker.setTicker(string1);
         TickerDTO aaplTicker = new TickerDTO();
         aaplTicker.setTicker(string2);
-        stockService.addStock(ibmTicker);
-        stockService.addStock(aaplTicker);
+        try {
+            stockService.addStock(ibmTicker);
+            stockService.addStock(aaplTicker);
+        }
+        catch (StockAlreadyExistsException e){
+            //sve u redu vec smo dodali pre stockove u bazu
+            //pa se zato buni
+        }
+
     }
 
     @When("zatrazim sve stocks")
@@ -78,29 +88,30 @@ public class StocksServiceTestsSteps extends StocksServiceConfig {
             fail("nije pronadjen stock sa tickerom IBM");
     }
 
-    @Given("postoji stock sa nekim last refreshom {string} u bazi")
-    public void postojiStockSaNekimLastRefreshomUBazi(String date) {
+    @Given("postoji stock sa nekim last refreshom u bazi")
+    public void postojiStockSaNekimLastRefreshomUBazi() {
         //Vec imamo neke stockove u bazi od prethodnih testova
+        lastRefresh = stockService.getStockByTicker("IBM").getLastRefresh();
     }
 
-    @When("zatrazim stock sa tim {string} last refreshom")
-    public void zatrazimStockSaTimLastRefreshom(String date) {
-        stocksDTO = stockService.getStocksByLastRefresh(date);
+    @When("zatrazim stock sa tim last refreshom")
+    public void zatrazimStockSaTimLastRefreshom() {
+        stocksDTO = stockService.getStocksByLastRefresh(lastRefresh);
     }
 
-    @Then("dobijem stockove sa tim {string} last refreshom")
-    public void dobijemStockoveSaTimLastRefreshom(String date) {
+    @Then("dobijem stockove sa tim last refreshom")
+    public void dobijemStockoveSaTimLastRefreshom() {
         boolean found = false;
 
         for (StockDTO stock : stocksDTO){
-            if (stock.getLastRefresh().equals(date))
+            if (stock.getLastRefresh().equals(lastRefresh))
                 found = true;
-            if (!stock.getLastRefresh().equals(date))
-                fail("postoji stock sa last refreshom drugacijim od prosledjenog " + date);
+            if (!stock.getLastRefresh().equals(lastRefresh))
+                fail("postoji stock sa last refreshom drugacijim od prosledjenog " + lastRefresh);
         }
 
         if (!found)
-            fail("ne postoje stockovi sa last refreshom " + date);
+            fail("ne postoje stockovi sa last refreshom " + lastRefresh);
     }
 
     @Given("postoji stock sa exchangeom {string} u bazi")

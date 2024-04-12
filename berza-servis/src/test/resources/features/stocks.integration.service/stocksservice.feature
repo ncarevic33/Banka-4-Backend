@@ -12,9 +12,9 @@ Feature: Service za stocks servis
     Then dobijem stock sa tickerom "IBM"
 
   Scenario: Dohvatanje stocka po last refreshu
-    Given postoji stock sa nekim last refreshom "2024-04-08" u bazi
-    When zatrazim stock sa tim "2024-04-08" last refreshom
-    Then dobijem stockove sa tim "2024-04-08" last refreshom
+    Given postoji stock sa nekim last refreshom u bazi
+    When zatrazim stock sa tim last refreshom
+    Then dobijem stockove sa tim last refreshom
 
   Scenario: Dohvatanje stocka po exchangeu
     Given postoji stock sa exchangeom "NYSE" u bazi
