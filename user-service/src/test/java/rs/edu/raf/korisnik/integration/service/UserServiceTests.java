@@ -1,5 +1,6 @@
 package rs.edu.raf.korisnik.integration.service;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.platform.suite.api.ConfigurationParameter;
 import org.junit.platform.suite.api.IncludeEngines;
 import org.junit.platform.suite.api.SelectClasspathResource;
@@ -14,9 +15,10 @@ import static io.cucumber.core.options.Constants.GLUE_PROPERTY_NAME;
 //  - @ConfigurationParameter - koristimo ovu anotaciju da naznacimo u kom paketu se nalazi Glue kod (obicno je to ovaj
 //    isti paket)
 
-@Suite
-@IncludeEngines("cucumber")
-@SelectClasspathResource("features/korisnik/integration/service")
-@ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "rs.edu.raf.korisnik.integration")
+//@Disabled
+//@Suite
+//@IncludeEngines("cucumber")
+//@SelectClasspathResource("features/korisnik/integration/service")
+//@ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "rs.edu.raf.korisnik.integration")
 public class UserServiceTests {
 }

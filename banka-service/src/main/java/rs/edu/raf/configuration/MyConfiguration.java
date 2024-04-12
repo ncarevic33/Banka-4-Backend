@@ -12,7 +12,7 @@ public class MyConfiguration {
     @Bean
     public RestTemplate restTemplate(){
         RestTemplate restTemplate = new RestTemplate();
-        restTemplate.setUriTemplateHandler(new DefaultUriBuilderFactory("http://api.stamenic.work:8080/api"));
+        restTemplate.setUriTemplateHandler(new DefaultUriBuilderFactory("http://user-service:8080/api"));
 
         return restTemplate;
     }
