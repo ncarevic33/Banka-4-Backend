@@ -43,7 +43,7 @@ public class InflationServiceImpl implements InflationService {
         return dtos;
     }
 
-    @Scheduled(initialDelay = 60000L)
+    @Scheduled(initialDelay = 30000L)
     private void load(){
         inflAPICall(URI.create("https://www.imf.org/external/datamapper/api/v1/PCPIPCH"));
     }
