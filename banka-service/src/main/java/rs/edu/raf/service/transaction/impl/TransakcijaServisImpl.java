@@ -257,9 +257,19 @@ public class TransakcijaServisImpl implements TransakcijaServis {
                     uplata.setVremeIzvrsavanja(vremeIzvrsavanja);
 
                     Uplata u = uplataRepository.save(uplata);
+                    Long racunPrimaoca = u.getRacunPrimaoca();
+                    Long racunPosiljaoca = u.getRacunPosiljaoca();
+
+                    System.out.println("Racun primaoca: " + racunPrimaoca);
+//                    System.out.println(racunPosiljaoca);
+
                     UplataDTO uplataDTO = TransakcijaMapper.PlacanjeToDto(u);
                     //TODO ubaciti u queue i za primaoca i za posiljaoca
-                    messagingTemplate.convertAndSend("/topic/uplata/" + idUplate, uplataDTO);
+//                    messagingTemplate.convertAndSend("/topic/uplata/" + idUplate, uplataDTO);
+//                    messagingTemplate.convertAndSend("/topic/uplata/" + racunPrimaoca, uplataDTO);
+//                    messagingTemplate.convertAndSend("/topic/uplata/" + racunPosiljaoca, uplataDTO);
+                    messagingTemplate.convertAndSend("/topic/uplata", uplataDTO);
+
                     return u;
                 })
                 .orElseThrow(() -> new EntityNotFoundException("Uplata sa ID-om " + idUplate + " nije pronađen."));
@@ -275,13 +285,18 @@ public class TransakcijaServisImpl implements TransakcijaServis {
                     PrenosSredstavaDTO prenosSredstavaDTO = TransakcijaMapper.PrenosSredstavaToDto(p);
                     //TODO treba ubaciti u queue i za posiljaoca i za primaoca
 
-                    messagingTemplate.convertAndSend("/topic/prenos-sredstava/" + idPrenosaSredstava, prenosSredstavaDTO);
+                    Long racunPrimaoca = prenosSredstavaDTO.getPrviRacun();
+                    Long racunPosiljaoca = prenosSredstavaDTO.getDrugiRacun();
+
+//                    messagingTemplate.convertAndSend("/topic/prenos-sredstava/" + idPrenosaSredstava, prenosSredstavaDTO);
+                    messagingTemplate.convertAndSend("/topic/prenos-sredstava/" + racunPrimaoca, prenosSredstavaDTO);
+                    messagingTemplate.convertAndSend("/topic/prenos-sredstava/" + racunPosiljaoca, prenosSredstavaDTO);
                     return p;
                 })
                 .orElseThrow(() -> new EntityNotFoundException("Prenos sredstava sa ID-om " + idPrenosaSredstava + " nije pronađen."));
     }
 
-    @Scheduled(cron = "0 */5 * * * *")
+    @Scheduled(cron = "0 */2 * * * *")
     public void realizacijaTransakcijaZaPrenostSredstava() {
         List<PrenosSredstava> prenosi = vratiPrenosSredstavaUObradi();
 
@@ -337,6 +352,10 @@ public class TransakcijaServisImpl implements TransakcijaServis {
                 continue;
             }
             transferAmount = exchangeRateServiceImpl.convert(realizacijaTransakcijePosiljaoca.getValute(), realizacijaTransakcijePrimaoca.getValute(), prenosSredstava.getIznos());
+
+            if(transferAmount == null){
+                transferAmount = BigDecimal.ZERO;
+            }
 
             if (realizacijaTransakcijePosiljaoca.getRezervisanaSredstva().compareTo(prenosSredstava.getIznos()) < 0) {
                 promeniStatusPrenosaSredstava(prenosSredstava.getId(), Status.NEUSPELO, System.currentTimeMillis());
@@ -527,6 +546,10 @@ public class TransakcijaServisImpl implements TransakcijaServis {
             }
 
             transferAmoun = exchangeRateServiceImpl.convert(realizacijaTransakcijePosiljaoca.getValute(), realizacijaTransakcijePrimaoca.getValute(), uplata.getIznos());
+
+            if(transferAmoun == null){
+                transferAmoun = BigDecimal.ZERO;
+            }
 
             if (realizacijaTransakcijePosiljaoca.getRezervisanaSredstva().compareTo(uplata.getIznos()) < 0) {
                 promeniStatusUplate(uplata.getId(), Status.NEUSPELO, System.currentTimeMillis());
