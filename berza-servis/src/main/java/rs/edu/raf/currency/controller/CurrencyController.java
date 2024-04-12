@@ -17,7 +17,7 @@ import java.util.List;
 @SecurityRequirement(name = "jwt")
 @CrossOrigin(origins = "*")
 public class CurrencyController {
-
+    @Autowired
     private CurrencyService currencyService;
 
     @ApiOperation(value = "Find currency by currency code")
