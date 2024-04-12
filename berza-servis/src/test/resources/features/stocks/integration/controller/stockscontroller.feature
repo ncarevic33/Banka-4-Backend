@@ -25,9 +25,9 @@ Feature: Stock controller
     When pozovem endpoint za dohvat stocka sa tickerom "SONY"
     Then dobijem stock sa tickerom "SONY"
 
-  Scenario: Pozivam endpoint da izlistam stockove sa last refreshom "2024-04-08"
-    When pozovem endpoint za listanje stockova sa last refreshom "2024-04-08"
-    Then dobijem listu stockova sa last refreshom "2024-04-08"
+  Scenario: Pozivam endpoint da izlistam stockove sa last refreshom
+    When pozovem endpoint za listanje stockova sa last refreshom
+    Then dobijem listu stockova sa last refreshom
 
   Scenario: Pozivam endpoint da izlistam stockove sa exchangeom "NYSE"
     When pozovem endpoint za listanje stockova sa exchangeom "NYSE"
