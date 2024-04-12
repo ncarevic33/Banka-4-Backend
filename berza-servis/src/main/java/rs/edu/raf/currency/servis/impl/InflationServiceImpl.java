@@ -30,8 +30,6 @@ public class InflationServiceImpl implements InflationService {
     public InflationServiceImpl(InflationRepository inflationRepository, InflationMapper inflationMapper) {
         this.inflationRepository = inflationRepository;
         this.inflationMapper = inflationMapper;
-        if(inflationRepository.findAll().isEmpty())
-            inflAPICall(URI.create("https://www.imf.org/external/datamapper/api/v1/PCPIPCH"));
     }
 
     @Override
@@ -43,6 +41,11 @@ public class InflationServiceImpl implements InflationService {
             dtos.add(dto);
         }
         return dtos;
+    }
+
+    @Scheduled(initialDelay = 60000L)
+    private void load(){
+        inflAPICall(URI.create("https://www.imf.org/external/datamapper/api/v1/PCPIPCH"));
     }
 
     @Override
