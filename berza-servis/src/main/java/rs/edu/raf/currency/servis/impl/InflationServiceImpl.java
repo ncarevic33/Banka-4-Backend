@@ -30,6 +30,8 @@ public class InflationServiceImpl implements InflationService {
     public InflationServiceImpl(InflationRepository inflationRepository, InflationMapper inflationMapper) {
         this.inflationRepository = inflationRepository;
         this.inflationMapper = inflationMapper;
+        if(inflationRepository.findAll().isEmpty())
+            inflAPICall(URI.create("https://www.imf.org/external/datamapper/api/v1/PCPIPCH"));
     }
 
     @Override
@@ -53,12 +55,12 @@ public class InflationServiceImpl implements InflationService {
         }
         return dtos;
     }
-
+/*
     @PostConstruct //COMMENT ME OUT AFTER THE FIRST RUN!
     private void loadInflationData() { //SVI podaci
         inflAPICall(URI.create("https://www.imf.org/external/datamapper/api/v1/PCPIPCH"));
     }
-
+*/
     @Scheduled(cron = "0 5 10 1 * *")
     private void updateInflationData() { //trazi jedino podatke za trenutnu godinu
         String yr = String.valueOf(new GregorianCalendar().get(Calendar.YEAR));
