@@ -107,8 +107,8 @@ public class RacunSeeder implements CommandLineRunner {
 //        radnik.setPermisije(0b1111111111111111111111L);
 //        radnik.setAktivan(true);
 //        radnikRepository.save(radnik);
-
-
+//
+//
         List<Zemlja> zemlje = new ArrayList<>();
         Zemlja z1 = new Zemlja("Švajcarska Konfederacija");
         zemlje.add(z1);
