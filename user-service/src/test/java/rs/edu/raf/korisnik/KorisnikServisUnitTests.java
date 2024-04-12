@@ -79,7 +79,7 @@ public class KorisnikServisUnitTests {
 
         korisnik.setJmbg(String.valueOf(1705000793457L));
 
-        korisnik.setDatumRodjenja(958514400000L);
+        korisnik.setDatumRodjenja(958532400000L);
         korisnik.setPol("M");
         korisnik.setEmail("pera.petrovic@gmail.com");
         korisnik.setBrojTelefona("0641234567");
@@ -105,7 +105,7 @@ public class KorisnikServisUnitTests {
 
         korisnik2.setJmbg(String.valueOf(2311000793457L));
 
-        korisnik2.setDatumRodjenja(974934000000L);
+        korisnik2.setDatumRodjenja(974952000000L);
         korisnik2.setPol("M");
         korisnik2.setEmail("milos.grbic@yahoo.com");
         korisnik2.setBrojTelefona("+381634444444");
@@ -120,7 +120,7 @@ public class KorisnikServisUnitTests {
 
         korisnik3.setJmbg(String.valueOf(1408001793457L));
 
-        korisnik3.setDatumRodjenja(997740000000L);
+        korisnik3.setDatumRodjenja(997758000000L);
         korisnik3.setPol("M");
         korisnik3.setEmail("nikola.zaric@gmail.com");
         korisnik3.setBrojTelefona("+381601111111");
@@ -150,7 +150,7 @@ public class KorisnikServisUnitTests {
 
         korisnik1.setJmbg(String.valueOf(1705000793457L));
 
-        korisnik1.setDatumRodjenja(958514400000L);
+        korisnik1.setDatumRodjenja(958532400000L);
         korisnik1.setPol("M");
         korisnik1.setEmail("pera.petrovic@gmail.com");
         korisnik1.setBrojTelefona("0641234567");
@@ -163,7 +163,7 @@ public class KorisnikServisUnitTests {
 
         korisnik2.setJmbg(String.valueOf(2311000793457L));
 
-        korisnik2.setDatumRodjenja(974934000000L);
+        korisnik2.setDatumRodjenja(974952000000L);
         korisnik2.setPol("M");
         korisnik2.setEmail("milos.grbic@yahoo.com");
         korisnik2.setBrojTelefona("+381634444444");
@@ -176,7 +176,7 @@ public class KorisnikServisUnitTests {
 
         korisnik3.setJmbg(String.valueOf(1408001793457L));
 
-        korisnik3.setDatumRodjenja(997740000000L);
+        korisnik3.setDatumRodjenja(997758000000L);
         korisnik3.setPol("M");
         korisnik3.setEmail("nikola.zaric@gmail.com");
         korisnik3.setBrojTelefona("+381601111111");
@@ -197,7 +197,7 @@ public class KorisnikServisUnitTests {
 
         noviRadnikDTO.setJmbg(String.valueOf(1705000793457L));
 
-        noviRadnikDTO.setDatumRodjenja(958514400000L);
+        noviRadnikDTO.setDatumRodjenja(958532400000L);
         noviRadnikDTO.setPol("M");
         noviRadnikDTO.setEmail("pera.petrovic@gmail.com");
         noviRadnikDTO.setBrojTelefona("0641234567");
@@ -235,7 +235,7 @@ public class KorisnikServisUnitTests {
 
         radnik.setJmbg(String.valueOf(1705000793457L));
 
-        radnik.setDatumRodjenja(958514400000L);
+        radnik.setDatumRodjenja(958532400000L);
         radnik.setPol("M");
         radnik.setEmail("pera.petrovic@gmail.com");
         radnik.setBrojTelefona("0641234567");
@@ -265,7 +265,7 @@ public class KorisnikServisUnitTests {
 
         radnik2.setJmbg(String.valueOf(1306995793457L));
 
-        radnik2.setDatumRodjenja(802994400000L);
+        radnik2.setDatumRodjenja(803012400000L);
         radnik2.setPol("F");
         radnik2.setEmail("lara.milic@gmail.com");
         radnik2.setBrojTelefona("+381601111111");
@@ -283,7 +283,7 @@ public class KorisnikServisUnitTests {
 
         radnik3.setJmbg(String.valueOf(2203989793457L));
 
-        radnik3.setDatumRodjenja(606524400000L);
+        radnik3.setDatumRodjenja(606542400000L);
         radnik3.setPol("M");
         radnik3.setEmail("stevan.krunic@gmail.com");
         radnik3.setBrojTelefona("+381601111111");
@@ -316,7 +316,7 @@ public class KorisnikServisUnitTests {
 
         radnik1.setJmbg(String.valueOf(1705000793457L));
 
-        radnik1.setDatumRodjenja(958514400000L);
+        radnik1.setDatumRodjenja(958532400000L);
         radnik1.setPol("M");
         radnik1.setEmail("pera.petrovic@gmail.com");
         radnik1.setBrojTelefona("0641234567");
@@ -332,7 +332,7 @@ public class KorisnikServisUnitTests {
 
         radnik2.setJmbg(String.valueOf(1306995793457L));
 
-        radnik2.setDatumRodjenja(802994400000L);
+        radnik2.setDatumRodjenja(803012400000L);
         radnik2.setPol("F");
         radnik2.setEmail("lara.milic@gmail.com");
         radnik2.setBrojTelefona("+381601111111");
@@ -348,7 +348,7 @@ public class KorisnikServisUnitTests {
 
         radnik3.setJmbg(String.valueOf(2203989793457L));
 
-        radnik3.setDatumRodjenja(606524400000L);
+        radnik3.setDatumRodjenja(606542400000L);
         radnik3.setPol("M");
         radnik3.setEmail("stevan.krunic@gmail.com");
         radnik3.setBrojTelefona("+381601111111");
@@ -409,8 +409,8 @@ public class KorisnikServisUnitTests {
 
         Korisnik korisnik = createMockKorisnik();
 
-        noviKorisnikDTO.setDatumRodjenja(708514400000L);
-        korisnik.setDatumRodjenja(708514400000L);
+        noviKorisnikDTO.setDatumRodjenja(708532400000L);
+        korisnik.setDatumRodjenja(708532400000L);
 
         given(korisnikMapper.noviKorisnikDtoToKorisnik(noviKorisnikDTO)).willReturn(korisnik);
 
@@ -487,8 +487,8 @@ public class KorisnikServisUnitTests {
 
         Radnik radnik = createMockRadnik();
 
-        noviRadnikDTO.setDatumRodjenja(708514400000L);
-        radnik.setDatumRodjenja(708514400000L);
+        noviRadnikDTO.setDatumRodjenja(708532400000L);
+        radnik.setDatumRodjenja(708532400000L);
 
         assertThrows(Exception.class, () -> {
             korisnikServis.kreirajNovogRadnika(noviRadnikDTO);
