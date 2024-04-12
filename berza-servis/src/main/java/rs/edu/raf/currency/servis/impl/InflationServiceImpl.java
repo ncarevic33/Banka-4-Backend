@@ -81,8 +81,9 @@ public class InflationServiceImpl implements InflationService {
             System.out.println("3");
             response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
         } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
             System.out.println("4");
-            throw new RuntimeException(e);
+            //throw new RuntimeException(e);
         }
             System.out.println("5");
         String body = response.body();
