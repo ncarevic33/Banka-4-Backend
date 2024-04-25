@@ -23,6 +23,7 @@ import java.util.*;
 
 @RestController
 @RequestMapping("/opcija")
+@CrossOrigin(origins = "*")
 public class OpcijaController {
 
     @Autowired
