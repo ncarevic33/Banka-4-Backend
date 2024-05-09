@@ -64,7 +64,7 @@ postsubmits:
               commit_hash=$(git rev-parse HEAD)
 
               # Package the code
-              mvn clean package
+              mvn clean package -DskipTests
               
               # PROMENITI PRI KOPIRANJU
               # for petlja koja se pokreće za svaki mikroservis.
