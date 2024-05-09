@@ -62,6 +62,9 @@ postsubmits:
               # Hash commit-a za koji se ovaj job pokrenuo. Ovaj hash koristimo da pushujemo
               # image koji ima ovaj hash kao svoj tag.
               commit_hash=$(git rev-parse HEAD)
+
+              # Package the code
+              mvn clean package
               
               # PROMENITI PRI KOPIRANJU
               # for petlja koja se pokreće za svaki mikroservis.
