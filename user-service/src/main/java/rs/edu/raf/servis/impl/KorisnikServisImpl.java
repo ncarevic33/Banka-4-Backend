@@ -1,6 +1,7 @@
 package rs.edu.raf.servis.impl;
 
 import lombok.AllArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import rs.edu.raf.dto.*;
@@ -68,8 +69,8 @@ public class KorisnikServisImpl implements KorisnikServis {
 
         if(kodServis.dobarKod(registrujKorisnikDTO.getEmail(),registrujKorisnikDTO.getCode(),false)) {
 
-                                                //DtoToNekiEntity ili NoviDtoToNekiEntity radimo kada ocemo da vrsimo neke operacije nad bazom za konkretan Dto sa fronta
-                                                //NekiEntityToDto kada saljemo frontu
+            //DtoToNekiEntity ili NoviDtoToNekiEntity radimo kada ocemo da vrsimo neke operacije nad bazom za konkretan Dto sa fronta
+            //NekiEntityToDto kada saljemo frontu
             Korisnik korisnik = korisnikMapper.registrujKorisnikDtoToKorisnik(registrujKorisnikDTO);
             if(korisnik == null){
                 Radnik radnik = korisnikMapper.registrujRadnikDtoToRadnik(registrujKorisnikDTO);
@@ -206,7 +207,6 @@ public class KorisnikServisImpl implements KorisnikServis {
                 radnik.get().setPol(izmenaRadnikaDTO.getPol());
             if(izmenaRadnikaDTO.getBrojTelefona()!=null && !izmenaRadnikaDTO.getBrojTelefona().equals(""))
                 radnik.get().setBrojTelefona(izmenaRadnikaDTO.getBrojTelefona());
-            radnik.get().setAdresa(izmenaRadnikaDTO.getAdresa());
             if(izmenaRadnikaDTO.getPassword()!=null && !izmenaRadnikaDTO.getPassword().equals(""))
                 radnik.get().setPassword(bCryptPasswordEncoder.encode(izmenaRadnikaDTO.getPassword()));
             radnik.get().setPozicija(izmenaRadnikaDTO.getPozicija());
@@ -215,6 +215,7 @@ public class KorisnikServisImpl implements KorisnikServis {
             if(izmenaRadnikaDTO.getPermisije()!=null)
                 radnik.get().setPermisije(izmenaRadnikaDTO.getPermisije());
             if(izmenaRadnikaDTO.getAdresa()!=null)
+                radnik.get().setAdresa(izmenaRadnikaDTO.getAdresa());
             radnik.get().setAktivan(izmenaRadnikaDTO.getAktivan());
             radnik.get().setSupervisor(izmenaRadnikaDTO.isSupervisor());
             radnik.get().setDailyLimit(izmenaRadnikaDTO.getDailyLimit());
@@ -277,7 +278,13 @@ public class KorisnikServisImpl implements KorisnikServis {
 
     @Override
     public KorisnikDTO findUserById(Long id) {
-        return korisnikMapper.korisnikToKorisnikDto(korisnikRepository.findKorisnikByIdAndAktivanIsTrue(id).orElse(null)) ;
+        Korisnik korisnik = korisnikRepository.findKorisnikByIdAndAktivanIsTrue(id).orElse(null);
+        if(korisnik != null) return korisnikMapper.korisnikToKorisnikDto(korisnik) ;
+        return null;
+    }
+
+    public RadnikDTO findWorkerById(Long id){
+        return radnikMapper.radnikToRadnikDto(radnikRepository.findById(id).orElse(null));
     }
 
     @Override
@@ -289,6 +296,7 @@ public class KorisnikServisImpl implements KorisnikServis {
 
             if(korisnik.getPovezaniRacuni() == null){
                 korisnik.setPovezaniRacuni(accountNumber.toString());
+                korisnikRepository.save(korisnik);
                 return true;
             }
 
@@ -316,6 +324,11 @@ public class KorisnikServisImpl implements KorisnikServis {
         Radnik radnik = radnikRepository.findById(id).orElseThrow(()->new UserNotFoundException("Employee with id " + id + " not found!"));
         radnik.setDailySpent(radnik.getDailySpent().add(price));
         radnikRepository.save(radnik);
+    }
+
+    @Scheduled(initialDelay = 180000, fixedRate = 60000)
+    public void clearDailySpent() {
+        radnikRepository.clearDailySpent();
     }
 }
 
