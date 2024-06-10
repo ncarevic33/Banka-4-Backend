@@ -117,7 +117,7 @@ public class PonudaServiceImpl implements PonudaService {
     public boolean prihvati(Long idPonude) {
         Ponuda ponuda = ponudaRepository.findById(idPonude).orElseThrow();
         RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<?> response = restTemplate.exchange("https://banka-3-dev.si.raf.edu.rs/exchange-service/api/v1/otcTrade/offerAcepted/"+ponuda.getBanka3Id(),
+        ResponseEntity<?> response = restTemplate.exchange("https://banka-3-dev.si.raf.edu.rs/exchange-service/api/v1/otcTrade/offerAccepted/"+ponuda.getBanka3Id(),
                 HttpMethod.POST,null,String.class);
 
         ponudaRepository.prihvatiPonudu(idPonude);
