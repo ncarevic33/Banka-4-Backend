@@ -12,7 +12,8 @@ public class OrderDto {
 
     private Long id;
 
-    private Long userId;//
+
+    private Long userId;
 
     private String ticker;
 
